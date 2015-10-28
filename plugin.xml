@@ -6,25 +6,25 @@
          point="org.eclipse.ui.commands">
       <category
             name="Sample Category"
-            id="PluginHelloWorldCommand.commands.category">
+            id="AutoCISQ.commands.category">
       </category>
       <command
             name="Sample Command"
-            categoryId="PluginHelloWorldCommand.commands.category"
-            id="PluginHelloWorldCommand.commands.sampleCommand">
+            categoryId="AutoCISQ.commands.category"
+            id="AutoCISQ.commands.sampleCommand">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            commandId="PluginHelloWorldCommand.commands.sampleCommand"
-            class="pluginhelloworldcommand.handlers.SampleHandler">
+            commandId="AutoCISQ.commands.sampleCommand"
+            class="autocisq.handlers.SampleHandler">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="PluginHelloWorldCommand.commands.sampleCommand"
+            commandId="AutoCISQ.commands.sampleCommand"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+6"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -37,23 +37,23 @@
          <menu
                label="Sample Menu"
                mnemonic="M"
-               id="PluginHelloWorldCommand.menus.sampleMenu">
+               id="AutoCISQ.menus.sampleMenu">
             <command
-                  commandId="PluginHelloWorldCommand.commands.sampleCommand"
+                  commandId="AutoCISQ.commands.sampleCommand"
                   mnemonic="S"
-                  id="PluginHelloWorldCommand.menus.sampleCommand">
+                  id="AutoCISQ.menus.sampleCommand">
             </command>
          </menu>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
-               id="PluginHelloWorldCommand.toolbars.sampleToolbar">
+               id="AutoCISQ.toolbars.sampleToolbar">
             <command
-                  commandId="PluginHelloWorldCommand.commands.sampleCommand"
+                  commandId="AutoCISQ.commands.sampleCommand"
                   icon="icons/sample.gif"
                   tooltip="Say hello world"
-                  id="PluginHelloWorldCommand.toolbars.sampleCommand">
+                  id="AutoCISQ.toolbars.sampleCommand">
             </command>
          </toolbar>
       </menuContribution>
@@ -64,14 +64,14 @@
          name="Java Quality Issue"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
-      <super type="pluginhelloworld.javaqualitymarker"/>
+      <super type="AutoCISQ.javaqualitymarker"/>
       <persistent value="true"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
       <type
-            markerType="pluginhelloworld.javaqualityissue"
-            name="pluginhelloworld.javaqualityissue"
+            markerType="AutoCISQ.javaqualityissue"
+            name="AutoCISQ.javaqualityissue"
             super="org.eclipse.ui.workbench.texteditor.error"
             markerSeverity="2"/>
    </extension>
@@ -79,7 +79,7 @@
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
-            annotationType="pluginhelloworld.javaqualityissue"
+            annotationType="AutoCISQ.javaqualityissue"
             contributesToHeader="true"
             includeOnPreferencePage="false"
             isGoToNextNavigationTarget="true"

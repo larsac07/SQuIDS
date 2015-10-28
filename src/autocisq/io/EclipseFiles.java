@@ -1,4 +1,4 @@
-package pluginhelloworldcommand.io;
+package autocisq.io;
 
 import java.util.LinkedList;
 import java.util.List;

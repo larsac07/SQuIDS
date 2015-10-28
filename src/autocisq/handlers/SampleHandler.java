@@ -1,4 +1,4 @@
-package pluginhelloworldcommand.handlers;
+package autocisq.handlers;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,10 +16,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
 
-import pluginhelloworldcommand.io.EclipseFiles;
+import autocisq.debug.Logger;
+import autocisq.io.EclipseFiles;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -40,16 +39,13 @@ public class SampleHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-
-		// TODO Iterate
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
 			List<IFile> files;
 			try {
 				files = EclipseFiles.getFiles(project, "java", null);
 				for (IFile file : files) {
-					file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+					file.deleteMarkers("AutoCISQ.javaqualityissue", true, IResource.DEPTH_INFINITE);
 					try {
 						List<String> lines = Files.readAllLines(file.getLocation().toFile().toPath());
 						String fileString = "";
@@ -57,44 +53,24 @@ public class SampleHandler extends AbstractHandler {
 						for (String line : lines) {
 							fileString += line + nl;
 						}
-						// boolean found =
-						// fileString.matches("(?s).*catch\\s*\\([^\\)]+\\)\\s*\\{[^\\}]+\\}(?s).*");
-						// MessageDialog.openInformation(window.getShell(),
-						// "Search results", "Found: " + found);
 
+						// Pattern for finding multiple occurrances of empty or
+						// generic catch blocks
 						Pattern pattern = Pattern.compile(
 								"catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}|catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO Auto-generated catch block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}");
+
 						Matcher matcher = pattern.matcher(fileString);
-						// check all occurences
 						while (matcher.find()) {
 							int errorLineNumber = findLineNumber(fileString, matcher.start());
-							System.out.println("Found error in " + file.getLocation().toString() + " at line "
-									+ errorLineNumber + ":");
-							System.out.print("Start index: " + matcher.start());
-							System.out.print(" End index: " + matcher.end() + " ");
-							System.out.println(matcher.group());
-							IMarker m = file.createMarker(IMarker.PROBLEM);
+							Logger.cisqIssue(file, errorLineNumber, matcher.start(), matcher.end(), matcher.group());
+							IMarker m = file.createMarker("AutoCISQ.javaqualityissue");
 							m.setAttribute(IMarker.LINE_NUMBER, errorLineNumber);
 							m.setAttribute(IMarker.MESSAGE, "Empty or generic catch clause");
 							m.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
 							m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 							m.setAttribute(IMarker.CHAR_START, matcher.start());
 							m.setAttribute(IMarker.CHAR_END, matcher.end());
-							// MessageDialog.openInformation(window.getShell(),
-							// "Errors found", "Empty catch clause!");
 						}
-
-						// boolean empty =
-						// fileString.matches("(?s).*catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}(?s).*")
-						// || fileString.matches(
-						// "(?s).*catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO
-						// Auto-generated catch
-						// block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}(?s).*");
-						// if (empty) {
-						// System.out.println(fileString);
-						// MessageDialog.openInformation(window.getShell(),
-						// "Errors found", "Empty catch clause!");
-						// }
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
