@@ -14,18 +14,33 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+
 import autocisq.debug.Logger;
 import autocisq.io.EclipseFiles;
 
 public abstract class IssueFinder {
 
 	public static void findIssues(IWorkspace workspace) {
+
 		IProject[] projects = workspace.getRoot().getProjects();
 		for (IProject project : projects) {
 			List<IFile> files;
 			try {
 				files = EclipseFiles.getFiles(project, "java", null);
 				for (IFile file : files) {
+					try {
+						CompilationUnit cu = JavaParser.parse(file.getLocation().toFile());
+						System.out.println(cu.toString());
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					file.deleteMarkers("AutoCISQ.javaqualityissue", true, IResource.DEPTH_INFINITE);
 					try {
 						List<String> lines = Files.readAllLines(file.getLocation().toFile().toPath());
