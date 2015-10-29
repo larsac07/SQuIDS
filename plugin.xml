@@ -76,17 +76,17 @@
             markerSeverity="2"/>
    </extension>
 
-   <extension
+   <extension id="javaqualityissueannotationspecification" name="Java Quality Issue Annotation Specification"
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
-      <specification
-            annotationType="AutoCISQ.javaqualityissue"
-            contributesToHeader="true"
-            includeOnPreferencePage="false"
-            isGoToNextNavigationTarget="true"
-            isGoToPreviousNavigationTarget="true"
+      <specification annotationType="AutoCISQ.javaqualityissue"
             label="Java Quality Issue Annotation Specification"
             showInNextPrevDropdownToolbarAction="true"
-            symbolicIcon="error"/>
+            isGoToPreviousNavigationTarget="true"
+            isGoToNextNavigationTarget="true"
+            includeOnPreferencePage="false"
+            contributesToHeader="true"
+            symbolicIcon="error"
+            	/>
    </extension>
    
 
