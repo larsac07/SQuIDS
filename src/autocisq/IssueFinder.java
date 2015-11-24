@@ -46,7 +46,19 @@ public abstract class IssueFinder {
 					try {
 						CompilationUnit compilationUnit = JavaParser.parse(EclipseFiles.iFileToFile(file));
 						System.out.println(compilationUnit);
-						analyzeNode(compilationUnit, file, compilationUnit.toString(), true);
+						List<Issue> issues = analyzeNode(compilationUnit, null, compilationUnit.toString());
+						// Report issues
+						for (Issue issue : issues) {
+							Logger.cisqIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
+									issue.getProblemArea());
+							// Mark in editor
+							try {
+								markIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex());
+							} catch (CoreException e) {
+								Logger.bug("Could not create marker on file " + file);
+								e.printStackTrace();
+							}
+						}
 					} catch (ParseException e) {
 						System.err.println(e.getClass().getName() + ": Could not parse file "
 								+ file.getFullPath().toFile().getAbsolutePath());
@@ -89,15 +101,15 @@ public abstract class IssueFinder {
 			}
 
 			if (lineIndex < startLine) {
-				startIndex += line.length();
+				startIndex += line.length() + 1;
 			} else if (lineIndex == startLine) {
 				startIndex += startColumn - 1;
 			}
 
-			endIndex += line.length();
-
 			if (lineIndex == endLine) {
-				endIndex += endColumn - 1;
+				endIndex += endColumn;
+			} else {
+				endIndex += line.length() + 1;
 			}
 
 			lineIndex++;
@@ -136,48 +148,44 @@ public abstract class IssueFinder {
 	 * @param file
 	 * @throws JavaModelException
 	 */
-	public static void analyzeNode(Node rootNode, IFile file, String fileAsString, boolean mark) {
-		List<Issue> issues = new LinkedList<>();
+
+	public static List<Issue> analyzeNode(Node rootNode, List<Issue> issues, String fileAsString) {
+		if (issues == null) {
+			issues = new LinkedList<>();
+		}
 		if (rootNode instanceof CatchClause) {
 			CatchClause catchClause = (CatchClause) rootNode;
-			issues.addAll(inspectCatchClause(catchClause, fileAsString));
+			inspectCatchClause(catchClause, fileAsString, issues);
 		}
 
 		// Recursive call for each child node
 		for (Node node : rootNode.getChildrenNodes()) {
-			analyzeNode(node, file, fileAsString, mark);
+			analyzeNode(node, issues, fileAsString);
 		}
+		return issues;
+	}
 
-		// Report issues
-		for (Issue issue : issues) {
-			Logger.cisqIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
-					issue.getProblemArea());
-			if (mark) {
-				// Mark in editor
-				try {
-					markIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex());
-				} catch (CoreException e) {
-					Logger.bug("Could not create marker on file " + file);
-					e.printStackTrace();
-				}
-			}
-		}
+	public static List<Issue> inspectCatchClause(CatchClause catchClause, String fileAsString) {
+		return inspectCatchClause(catchClause, fileAsString, null);
 	}
 
 	/**
 	 * Detects empty or generic catch blocks, and adds a marker to it
 	 *
-	 * @param cc
+	 * @param catchClause
 	 *            - the catch clause to inspect
 	 */
-	public static List<Issue> inspectCatchClause(CatchClause cc, String fileAsString) {
+	public static List<Issue> inspectCatchClause(CatchClause catchClause, String fileAsString, List<Issue> issues) {
 		// TODO detect auto generated catch blocks
 		// TODO add marker to file corresponding to the issue
-		List<Issue> issues = new LinkedList<>();
-		if (cc.getCatchBlock().getStmts().isEmpty()) {
-			int[] indexes = columnsToIndexes(fileAsString, cc.getBeginLine(), cc.getEndLine(), cc.getBeginColumn(),
-					cc.getEndColumn());
-			issues.add(new Issue(cc.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block", cc.toString()));
+		if (issues == null) {
+			issues = new LinkedList<>();
+		}
+		if (catchClause.getCatchBlock().getStmts().isEmpty()) {
+			int[] indexes = columnsToIndexes(fileAsString, catchClause.getBeginLine(), catchClause.getEndLine(),
+					catchClause.getBeginColumn(), catchClause.getEndColumn());
+			issues.add(new Issue(catchClause.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block",
+					catchClause.toString(), catchClause));
 		}
 		return issues;
 	}
