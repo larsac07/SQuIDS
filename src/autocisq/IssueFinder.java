@@ -119,12 +119,13 @@ public abstract class IssueFinder {
 	public static void analyzeRegex(String fileString, IFile file, boolean mark) {
 		// Pattern for finding multiple occurrances of empty or
 		// generic catch blocks
-		Pattern pattern = Pattern.compile("catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}");
-		// + "|catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO Auto-generated catch
-		// block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}");
+		Pattern pattern = Pattern.compile("catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}"
+				+ "|catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO Auto-generated catch block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}");
 
 		Matcher matcher = pattern.matcher(fileString);
-		while (matcher.find()) {
+		while (matcher.find())
+
+		{
 			int errorLineNumber = findLineNumber(fileString, matcher.start());
 			Logger.cisqIssue(file, errorLineNumber, matcher.start(), matcher.end(), matcher.group());
 			if (mark) {
@@ -136,6 +137,7 @@ public abstract class IssueFinder {
 				}
 			}
 		}
+
 	}
 
 	/**
