@@ -1,5 +1,6 @@
 package autocisq.io;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,5 +44,9 @@ public class EclipseFiles {
 			}
 		}
 		return files;
+	}
+
+	public static File iFileToFile(IFile file) {
+		return file.getLocation().toFile();
 	}
 }
