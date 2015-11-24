@@ -1,6 +1,7 @@
 package autocisq;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,11 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
@@ -26,6 +23,7 @@ import com.github.javaparser.ast.stmt.CatchClause;
 import autocisq.debug.Logger;
 import autocisq.io.EclipseFiles;
 import autocisq.io.IOUtils;
+import autocisq.models.Issue;
 
 public abstract class IssueFinder {
 
@@ -78,14 +76,6 @@ public abstract class IssueFinder {
 	 */
 	public static int findLineNumber(String string, int index) {
 		return string.substring(0, index).split("[\n|\r]").length;
-	}
-
-	public static ASTNode parse(ICompilationUnit unit) {
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		return parser.createAST(null); // parse
 	}
 
 	public static int[] columnsToIndexes(String string, int startLine, int endLine, int startColumn, int endColumn) {
@@ -146,16 +136,32 @@ public abstract class IssueFinder {
 	 * @param file
 	 * @throws JavaModelException
 	 */
-	private static void analyzeNode(Node rootNode, IFile file, String fileAsString, boolean mark) {
+	public static void analyzeNode(Node rootNode, IFile file, String fileAsString, boolean mark) {
+		List<Issue> issues = new LinkedList<>();
 		if (rootNode instanceof CatchClause) {
 			CatchClause catchClause = (CatchClause) rootNode;
-			inspectCatchClause(catchClause, file, fileAsString, mark);
+			issues.addAll(inspectCatchClause(catchClause, fileAsString));
 		}
 
+		// Recursive call for each child node
 		for (Node node : rootNode.getChildrenNodes()) {
 			analyzeNode(node, file, fileAsString, mark);
 		}
 
+		// Report issues
+		for (Issue issue : issues) {
+			Logger.cisqIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
+					issue.getProblemArea());
+			if (mark) {
+				// Mark in editor
+				try {
+					markIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex());
+				} catch (CoreException e) {
+					Logger.bug("Could not create marker on file " + file);
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**
@@ -164,20 +170,16 @@ public abstract class IssueFinder {
 	 * @param cc
 	 *            - the catch clause to inspect
 	 */
-	private static void inspectCatchClause(CatchClause cc, IFile file, String fileAsString, boolean mark) {
+	public static List<Issue> inspectCatchClause(CatchClause cc, String fileAsString) {
 		// TODO detect auto generated catch blocks
 		// TODO add marker to file corresponding to the issue
+		List<Issue> issues = new LinkedList<>();
 		if (cc.getCatchBlock().getStmts().isEmpty()) {
 			int[] indexes = columnsToIndexes(fileAsString, cc.getBeginLine(), cc.getEndLine(), cc.getBeginColumn(),
 					cc.getEndColumn());
-			Logger.cisqIssue(file, cc.getBeginLine(), indexes[0], indexes[1], cc.toString());
-			try {
-				markIssue(file, cc.getBeginLine(), indexes[0], indexes[1]);
-			} catch (CoreException e) {
-				Logger.bug("Could not create marker on file " + file);
-				e.printStackTrace();
-			}
+			issues.add(new Issue(cc.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block", cc.toString()));
 		}
+		return issues;
 	}
 
 	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex) throws CoreException {
