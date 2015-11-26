@@ -30,6 +30,8 @@ public class EntropyManualCalculator {
 			e.printStackTrace();
 		} catch (Exception e) {
 			
+		} finally {
+			
 		}
 		return entropy;
 	}
