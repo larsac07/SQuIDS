@@ -18,7 +18,9 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
+import com.github.javaparser.ast.stmt.TryStmt;
 
 import autocisq.debug.Logger;
 import autocisq.io.EclipseFiles;
@@ -40,13 +42,9 @@ public abstract class IssueFinder {
 
 					String fileString = IOUtils.fileToString(file);
 
-					System.out.println(fileString);
-					analyzeRegex(fileString, file, false);
-
 					try {
 						CompilationUnit compilationUnit = JavaParser.parse(EclipseFiles.iFileToFile(file));
-						System.out.println(compilationUnit);
-						List<Issue> issues = analyzeNode(compilationUnit, null, compilationUnit.toString());
+						List<Issue> issues = analyzeNode(compilationUnit, null, fileString);
 						// Report issues
 						for (Issue issue : issues) {
 							Logger.cisqIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
@@ -94,14 +92,19 @@ public abstract class IssueFinder {
 		int startIndex = 0;
 		int endIndex = 0;
 		int lineIndex = 1;
+
 		String[] lines = string.split("[\n|\r]");
 		for (String line : lines) {
+
+			// Account for newline characters
+			int lineLength = line.length() + 1;
+
 			if (lineIndex > endLine) {
 				break;
 			}
 
 			if (lineIndex < startLine) {
-				startIndex += line.length() + 1;
+				startIndex += lineLength;
 			} else if (lineIndex == startLine) {
 				startIndex += startColumn - 1;
 			}
@@ -109,7 +112,7 @@ public abstract class IssueFinder {
 			if (lineIndex == endLine) {
 				endIndex += endColumn;
 			} else {
-				endIndex += line.length() + 1;
+				endIndex += lineLength;
 			}
 
 			lineIndex++;
@@ -118,28 +121,21 @@ public abstract class IssueFinder {
 		return new int[] { startIndex, endIndex };
 	}
 
-	public static void analyzeRegex(String fileString, IFile file, boolean mark) {
+	public static List<Issue> analyzeRegex(String fileString) {
 		// Pattern for finding multiple occurrances of empty or
 		// generic catch blocks
-		Pattern pattern = Pattern.compile("catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}"
-				+ "|catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO Auto-generated catch block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}");
+		List<Issue> issues = new LinkedList<>();
+		Pattern pattern = Pattern.compile("catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}");
+		// + "|catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO Auto-generated catch
+		// block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}");
 
 		Matcher matcher = pattern.matcher(fileString);
-		while (matcher.find())
-
-		{
+		while (matcher.find()) {
 			int errorLineNumber = findLineNumber(fileString, matcher.start());
-			Logger.cisqIssue(file, errorLineNumber, matcher.start(), matcher.end(), matcher.group());
-			if (mark) {
-				try {
-					markIssue(file, errorLineNumber, matcher.start(), matcher.end());
-				} catch (CoreException e) {
-					Logger.bug("Could not create marker on file " + file);
-					e.printStackTrace();
-				}
-			}
+			issues.add(new Issue(errorLineNumber, matcher.start(), matcher.end(), "Empty catch or finally block",
+					matcher.group(), null));
 		}
-
+		return issues;
 	}
 
 	/**
@@ -155,7 +151,10 @@ public abstract class IssueFinder {
 		}
 		if (rootNode instanceof CatchClause) {
 			CatchClause catchClause = (CatchClause) rootNode;
-			inspectCatchClause(catchClause, fileAsString, issues);
+			checkEmptyBlockStmt(catchClause.getCatchBlock(), fileAsString, issues);
+		} else if (rootNode instanceof BlockStmt && rootNode.getParentNode() instanceof TryStmt) {
+			BlockStmt blockStmt = (BlockStmt) rootNode;
+			checkEmptyBlockStmt(blockStmt, fileAsString, issues);
 		}
 
 		// Recursive call for each child node
@@ -165,27 +164,39 @@ public abstract class IssueFinder {
 		return issues;
 	}
 
-	public static List<Issue> inspectCatchClause(CatchClause catchClause, String fileAsString) {
-		return inspectCatchClause(catchClause, fileAsString, null);
+	public static List<Issue> checkEmptyBlockStmt(BlockStmt catchClause, String fileAsString) {
+		return checkEmptyBlockStmt(catchClause, fileAsString, null);
 	}
 
 	/**
 	 * Detects empty or generic catch blocks, and adds a marker to it
 	 *
-	 * @param catchClause
+	 * @param blockStmt
 	 *            - the catch clause to inspect
 	 */
-	public static List<Issue> inspectCatchClause(CatchClause catchClause, String fileAsString, List<Issue> issues) {
+	public static List<Issue> checkEmptyBlockStmt(BlockStmt blockStmt, String fileAsString, List<Issue> issues) {
 		// TODO detect auto generated catch blocks
 		// TODO add marker to file corresponding to the issue
 		if (issues == null) {
 			issues = new LinkedList<>();
 		}
-		if (catchClause.getCatchBlock().getStmts().isEmpty()) {
-			int[] indexes = columnsToIndexes(fileAsString, catchClause.getBeginLine(), catchClause.getEndLine(),
-					catchClause.getBeginColumn(), catchClause.getEndColumn());
-			issues.add(new Issue(catchClause.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block",
-					catchClause.toString(), catchClause));
+		Node parent = blockStmt.getParentNode();
+		if (blockStmt.getStmts().isEmpty() && parent instanceof CatchClause) {
+			int[] indexes = columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
+					parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
+			issues.add(new Issue(parent.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block", parent.toString(),
+					parent));
+		} else if (blockStmt.getStmts().size() == 1 && parent instanceof CatchClause
+				&& blockStmt.getStmts().get(0).toString().equals("e.printStackTrace();")) {
+			int[] indexes = columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
+					parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
+			issues.add(new Issue(parent.getBeginLine(), indexes[0], indexes[1], "Auto Generated Catch Block",
+					parent.toString(), parent));
+		} else if (blockStmt.getStmts().isEmpty() && blockStmt.getParentNode() instanceof TryStmt) {
+			int[] indexes = columnsToIndexes(fileAsString, blockStmt.getBeginLine(), blockStmt.getEndLine(),
+					parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
+			issues.add(new Issue(blockStmt.getBeginLine(), indexes[0], indexes[1], "Empty Finally Block",
+					blockStmt.toString(), blockStmt));
 		}
 		return issues;
 	}
