@@ -64,9 +64,10 @@ public class IssueFinderTest {
 
 	@Test
 	public void testCheckEmptyBlockStmt() {
-		assertTrue(this.issues.size() == 2);
+		assertTrue(this.issues.size() == 3);
 		assertEquals(this.issues.get(0).getBeginLine(), 28);
 		assertEquals(this.issues.get(1).getBeginLine(), 31);
+		assertEquals(this.issues.get(2).getBeginLine(), 33);
 	}
 
 	@Test
