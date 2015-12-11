@@ -152,7 +152,6 @@ public abstract class IssueFinder {
 			Expression expr = methodCall.getScope();
 			List<Expression> exprs = methodCall.getArgs();
 			List<Type> types = methodCall.getTypeArgs();
-			System.out.println();
 		}
 
 		// Recursive call for each child node

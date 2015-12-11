@@ -126,7 +126,6 @@ public class IssueFinderTest {
 		int startColumn = this.catchClause.getBeginColumn() - 14;
 		int endColumn = this.catchClause.getEndColumn() - 14;
 		int[] indexes = IssueFinder.columnsToIndexes(this.fileString, beginLine, endLine, startColumn, endColumn);
-		System.out.println(indexes[0] + " " + indexes[1]);
 		Issue regexIssue = IssueFinder.analyzeRegex(this.fileString).get(0);
 		int expectedBeginLine = regexIssue.getBeginLine();
 		int expectedStartIndex = regexIssue.getStartIndex();
