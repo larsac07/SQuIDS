@@ -1,78 +1,54 @@
 package autocisq;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaModelException;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.TryStmt;
+import com.github.javaparser.ast.type.Type;
 
-import autocisq.debug.Logger;
-import autocisq.io.EclipseFiles;
 import autocisq.io.IOUtils;
 import autocisq.models.Issue;
+import autocisq.models.JavaResource;
 
 public abstract class IssueFinder {
 
-	public static void findIssues(IWorkspace workspace) {
+	private static List<JavaResource> javaResources = new LinkedList<>();
 
-		IProject[] projects = workspace.getRoot().getProjects();
-		for (IProject project : projects) {
+	public static List<Issue> findIssues(File file) {
+		List<Issue> issues = new LinkedList<>();
+		String fileString = IOUtils.fileToString(file);
 
-			List<IFile> files;
-			try {
-				files = EclipseFiles.getFiles(project, "java", null);
-				for (IFile file : files) {
-					file.deleteMarkers("AutoCISQ.javaqualityissue", true, IResource.DEPTH_INFINITE);
+		try {
+			CompilationUnit compilationUnit = JavaParser.parse(file);
+			analyzeNode(compilationUnit, issues, fileString);
 
-					String fileString = IOUtils.fileToString(file);
-
-					try {
-						CompilationUnit compilationUnit = JavaParser.parse(EclipseFiles.iFileToFile(file));
-						List<Issue> issues = analyzeNode(compilationUnit, null, fileString);
-						// Report issues
-						for (Issue issue : issues) {
-							Logger.cisqIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
-									issue.getProblemArea());
-							// Mark in editor
-							try {
-								markIssue(file, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex());
-							} catch (CoreException e) {
-								Logger.bug("Could not create marker on file " + file);
-								e.printStackTrace();
-							}
-						}
-					} catch (ParseException e) {
-						System.err.println(e.getClass().getName() + ": Could not parse file "
-								+ file.getFullPath().toFile().getAbsolutePath());
-						e.printStackTrace();
-					} catch (IOException e) {
-						System.err.println(e.getClass().getName() + ": Could not find file "
-								+ file.getFullPath().toFile().getAbsolutePath());
-						e.printStackTrace();
-					}
-
-				}
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (ParseException e) {
+			System.err.println(e.getClass().getName() + ": Could not parse file " + file.getAbsolutePath());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println(e.getClass().getName() + ": Could not find file " + file.getAbsolutePath());
+			e.printStackTrace();
 		}
+		return issues;
 	}
 
 	/**
@@ -149,12 +125,34 @@ public abstract class IssueFinder {
 		if (issues == null) {
 			issues = new LinkedList<>();
 		}
+
 		if (rootNode instanceof CatchClause) {
 			CatchClause catchClause = (CatchClause) rootNode;
 			checkEmptyBlockStmt(catchClause.getCatchBlock(), fileAsString, issues);
-		} else if (rootNode instanceof BlockStmt && rootNode.getParentNode() instanceof TryStmt) {
+		} else if (rootNode instanceof MethodDeclaration) {
+			List<Comment> comments = rootNode.getAllContainedComments();
+			for (Comment comment : comments) {
+				String content = comment.toString();
+				if (content.endsWith(";")
+						&& (content.contains("()") || content.contains("=") || content.contains("new"))) {
+
+					int[] indexes = columnsToIndexes(fileAsString, rootNode.getBeginLine(), rootNode.getEndLine(),
+							rootNode.getBeginColumn(), rootNode.getEndColumn());
+					issues.add(new Issue(rootNode.getBeginLine(), indexes[0], indexes[1], "Commented Out Instruction",
+							rootNode.toString(), rootNode));
+				}
+			}
+		}
+
+		else if (rootNode instanceof BlockStmt && rootNode.getParentNode() instanceof TryStmt) {
 			BlockStmt blockStmt = (BlockStmt) rootNode;
 			checkEmptyBlockStmt(blockStmt, fileAsString, issues);
+		} else if (rootNode instanceof MethodCallExpr) {
+			MethodCallExpr methodCall = (MethodCallExpr) rootNode;
+			Expression expr = methodCall.getScope();
+			List<Expression> exprs = methodCall.getArgs();
+			List<Type> types = methodCall.getTypeArgs();
+			System.out.println();
 		}
 
 		// Recursive call for each child node
@@ -232,15 +230,5 @@ public abstract class IssueFinder {
 		} else {
 			return findNodeParentOfType(node.getParentNode(), parentClass);
 		}
-	}
-
-	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex) throws CoreException {
-		IMarker m = file.createMarker("AutoCISQ.javaqualityissue");
-		m.setAttribute(IMarker.LINE_NUMBER, errorLineNumber);
-		m.setAttribute(IMarker.MESSAGE, "Empty or generic catch clause");
-		m.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-		m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-		m.setAttribute(IMarker.CHAR_START, startIndex);
-		m.setAttribute(IMarker.CHAR_END, endIndex);
 	}
 }
