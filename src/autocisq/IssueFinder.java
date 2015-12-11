@@ -201,6 +201,39 @@ public abstract class IssueFinder {
 		return issues;
 	}
 
+	public static boolean methodCallFromAnotherType(MethodCallExpr methodCall) {
+		return methodCall.getScope() == null;
+	}
+
+	public static List<FieldDeclaration> findTypeFields(TypeDeclaration typeDeclaration) {
+		List<FieldDeclaration> fields = new LinkedList<>();
+		for (BodyDeclaration bodyDeclaration : typeDeclaration.getMembers()) {
+			if (bodyDeclaration instanceof FieldDeclaration) {
+				fields.add((FieldDeclaration) bodyDeclaration);
+			}
+		}
+		return fields;
+	}
+
+	public static TypeDeclaration findNodeTypeDeclaration(Node node) throws NoParentFoundException {
+		return (TypeDeclaration) findNodeParentOfType(node, TypeDeclaration.class);
+	}
+
+	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoParentFoundException {
+		return (CompilationUnit) findNodeParentOfType(node, CompilationUnit.class);
+	}
+
+	public static Node findNodeParentOfType(Node node, Class<? extends Node> parentClass)
+			throws NoParentFoundException {
+		if (node == null) {
+			throw new NoParentFoundException();
+		} else if (node.getClass().equals(parentClass)) {
+			return node;
+		} else {
+			return findNodeParentOfType(node.getParentNode(), parentClass);
+		}
+	}
+
 	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex) throws CoreException {
 		IMarker m = file.createMarker("AutoCISQ.javaqualityissue");
 		m.setAttribute(IMarker.LINE_NUMBER, errorLineNumber);
