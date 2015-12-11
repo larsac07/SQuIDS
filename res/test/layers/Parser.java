@@ -19,6 +19,7 @@ public class Parser {
 	private String[] headers;
 	private List<String[]> rows;
 	private List<String> rowHTMLList;
+	private GUI gui;
 
 	/**
 	 * Initializes a Parser with an input, output and filter
@@ -71,6 +72,8 @@ public class Parser {
 	 * @throws IOException
 	 */
 	public void parse() throws IOException {
+		GUI gui = GUI.getInstance();
+		gui.getSettings();
 		System.out.println("Trying to read from file \"" + this.inputTSV + "\"");
 		// .tsv to a buffered reader
 		FileReader fileReader = new FileReader(this.inputTSV);
