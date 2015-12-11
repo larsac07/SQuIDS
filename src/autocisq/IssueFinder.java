@@ -2,8 +2,10 @@ package autocisq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,22 +35,38 @@ public abstract class IssueFinder {
 
 	private static List<JavaResource> javaResources = new LinkedList<>();
 
-	public static List<Issue> findIssues(File file) {
-		List<Issue> issues = new LinkedList<>();
-		String fileString = IOUtils.fileToString(file);
+	public static Map<File, List<Issue>> findIssues(List<File> files) {
+		javaResources = new LinkedList<>();
+		Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
+		for (File file : files) {
+			List<String> fileStringLines = IOUtils.fileToStringLines(file);
+			String fileString = String.join(System.lineSeparator(), fileStringLines);
 
-		try {
-			CompilationUnit compilationUnit = JavaParser.parse(file);
+			try {
+				CompilationUnit compilationUnit = JavaParser.parse(file);
+				javaResources.add(new JavaResource(compilationUnit, file, fileString, fileStringLines));
+			} catch (ParseException e) {
+				System.err.println(e.getClass().getName() + ": Could not parse file " + file.getAbsolutePath());
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.err.println(e.getClass().getName() + ": Could not find file " + file.getAbsolutePath());
+				e.printStackTrace();
+			}
+		}
+
+		for (JavaResource javaResource : javaResources) {
+			List<Issue> issues = new LinkedList<>();
+
+			CompilationUnit compilationUnit = javaResource.getCompilationUnit();
+			String fileString = javaResource.getFileString();
+			File file = javaResource.getFile();
+
 			analyzeNode(compilationUnit, issues, fileString);
 
-		} catch (ParseException e) {
-			System.err.println(e.getClass().getName() + ": Could not parse file " + file.getAbsolutePath());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println(e.getClass().getName() + ": Could not find file " + file.getAbsolutePath());
-			e.printStackTrace();
+			fileIssuesMap.put(file, issues);
 		}
-		return issues;
+
+		return fileIssuesMap;
 	}
 
 	/**

@@ -1,7 +1,10 @@
 package autocisq.handlers;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -41,17 +44,31 @@ public class SampleHandler extends AbstractHandler {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
 
-			List<IFile> files;
+			List<IFile> iFiles;
+			List<File> files = new LinkedList<>();
+			Map<File, IFile> iFileMap = new HashMap<>();
 			try {
-				files = EclipseFiles.getFiles(project, "java", null);
-				for (IFile iFile : files) {
+				iFiles = EclipseFiles.getFiles(project, "java", null);
+				for (IFile iFile : iFiles) {
 					iFile.deleteMarkers("AutoCISQ.javaqualityissue", true, IResource.DEPTH_INFINITE);
 					File file = EclipseFiles.iFileToFile(iFile);
-					List<Issue> issues = IssueFinder.findIssues(file);
+					files.add(file);
+					iFileMap.put(file, iFile);
+				}
+				Map<File, List<Issue>> fileIssuesMap = IssueFinder.findIssues(files);
+
+				for (File file : fileIssuesMap.keySet()) {
+					List<Issue> issues = fileIssuesMap.get(file);
+					IFile iFile = iFileMap.get(file);
 					// Report issues
 					for (Issue issue : issues) {
-						Logger.cisqIssue(iFile, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
-								issue.getProblemArea());
+						try {
+							Logger.cisqIssue(iFile, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
+									issue.getProblemArea());
+						} catch (NullPointerException e) {
+							System.out.println(iFile);
+							System.out.println(issue);
+						}
 						// Mark in editor
 						try {
 							markIssue(iFile, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex());
