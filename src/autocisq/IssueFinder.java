@@ -16,9 +16,12 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
@@ -229,6 +232,40 @@ public class IssueFinder {
 		return issues;
 	}
 
+	public CompilationUnit findCompilationUnit(String className) {
+		for (JavaResource javaResource : this.javaResources) {
+			for (TypeDeclaration typeDeclaration : javaResource.getCompilationUnit().getTypes()) {
+				if (typeDeclaration.getName().equals(className)) {
+					return javaResource.getCompilationUnit();
+				}
+			}
+		}
+		return null;
+	}
+
+	public CompilationUnit findMethodCompilationUnit(MethodCallExpr methodCall) {
+		CompilationUnit compilationUnit = null;
+		try {
+			TypeDeclaration parentType = findNodeClassOrInterfaceDeclaration(methodCall);
+			for (FieldDeclaration fieldDeclaration : findTypeFields(parentType)) {
+				List<VariableDeclarator> variables = fieldDeclaration.getVariables();
+				for (VariableDeclarator variable : variables) {
+					Expression scopeExpression = methodCall.getScope();
+					VariableDeclaratorId variableId = variable.getId();
+					if (scopeExpression.toString().equals(variableId.getName())) {
+						return findCompilationUnit(fieldDeclaration.getType().toString());
+					}
+				}
+			}
+
+		} catch (NoParentFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return compilationUnit;
+	}
+
 	public static boolean methodCallFromAnotherType(MethodCallExpr methodCall) {
 		return methodCall.getScope() == null;
 	}
@@ -243,8 +280,9 @@ public class IssueFinder {
 		return fields;
 	}
 
-	public static TypeDeclaration findNodeTypeDeclaration(Node node) throws NoParentFoundException {
-		return (TypeDeclaration) findNodeParentOfType(node, TypeDeclaration.class);
+	public static ClassOrInterfaceDeclaration findNodeClassOrInterfaceDeclaration(Node node)
+			throws NoParentFoundException {
+		return (ClassOrInterfaceDeclaration) findNodeParentOfType(node, ClassOrInterfaceDeclaration.class);
 	}
 
 	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoParentFoundException {
@@ -260,5 +298,9 @@ public class IssueFinder {
 		} else {
 			return findNodeParentOfType(node.getParentNode(), parentClass);
 		}
+	}
+
+	public List<JavaResource> getJavaResources() {
+		return this.javaResources;
 	}
 }

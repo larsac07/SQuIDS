@@ -7,6 +7,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.CatchClause;
 
 import autocisq.IssueFinder;
@@ -24,15 +26,29 @@ public class IssueFinderTest {
 
 	private String fileString = "";
 	private File testFile;
+	private File layerTestFile;
+	private List<File> layerTestFiles;
 	private List<String> lines = new ArrayList<>();
 	private List<Issue> issues;
 	private CompilationUnit compilationUnit;
+	private CompilationUnit layerCompilationUnit;
 	private CatchClause catchClause;
 	private LinkedHashMap<String, String> layerMap;
+	private IssueFinder issueFinder;
 
 	@Before
 	public void setUp() throws Exception {
+		this.issueFinder = IssueFinder.getInstance();
 		this.testFile = new File("res/test/EntropyManualCalculator.java");
+		this.layerTestFile = new File("res/test/layers/Parser.java");
+		this.layerTestFiles = new LinkedList<>();
+		this.layerTestFiles.add(new File("res/test/layers/GUI.java"));
+		this.layerTestFiles.add(new File("res/test/layers/GUIUtils.java"));
+		this.layerTestFiles.add(new File("res/test/layers/SettingsGUI.java"));
+		this.layerTestFiles.add(new File("res/test/layers/ThemeManager.java"));
+		this.layerTestFiles.add(new File("res/test/layers/TsvToHtml.java"));
+		this.layerTestFiles.add(new File("res/test/layers/Parser.java"));
+		this.layerCompilationUnit = JavaParser.parse(this.layerTestFile);
 
 		this.lines = Files.readAllLines(this.testFile.toPath());
 
@@ -139,6 +155,13 @@ public class IssueFinderTest {
 
 	@Test
 	public void findClassOfMethodCall() {
-		IssueFinder.analyzeNode(this.compilationUnit, this.issues, this.fileString);
+		this.issueFinder.findIssues(this.layerTestFiles);
+		Node methodCall = this.layerCompilationUnit.getTypes().get(0).getMembers().get(9).getChildrenNodes().get(2)
+				.getChildrenNodes().get(1).getChildrenNodes().get(0);
+
+		CompilationUnit expected = this.issueFinder.getJavaResources().get(0).getCompilationUnit();
+		CompilationUnit actual = this.issueFinder.findMethodCompilationUnit((MethodCallExpr) methodCall);
+
+		assertEquals(expected, actual);
 	}
 }
