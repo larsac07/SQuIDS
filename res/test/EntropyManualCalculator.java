@@ -6,6 +6,8 @@ import java.io.IOException;
 
 public class EntropyManualCalculator {
 
+	public int lol;
+
 	public static void main(String[] args) {
 		int divider = 10;
 		double[] values = new double[] {4, 3, 3};
@@ -22,6 +24,9 @@ public class EntropyManualCalculator {
 		}
 		File f = new File("asdf.txt");
 		FileWriter fw;
+		// These
+		//Are
+		//	orphan comments
 		try {
 			fw = new FileWriter(f);
 			fw.write("adfg");

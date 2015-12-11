@@ -2,11 +2,11 @@ package autocisq.junit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -26,7 +26,9 @@ public class IssueFinderTest {
 	private File testFile;
 	private List<String> lines = new ArrayList<>();
 	private List<Issue> issues;
+	private CompilationUnit compilationUnit;
 	private CatchClause catchClause;
+	private LinkedHashMap<String, String> layerMap;
 
 	@Before
 	public void setUp() throws Exception {
@@ -39,11 +41,23 @@ public class IssueFinderTest {
 			this.fileString += line + nl;
 		}
 
-		CompilationUnit compilationUnit = JavaParser.parse(this.testFile);
-		Node tryStmt = compilationUnit.getTypes().get(0).getMembers().get(1).getChildrenNodes().get(3)
+		this.compilationUnit = JavaParser.parse(this.testFile);
+		Node tryStmt = this.compilationUnit.getTypes().get(0).getMembers().get(2).getChildrenNodes().get(3)
 				.getChildrenNodes().get(4);
 		this.catchClause = (CatchClause) tryStmt.getChildrenNodes().get(2);
 		this.issues = IssueFinder.analyzeNode(tryStmt, null, this.fileString);
+
+		String layer1 = "Layer 1";
+		String layer2 = "Layer 2";
+		String layer3 = "Layer 3";
+
+		this.layerMap = new LinkedHashMap<>();
+		this.layerMap.put("no.uib.lca092.rtms.gui.GUI", layer1);
+		this.layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", layer1);
+		this.layerMap.put("no.uib.lca092.rtms.gui.SettingsGUI", layer1);
+		this.layerMap.put("no.uib.lca092.rtms.gui.ThemeManager", layer1);
+		this.layerMap.put("no.uib.lca092.rtms.TsvToHtml", layer2);
+		this.layerMap.put("no.uib.lca092.rtms.io.Parser", layer3);
 	}
 
 	@Test
@@ -59,15 +73,17 @@ public class IssueFinderTest {
 
 	@Test
 	public void testAnalyzeNode() {
-		fail("Not yet implemented");
+		List<Issue> expected = this.issues;
+		List<Issue> actual = IssueFinder.analyzeNode(this.compilationUnit, expected, this.fileString);
+		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testCheckEmptyBlockStmt() {
 		assertTrue(this.issues.size() == 3);
-		assertEquals(this.issues.get(0).getBeginLine(), 28);
-		assertEquals(this.issues.get(1).getBeginLine(), 31);
-		assertEquals(this.issues.get(2).getBeginLine(), 33);
+		assertEquals(33, this.issues.get(0).getBeginLine());
+		assertEquals(36, this.issues.get(1).getBeginLine());
+		assertEquals(38, this.issues.get(2).getBeginLine());
 	}
 
 	@Test
@@ -120,5 +136,10 @@ public class IssueFinderTest {
 		assertEquals("Start index difference:" + Math.abs(expectedStartIndex - indexes[0]), expectedStartIndex,
 				indexes[0]);
 		assertEquals("End index difference:" + Math.abs(expectedEndIndex - indexes[1]), expectedEndIndex, indexes[1]);
+	}
+
+	@Test
+	public void findClassOfMethodCall() {
+		IssueFinder.analyzeNode(this.compilationUnit, this.issues, this.fileString);
 	}
 }
