@@ -55,7 +55,7 @@ public class SampleHandler extends AbstractHandler {
 					files.add(file);
 					iFileMap.put(file, iFile);
 				}
-				Map<File, List<Issue>> fileIssuesMap = IssueFinder.findIssues(files);
+				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files);
 
 				for (File file : fileIssuesMap.keySet()) {
 					List<Issue> issues = fileIssuesMap.get(file);

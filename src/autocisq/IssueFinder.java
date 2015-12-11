@@ -31,12 +31,25 @@ import autocisq.io.IOUtils;
 import autocisq.models.Issue;
 import autocisq.models.JavaResource;
 
-public abstract class IssueFinder {
+public class IssueFinder {
 
-	private static List<JavaResource> javaResources = new LinkedList<>();
+	private static IssueFinder instance;
 
-	public static Map<File, List<Issue>> findIssues(List<File> files) {
-		javaResources = new LinkedList<>();
+	private List<JavaResource> javaResources = new LinkedList<>();
+
+	public static IssueFinder getInstance() {
+		if (instance == null) {
+			instance = new IssueFinder();
+		}
+		return instance;
+	}
+
+	private IssueFinder() {
+		this.javaResources = new LinkedList<>();
+	}
+
+	public Map<File, List<Issue>> findIssues(List<File> files) {
+		this.javaResources = new LinkedList<>();
 		Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
 		for (File file : files) {
 			List<String> fileStringLines = IOUtils.fileToStringLines(file);
@@ -44,7 +57,7 @@ public abstract class IssueFinder {
 
 			try {
 				CompilationUnit compilationUnit = JavaParser.parse(file);
-				javaResources.add(new JavaResource(compilationUnit, file, fileString, fileStringLines));
+				this.javaResources.add(new JavaResource(compilationUnit, file, fileString, fileStringLines));
 			} catch (ParseException e) {
 				System.err.println(e.getClass().getName() + ": Could not parse file " + file.getAbsolutePath());
 				e.printStackTrace();
@@ -54,7 +67,7 @@ public abstract class IssueFinder {
 			}
 		}
 
-		for (JavaResource javaResource : javaResources) {
+		for (JavaResource javaResource : this.javaResources) {
 			List<Issue> issues = new LinkedList<>();
 
 			CompilationUnit compilationUnit = javaResource.getCompilationUnit();
