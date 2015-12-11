@@ -7,13 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-
 public abstract class IOUtils {
-
-	public static String fileToString(IFile file) {
-		return fileToString(EclipseFiles.iFileToFile(file));
-	}
 
 	public static String fileToString(File file) {
 		return fileToString(file.toPath());
@@ -21,12 +15,23 @@ public abstract class IOUtils {
 
 	public static String fileToString(Path file) {
 		String fileString = "";
+		List<String> lines = fileToStringLines(file);
+		String nl = System.lineSeparator();
+		for (String line : lines) {
+			fileString += line + nl;
+		}
+
+		return fileString;
+	}
+
+	public static List<String> fileToStringLines(File file) {
+		return fileToStringLines(file.toPath());
+	}
+
+	public static List<String> fileToStringLines(Path file) {
+		List<String> lines = null;
 		try {
-			List<String> lines = Files.readAllLines(file);
-			String nl = System.lineSeparator();
-			for (String line : lines) {
-				fileString += line + nl;
-			}
+			lines = Files.readAllLines(file);
 		} catch (FileNotFoundException e) {
 			System.err.println(e.getClass().getName() + ": Could not find file " + file.toAbsolutePath().toString());
 			e.printStackTrace();
@@ -34,6 +39,6 @@ public abstract class IOUtils {
 			System.err.println(e.getClass().getName() + ": Could not find file " + file.toAbsolutePath().toString());
 			e.printStackTrace();
 		}
-		return fileString;
+		return lines;
 	}
 }
