@@ -46,7 +46,7 @@ public class EclipseFiles {
 		return files;
 	}
 
-	public static File iFileToFile(IFile file) {
-		return file.getLocation().toFile();
+	public static File iFileToFile(IFile iFile) {
+		return iFile.getLocation().toFile();
 	}
 }
