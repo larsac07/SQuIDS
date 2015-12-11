@@ -1,0 +1,35 @@
+Measure
+	-> FunctionsThatSpanLayers
+	-> LayerSkippingCalls
+
+
+
+measure
+	->catchBlock
+	->method
+	->etc
+	
+	
+	
+measure
+
+	public void doSomething () {
+	
+	}
+	
+	defaultMeasure
+			-> functionsthatspanlayers
+			
+			
+			
+			
+easy measures: maintainability.
+
+	measure 9
+	measure 10
+	measure 11
+	Measure 14
+	measure 15
+	measure 17
+	measure 19
+	
