@@ -63,15 +63,15 @@ public class SampleHandler extends AbstractHandler {
 					// Report issues
 					for (Issue issue : issues) {
 						try {
-							Logger.cisqIssue(iFile, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
-									issue.getProblemArea());
+							Logger.logIssue(iFile, issue);
 						} catch (NullPointerException e) {
 							System.out.println(iFile);
 							System.out.println(issue);
 						}
 						// Mark in editor
 						try {
-							markIssue(iFile, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex());
+							markIssue(iFile, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
+									issue.getType());
 						} catch (CoreException e) {
 							Logger.bug("Could not create marker on file " + file);
 							e.printStackTrace();
@@ -86,10 +86,11 @@ public class SampleHandler extends AbstractHandler {
 		return null;
 	}
 
-	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex) throws CoreException {
+	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex, String message)
+			throws CoreException {
 		IMarker m = file.createMarker("AutoCISQ.javaqualityissue");
 		m.setAttribute(IMarker.LINE_NUMBER, errorLineNumber);
-		m.setAttribute(IMarker.MESSAGE, "Empty or generic catch clause");
+		m.setAttribute(IMarker.MESSAGE, message);
 		m.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
 		m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 		m.setAttribute(IMarker.CHAR_START, startIndex);

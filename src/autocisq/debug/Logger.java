@@ -2,6 +2,8 @@ package autocisq.debug;
 
 import org.eclipse.core.resources.IResource;
 
+import autocisq.models.Issue;
+
 public class Logger {
 
 	private final static String NL = System.lineSeparator();
@@ -22,9 +24,9 @@ public class Logger {
 		System.err.println(object);
 	}
 
-	public static void cisqIssue(IResource file, int errorLineNumber, int startIndex, int endIndex,
-			String problemArea) {
-		bug("Found error in " + file.getLocation().toString() + " at line " + errorLineNumber + ":" + NL
-				+ "Start index: " + startIndex + " End index: " + endIndex + NL + problemArea);
+	public static void logIssue(IResource file, Issue issue) {
+		bug("Found " + issue.getType() + " error in " + file.getLocation().toString() + " at line "
+				+ issue.getBeginLine() + ":" + NL + "Start index: " + issue.getStartIndex() + " End index: "
+				+ issue.getEndIndex() + NL + issue.getProblemArea());
 	}
 }
