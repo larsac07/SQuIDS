@@ -26,8 +26,8 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.TryStmt;
-import com.github.javaparser.ast.type.Type;
 
+import autocisq.debug.Logger;
 import autocisq.io.IOUtils;
 import autocisq.models.Issue;
 import autocisq.models.JavaResource;
@@ -36,7 +36,8 @@ public class IssueFinder {
 
 	private static IssueFinder instance;
 
-	private List<JavaResource> javaResources = new LinkedList<>();
+	private List<JavaResource> javaResources;
+	private LinkedHashMap<String, Integer> layerMap;
 
 	public static IssueFinder getInstance() {
 		if (instance == null) {
@@ -47,6 +48,37 @@ public class IssueFinder {
 
 	private IssueFinder() {
 		this.javaResources = new LinkedList<>();
+
+		this.layerMap = new LinkedHashMap<>();
+		this.layerMap.put("no.uib.lca092.rtms.gui.GUI", 1);
+		this.layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", 1);
+		this.layerMap.put("no.uib.lca092.rtms.gui.SettingsGUI", 1);
+		this.layerMap.put("no.uib.lca092.rtms.gui.ThemeManager", 1);
+		this.layerMap.put("no.uib.lca092.rtms.TsvToHtml", 2);
+		this.layerMap.put("no.uib.lca092.rtms.io.Parser", 3);
+
+		this.layerMap.put("no.uib.mof077.shortbytes.decisiontree.EntropyManualCalculator", 1);
+		this.layerMap.put("no.uib.mof077.shortbytes.decisiontree.Node", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.decisiontree.Person", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.decisiontree.Tree", 1);
+		this.layerMap.put("no.uib.mof077.shortbytes.genetics.Candidate", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.genetics.GeneticAlgorithm", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.genetics.Main", 1);
+		this.layerMap.put("no.uib.mof077.shortbytes.kmeans.Cluster", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.kmeans.KMeans", 1);
+		this.layerMap.put("no.uib.mof077.shortbytes.kmeans.Vector3", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.neural.Connection", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.neural.Network", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.neural.Node", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.neural.NodeLayer", 2);
+		this.layerMap.put("no.uib.mof077.shortbytes.neural.TestNeuralNetwork", 1);
+		this.layerMap.put("no.uib.mof077.shortbytes.neural.XORHomework", 1);
+		this.layerMap.put("no.uib.mof077.shortbytes.neural.XORNetwork", 1);
+		this.layerMap.put("no.uib.mof077.shortbytes.som.HomeworkSOM", 3);
+		this.layerMap.put("no.uib.mof077.shortbytes.som.KohonenSom", 3);
+		this.layerMap.put("no.uib.mof077.shortbytes.som.Layer", 3);
+		this.layerMap.put("no.uib.mof077.shortbytes.som.Neuron", 3);
+		this.layerMap.put("no.uib.mof077.shortbytes.som.SomMain", 3);
 	}
 
 	public Map<File, List<Issue>> findIssues(List<File> files) {
@@ -58,6 +90,8 @@ public class IssueFinder {
 
 			try {
 				CompilationUnit compilationUnit = JavaParser.parse(file);
+				Logger.log(compilationUnit.getPackage().getPackageName() + "."
+						+ compilationUnit.getTypes().get(0).getName());
 				this.javaResources.add(new JavaResource(compilationUnit, file, fileString, fileStringLines));
 			} catch (ParseException e) {
 				System.err.println(e.getClass().getName() + ": Could not parse file " + file.getAbsolutePath());
@@ -153,7 +187,7 @@ public class IssueFinder {
 	 * @throws JavaModelException
 	 */
 
-	public static List<Issue> analyzeNode(Node rootNode, List<Issue> issues, String fileAsString) {
+	public List<Issue> analyzeNode(Node rootNode, List<Issue> issues, String fileAsString) {
 		if (issues == null) {
 			issues = new LinkedList<>();
 		}
@@ -181,9 +215,35 @@ public class IssueFinder {
 			checkEmptyBlockStmt(blockStmt, fileAsString, issues);
 		} else if (rootNode instanceof MethodCallExpr) {
 			MethodCallExpr methodCall = (MethodCallExpr) rootNode;
-			Expression expr = methodCall.getScope();
-			List<Expression> exprs = methodCall.getArgs();
-			List<Type> types = methodCall.getTypeArgs();
+			if (!methodCallFromSameType(methodCall)) {
+				CompilationUnit methodCompilationUnit = findMethodCompilationUnit(methodCall);
+				if (methodCompilationUnit != null) {
+					CompilationUnit methodCallCompilationUnit = null;
+					try {
+						methodCallCompilationUnit = findNodeCompilationUnit(methodCall);
+					} catch (NoAncestorFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					String methodClass = methodCompilationUnit.getPackage().getPackageName() + "."
+							+ methodCompilationUnit.getTypes().get(0).getName();
+					String methodCallClass = methodCallCompilationUnit.getPackage().getPackageName() + "."
+							+ methodCallCompilationUnit.getTypes().get(0).getName();
+
+					Integer methodLayer = this.layerMap.get(methodClass);
+					Integer methodCallLayer = this.layerMap.get(methodCallClass);
+
+					if (methodLayer != null) {
+						if (Math.abs(methodLayer - methodCallLayer) > 1) {
+							int[] indexes = columnsToIndexes(fileAsString, rootNode.getBeginLine(),
+									rootNode.getEndLine(), rootNode.getBeginColumn(), rootNode.getEndColumn());
+							issues.add(new Issue(methodCall.getBeginLine(), indexes[0], indexes[1],
+									"Layer-Skipping Call", methodCall.toString(), methodCall));
+						}
+					}
+				}
+			}
 		}
 
 		// Recursive call for each child node
@@ -243,20 +303,24 @@ public class IssueFinder {
 
 	public CompilationUnit findMethodCompilationUnit(MethodCallExpr methodCall) {
 		CompilationUnit compilationUnit = null;
+		Expression scopeExpression = methodCall.getScope();
 		try {
 			TypeDeclaration parentType = findNodeClassOrInterfaceDeclaration(methodCall);
-			for (FieldDeclaration fieldDeclaration : findTypeFields(parentType)) {
+			search: for (FieldDeclaration fieldDeclaration : findTypeFields(parentType)) {
 				List<VariableDeclarator> variables = fieldDeclaration.getVariables();
 				for (VariableDeclarator variable : variables) {
-					Expression scopeExpression = methodCall.getScope();
 					VariableDeclaratorId variableId = variable.getId();
 					if (scopeExpression.toString().equals(variableId.getName())) {
-						return findCompilationUnit(fieldDeclaration.getType().toString());
+						compilationUnit = findCompilationUnit(fieldDeclaration.getType().toString());
+						break search;
 					}
 				}
 			}
+			if (compilationUnit == null) {
+				compilationUnit = findCompilationUnit(scopeExpression.toString());
+			}
 
-		} catch (NoParentFoundException e) {
+		} catch (NoAncestorFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -264,7 +328,7 @@ public class IssueFinder {
 		return compilationUnit;
 	}
 
-	public static boolean methodCallFromAnotherType(MethodCallExpr methodCall) {
+	public static boolean methodCallFromSameType(MethodCallExpr methodCall) {
 		return methodCall.getScope() == null;
 	}
 
@@ -279,22 +343,32 @@ public class IssueFinder {
 	}
 
 	public static ClassOrInterfaceDeclaration findNodeClassOrInterfaceDeclaration(Node node)
-			throws NoParentFoundException {
-		return (ClassOrInterfaceDeclaration) findNodeParentOfType(node, ClassOrInterfaceDeclaration.class);
+			throws NoAncestorFoundException {
+		return (ClassOrInterfaceDeclaration) findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
 	}
 
-	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoParentFoundException {
-		return (CompilationUnit) findNodeParentOfType(node, CompilationUnit.class);
+	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoAncestorFoundException {
+		return (CompilationUnit) findNodeAncestorOfType(node, CompilationUnit.class);
 	}
 
-	public static Node findNodeParentOfType(Node node, Class<? extends Node> parentClass)
-			throws NoParentFoundException {
+	/**
+	 * Find a Node's ancestor of a specified class
+	 *
+	 * @param node
+	 *            - the node of reference
+	 * @param ancestorClass
+	 *            - the class of the ancestor you wish to find
+	 * @return the closest ancestor found of the specified class
+	 * @throws NoAncestorFoundException
+	 */
+	public static Node findNodeAncestorOfType(Node node, Class<? extends Node> ancestorClass)
+			throws NoAncestorFoundException {
 		if (node == null) {
-			throw new NoParentFoundException();
-		} else if (node.getClass().equals(parentClass)) {
+			throw new NoAncestorFoundException();
+		} else if (node.getClass().equals(ancestorClass)) {
 			return node;
 		} else {
-			return findNodeParentOfType(node.getParentNode(), parentClass);
+			return findNodeAncestorOfType(node.getParentNode(), ancestorClass);
 		}
 	}
 

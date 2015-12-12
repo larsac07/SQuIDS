@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,10 +17,12 @@ import org.junit.Test;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.CatchClause;
 
 import autocisq.IssueFinder;
+import autocisq.NoAncestorFoundException;
 import autocisq.models.Issue;
 
 public class IssueFinderTest {
@@ -61,7 +64,7 @@ public class IssueFinderTest {
 		Node tryStmt = this.compilationUnit.getTypes().get(0).getMembers().get(2).getChildrenNodes().get(3)
 				.getChildrenNodes().get(4);
 		this.catchClause = (CatchClause) tryStmt.getChildrenNodes().get(2);
-		this.issues = IssueFinder.analyzeNode(tryStmt, null, this.fileString);
+		this.issues = this.issueFinder.analyzeNode(tryStmt, null, this.fileString);
 
 		String layer1 = "Layer 1";
 		String layer2 = "Layer 2";
@@ -90,7 +93,7 @@ public class IssueFinderTest {
 	@Test
 	public void testAnalyzeNode() {
 		List<Issue> expected = this.issues;
-		List<Issue> actual = IssueFinder.analyzeNode(this.compilationUnit, expected, this.fileString);
+		List<Issue> actual = this.issueFinder.analyzeNode(this.compilationUnit, expected, this.fileString);
 		assertEquals(expected, actual);
 	}
 
@@ -164,4 +167,47 @@ public class IssueFinderTest {
 
 		assertEquals(expected, actual);
 	}
+
+	@Test
+	public void findClassOfStaticMethodCall() {
+		this.issueFinder.findIssues(this.layerTestFiles);
+		Node staticMethodCall = this.layerCompilationUnit.getTypes().get(0).getMembers().get(9).getChildrenNodes()
+				.get(2).getChildrenNodes().get(0).getChildrenNodes().get(0).getChildrenNodes().get(1).getChildrenNodes()
+				.get(1);
+
+		CompilationUnit expected = this.issueFinder.getJavaResources().get(0).getCompilationUnit();
+		CompilationUnit actual = this.issueFinder.findMethodCompilationUnit((MethodCallExpr) staticMethodCall);
+
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void testFindNodeAncestorOfType() throws NoAncestorFoundException {
+		Node node = this.layerCompilationUnit.getTypes().get(0).getMembers().get(9).getChildrenNodes().get(2)
+				.getChildrenNodes().get(1).getChildrenNodes().get(0);
+		MethodDeclaration expected = (MethodDeclaration) this.layerCompilationUnit.getTypes().get(0).getMembers()
+				.get(9);
+		Node actual = IssueFinder.findNodeAncestorOfType(node, MethodDeclaration.class);
+
+		assertEquals(expected.getClass(), actual.getClass());
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void findLayerSkippingCalls() {
+		Map<File, List<Issue>> layerIssuesMap = IssueFinder.getInstance().findIssues(this.layerTestFiles);
+
+		boolean found = false;
+		for (List<Issue> fileIssues : layerIssuesMap.values()) {
+			for (Issue issue : fileIssues) {
+				if (issue.getType().equals("Layer-Skipping Call")) {
+					System.out.println(issue.getProblemArea());
+					System.out.println();
+					found = true;
+				}
+			}
+		}
+		assertTrue(found);
+	}
+
 }

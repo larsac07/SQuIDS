@@ -1,6 +1,6 @@
 package autocisq;
 
-public class NoParentFoundException extends Exception {
+public class NoAncestorFoundException extends Exception {
 
 	/**
 	 *
