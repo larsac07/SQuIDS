@@ -2,6 +2,7 @@ package autocisq.handlers;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import autocisq.IssueFinder;
+import autocisq.ProjectIssue;
 import autocisq.debug.Logger;
 import autocisq.io.EclipseFiles;
+import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
@@ -41,6 +44,30 @@ public class SampleHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		Map<String, Integer> layerMap = new LinkedHashMap<>();
+		layerMap.put("no.uib.mof077.shortbytes.decisiontree.EntropyManualCalculator", 1);
+		layerMap.put("no.uib.mof077.shortbytes.decisiontree.Node", 2);
+		layerMap.put("no.uib.mof077.shortbytes.decisiontree.Person", 2);
+		layerMap.put("no.uib.mof077.shortbytes.decisiontree.Tree", 1);
+		layerMap.put("no.uib.mof077.shortbytes.genetics.Candidate", 2);
+		layerMap.put("no.uib.mof077.shortbytes.genetics.GeneticAlgorithm", 2);
+		layerMap.put("no.uib.mof077.shortbytes.genetics.Main", 1);
+		layerMap.put("no.uib.mof077.shortbytes.kmeans.Cluster", 2);
+		layerMap.put("no.uib.mof077.shortbytes.kmeans.KMeans", 1);
+		layerMap.put("no.uib.mof077.shortbytes.kmeans.Vector3", 2);
+		layerMap.put("no.uib.mof077.shortbytes.neural.Connection", 2);
+		layerMap.put("no.uib.mof077.shortbytes.neural.Network", 2);
+		layerMap.put("no.uib.mof077.shortbytes.neural.Node", 2);
+		layerMap.put("no.uib.mof077.shortbytes.neural.NodeLayer", 2);
+		layerMap.put("no.uib.mof077.shortbytes.neural.TestNeuralNetwork", 1);
+		layerMap.put("no.uib.mof077.shortbytes.neural.XORHomework", 1);
+		layerMap.put("no.uib.mof077.shortbytes.neural.XORNetwork", 1);
+		layerMap.put("no.uib.mof077.shortbytes.som.HomeworkSOM", 3);
+		layerMap.put("no.uib.mof077.shortbytes.som.KohonenSom", 3);
+		layerMap.put("no.uib.mof077.shortbytes.som.Layer", 3);
+		layerMap.put("no.uib.mof077.shortbytes.som.Neuron", 3);
+		layerMap.put("no.uib.mof077.shortbytes.som.SomMain", 3);
+
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
 
@@ -55,7 +82,7 @@ public class SampleHandler extends AbstractHandler {
 					files.add(file);
 					iFileMap.put(file, iFile);
 				}
-				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files);
+				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files, layerMap);
 
 				for (File file : fileIssuesMap.keySet()) {
 					List<Issue> issues = fileIssuesMap.get(file);
@@ -63,15 +90,16 @@ public class SampleHandler extends AbstractHandler {
 					// Report issues
 					for (Issue issue : issues) {
 						try {
-							Logger.logIssue(iFile, issue);
-						} catch (NullPointerException e) {
-							System.out.println(iFile);
-							System.out.println(issue);
-						}
-						// Mark in editor
-						try {
-							markIssue(iFile, issue.getBeginLine(), issue.getStartIndex(), issue.getEndIndex(),
-									issue.getType());
+							if (issue instanceof FileIssue) {
+								FileIssue fileIssue = (FileIssue) issue;
+								Logger.logIssue(iFile, (FileIssue) issue);
+								markIssue(iFile, fileIssue.getBeginLine(), fileIssue.getStartIndex(),
+										fileIssue.getEndIndex(), fileIssue.getType());
+							} else if (issue instanceof ProjectIssue) {
+								ProjectIssue projectIssue = (ProjectIssue) issue;
+								Logger.logIssue(iFile, (ProjectIssue) issue);
+								markIssue(project, projectIssue.getType());
+							}
 						} catch (CoreException e) {
 							Logger.bug("Could not create marker on file " + file);
 							e.printStackTrace();
@@ -97,4 +125,10 @@ public class SampleHandler extends AbstractHandler {
 		m.setAttribute(IMarker.CHAR_END, endIndex);
 	}
 
+	private static void markIssue(IProject project, String message) throws CoreException {
+		IMarker m = project.createMarker("AutoCISQ.javaqualityissue");
+		m.setAttribute(IMarker.MESSAGE, message);
+		m.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+		m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+	}
 }

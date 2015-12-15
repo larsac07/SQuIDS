@@ -2,10 +2,12 @@ package autocisq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +31,7 @@ import com.github.javaparser.ast.stmt.TryStmt;
 
 import autocisq.debug.Logger;
 import autocisq.io.IOUtils;
+import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.JavaResource;
 
@@ -37,7 +40,7 @@ public class IssueFinder {
 	private static IssueFinder instance;
 
 	private List<JavaResource> javaResources;
-	private LinkedHashMap<String, Integer> layerMap;
+	private Map<String, Integer> layerMap;
 
 	public static IssueFinder getInstance() {
 		if (instance == null) {
@@ -48,41 +51,14 @@ public class IssueFinder {
 
 	private IssueFinder() {
 		this.javaResources = new LinkedList<>();
-
 		this.layerMap = new LinkedHashMap<>();
-		this.layerMap.put("no.uib.lca092.rtms.gui.GUI", 1);
-		this.layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", 1);
-		this.layerMap.put("no.uib.lca092.rtms.gui.SettingsGUI", 1);
-		this.layerMap.put("no.uib.lca092.rtms.gui.ThemeManager", 1);
-		this.layerMap.put("no.uib.lca092.rtms.TsvToHtml", 2);
-		this.layerMap.put("no.uib.lca092.rtms.io.Parser", 3);
-
-		this.layerMap.put("no.uib.mof077.shortbytes.decisiontree.EntropyManualCalculator", 1);
-		this.layerMap.put("no.uib.mof077.shortbytes.decisiontree.Node", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.decisiontree.Person", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.decisiontree.Tree", 1);
-		this.layerMap.put("no.uib.mof077.shortbytes.genetics.Candidate", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.genetics.GeneticAlgorithm", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.genetics.Main", 1);
-		this.layerMap.put("no.uib.mof077.shortbytes.kmeans.Cluster", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.kmeans.KMeans", 1);
-		this.layerMap.put("no.uib.mof077.shortbytes.kmeans.Vector3", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.neural.Connection", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.neural.Network", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.neural.Node", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.neural.NodeLayer", 2);
-		this.layerMap.put("no.uib.mof077.shortbytes.neural.TestNeuralNetwork", 1);
-		this.layerMap.put("no.uib.mof077.shortbytes.neural.XORHomework", 1);
-		this.layerMap.put("no.uib.mof077.shortbytes.neural.XORNetwork", 1);
-		this.layerMap.put("no.uib.mof077.shortbytes.som.HomeworkSOM", 3);
-		this.layerMap.put("no.uib.mof077.shortbytes.som.KohonenSom", 3);
-		this.layerMap.put("no.uib.mof077.shortbytes.som.Layer", 3);
-		this.layerMap.put("no.uib.mof077.shortbytes.som.Neuron", 3);
-		this.layerMap.put("no.uib.mof077.shortbytes.som.SomMain", 3);
 	}
 
-	public Map<File, List<Issue>> findIssues(List<File> files) {
+	public Map<File, List<Issue>> findIssues(List<File> files, Map<String, Integer> layerMap) {
 		this.javaResources = new LinkedList<>();
+		if (files != null) {
+			this.layerMap = layerMap;
+		}
 		Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
 		for (File file : files) {
 			List<String> fileStringLines = IOUtils.fileToStringLines(file);
@@ -100,6 +76,13 @@ public class IssueFinder {
 				System.err.println(e.getClass().getName() + ": Could not find file " + file.getAbsolutePath());
 				e.printStackTrace();
 			}
+		}
+
+		Set<Integer> distinctLayers = new HashSet<Integer>(this.layerMap.values());
+		if (distinctLayers.size() > 8) {
+			List<Issue> issues = new LinkedList<>();
+			issues.add(new ProjectIssue("Too Many Horizontal Layers"));
+			fileIssuesMap.put(new File("."), issues);
 		}
 
 		for (JavaResource javaResource : this.javaResources) {
@@ -163,10 +146,10 @@ public class IssueFinder {
 		return new int[] { startIndex, endIndex };
 	}
 
-	public static List<Issue> analyzeRegex(String fileString) {
+	public static List<FileIssue> analyzeRegex(String fileString) {
 		// Pattern for finding multiple occurrances of empty or
 		// generic catch blocks
-		List<Issue> issues = new LinkedList<>();
+		List<FileIssue> issues = new LinkedList<>();
 		Pattern pattern = Pattern.compile("catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}");
 		// + "|catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO Auto-generated catch
 		// block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}");
@@ -174,7 +157,7 @@ public class IssueFinder {
 		Matcher matcher = pattern.matcher(fileString);
 		while (matcher.find()) {
 			int errorLineNumber = findLineNumber(fileString, matcher.start());
-			issues.add(new Issue(errorLineNumber, matcher.start(), matcher.end(), "Empty catch or finally block",
+			issues.add(new FileIssue(errorLineNumber, matcher.start(), matcher.end(), "Empty catch or finally block",
 					matcher.group(), null));
 		}
 		return issues;
@@ -204,8 +187,8 @@ public class IssueFinder {
 
 					int[] indexes = columnsToIndexes(fileAsString, rootNode.getBeginLine(), rootNode.getEndLine(),
 							rootNode.getBeginColumn(), rootNode.getEndColumn());
-					issues.add(new Issue(rootNode.getBeginLine(), indexes[0], indexes[1], "Commented Out Instruction",
-							rootNode.toString(), rootNode));
+					issues.add(new FileIssue(rootNode.getBeginLine(), indexes[0], indexes[1],
+							"Commented Out Instruction", rootNode.toString(), rootNode));
 				}
 			}
 		}
@@ -238,7 +221,7 @@ public class IssueFinder {
 						if (Math.abs(methodLayer - methodCallLayer) > 1) {
 							int[] indexes = columnsToIndexes(fileAsString, rootNode.getBeginLine(),
 									rootNode.getEndLine(), rootNode.getBeginColumn(), rootNode.getEndColumn());
-							issues.add(new Issue(methodCall.getBeginLine(), indexes[0], indexes[1],
+							issues.add(new FileIssue(methodCall.getBeginLine(), indexes[0], indexes[1],
 									"Layer-Skipping Call", methodCall.toString(), methodCall));
 						}
 					}
@@ -273,18 +256,18 @@ public class IssueFinder {
 		if (blockStmt.getStmts().isEmpty() && parent instanceof CatchClause) {
 			int[] indexes = columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
 					parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
-			issues.add(new Issue(parent.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block", parent.toString(),
-					parent));
+			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block",
+					parent.toString(), parent));
 		} else if (blockStmt.getStmts().size() == 1 && parent instanceof CatchClause
 				&& blockStmt.getStmts().get(0).toString().equals("e.printStackTrace();")) {
 			int[] indexes = columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
 					parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
-			issues.add(new Issue(parent.getBeginLine(), indexes[0], indexes[1], "Auto Generated Catch Block",
+			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], "Auto Generated Catch Block",
 					parent.toString(), parent));
 		} else if (blockStmt.getStmts().isEmpty() && blockStmt.getParentNode() instanceof TryStmt) {
 			int[] indexes = columnsToIndexes(fileAsString, blockStmt.getBeginLine(), blockStmt.getEndLine(),
 					parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
-			issues.add(new Issue(blockStmt.getBeginLine(), indexes[0], indexes[1], "Empty Finally Block",
+			issues.add(new FileIssue(blockStmt.getBeginLine(), indexes[0], indexes[1], "Empty Finally Block",
 					blockStmt.toString(), blockStmt));
 		}
 		return issues;

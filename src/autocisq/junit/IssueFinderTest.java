@@ -23,6 +23,8 @@ import com.github.javaparser.ast.stmt.CatchClause;
 
 import autocisq.IssueFinder;
 import autocisq.NoAncestorFoundException;
+import autocisq.ProjectIssue;
+import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 public class IssueFinderTest {
@@ -36,7 +38,7 @@ public class IssueFinderTest {
 	private CompilationUnit compilationUnit;
 	private CompilationUnit layerCompilationUnit;
 	private CatchClause catchClause;
-	private LinkedHashMap<String, String> layerMap;
+	private LinkedHashMap<String, Integer> layerMap;
 	private IssueFinder issueFinder;
 
 	@Before
@@ -66,17 +68,16 @@ public class IssueFinderTest {
 		this.catchClause = (CatchClause) tryStmt.getChildrenNodes().get(2);
 		this.issues = this.issueFinder.analyzeNode(tryStmt, null, this.fileString);
 
-		String layer1 = "Layer 1";
-		String layer2 = "Layer 2";
-		String layer3 = "Layer 3";
-
 		this.layerMap = new LinkedHashMap<>();
-		this.layerMap.put("no.uib.lca092.rtms.gui.GUI", layer1);
-		this.layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", layer1);
-		this.layerMap.put("no.uib.lca092.rtms.gui.SettingsGUI", layer1);
-		this.layerMap.put("no.uib.lca092.rtms.gui.ThemeManager", layer1);
-		this.layerMap.put("no.uib.lca092.rtms.TsvToHtml", layer2);
-		this.layerMap.put("no.uib.lca092.rtms.io.Parser", layer3);
+		this.layerMap.put("no.uib.lca092.rtms.gui.GUI", 1);
+		this.layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", 2);
+		this.layerMap.put("no.uib.lca092.rtms.gui.SettingsGUI", 3);
+		this.layerMap.put("no.uib.lca092.rtms.gui.ThemeManager", 4);
+		this.layerMap.put("no.uib.lca092.rtms.TsvToHtml", 5);
+		this.layerMap.put("no.uib.lca092.rtms.io.Parser", 6);
+		this.layerMap.put("no.uib.lca092.rtms.gui.ThemeManager2", 7);
+		this.layerMap.put("no.uib.lca092.rtms.TsvToHtml2", 8);
+		this.layerMap.put("no.uib.lca092.rtms.io.Parser2", 9);
 	}
 
 	@Test
@@ -100,9 +101,9 @@ public class IssueFinderTest {
 	@Test
 	public void testCheckEmptyBlockStmt() {
 		assertTrue(this.issues.size() == 3);
-		assertEquals(33, this.issues.get(0).getBeginLine());
-		assertEquals(36, this.issues.get(1).getBeginLine());
-		assertEquals(38, this.issues.get(2).getBeginLine());
+		assertEquals(33, ((FileIssue) this.issues.get(0)).getBeginLine());
+		assertEquals(36, ((FileIssue) this.issues.get(1)).getBeginLine());
+		assertEquals(38, ((FileIssue) this.issues.get(2)).getBeginLine());
 	}
 
 	@Test
@@ -145,7 +146,7 @@ public class IssueFinderTest {
 		int startColumn = this.catchClause.getBeginColumn() - 14;
 		int endColumn = this.catchClause.getEndColumn() - 14;
 		int[] indexes = IssueFinder.columnsToIndexes(this.fileString, beginLine, endLine, startColumn, endColumn);
-		Issue regexIssue = IssueFinder.analyzeRegex(this.fileString).get(0);
+		FileIssue regexIssue = IssueFinder.analyzeRegex(this.fileString).get(0);
 		int expectedBeginLine = regexIssue.getBeginLine();
 		int expectedStartIndex = regexIssue.getStartIndex();
 		int expectedEndIndex = regexIssue.getEndIndex();
@@ -158,7 +159,7 @@ public class IssueFinderTest {
 
 	@Test
 	public void findClassOfMethodCall() {
-		this.issueFinder.findIssues(this.layerTestFiles);
+		this.issueFinder.findIssues(this.layerTestFiles, this.layerMap);
 		Node methodCall = this.layerCompilationUnit.getTypes().get(0).getMembers().get(9).getChildrenNodes().get(2)
 				.getChildrenNodes().get(1).getChildrenNodes().get(0);
 
@@ -170,7 +171,7 @@ public class IssueFinderTest {
 
 	@Test
 	public void findClassOfStaticMethodCall() {
-		this.issueFinder.findIssues(this.layerTestFiles);
+		this.issueFinder.findIssues(this.layerTestFiles, this.layerMap);
 		Node staticMethodCall = this.layerCompilationUnit.getTypes().get(0).getMembers().get(9).getChildrenNodes()
 				.get(2).getChildrenNodes().get(0).getChildrenNodes().get(0).getChildrenNodes().get(1).getChildrenNodes()
 				.get(1);
@@ -195,15 +196,32 @@ public class IssueFinderTest {
 
 	@Test
 	public void findLayerSkippingCalls() {
-		Map<File, List<Issue>> layerIssuesMap = IssueFinder.getInstance().findIssues(this.layerTestFiles);
+		Map<File, List<Issue>> layerIssuesMap = IssueFinder.getInstance().findIssues(this.layerTestFiles,
+				this.layerMap);
 
 		boolean found = false;
-		for (List<Issue> fileIssues : layerIssuesMap.values()) {
+		search: for (List<Issue> fileIssues : layerIssuesMap.values()) {
 			for (Issue issue : fileIssues) {
-				if (issue.getType().equals("Layer-Skipping Call")) {
-					System.out.println(issue.getProblemArea());
-					System.out.println();
+				if (issue.getType().equals("Layer-Skipping Call") && issue instanceof FileIssue) {
 					found = true;
+					break search;
+				}
+			}
+		}
+		assertTrue(found);
+	}
+
+	@Test
+	public void findProjectWithTooManyHorizontalLayers() {
+		Map<File, List<Issue>> layerIssuesMap = IssueFinder.getInstance().findIssues(this.layerTestFiles,
+				this.layerMap);
+
+		boolean found = false;
+		search: for (List<Issue> fileIssues : layerIssuesMap.values()) {
+			for (Issue issue : fileIssues) {
+				if (issue.getType().equals("Too Many Horizontal Layers") && issue instanceof ProjectIssue) {
+					found = true;
+					break search;
 				}
 			}
 		}

@@ -2,7 +2,8 @@ package autocisq.debug;
 
 import org.eclipse.core.resources.IResource;
 
-import autocisq.models.Issue;
+import autocisq.ProjectIssue;
+import autocisq.models.FileIssue;
 
 public class Logger {
 
@@ -24,9 +25,13 @@ public class Logger {
 		System.err.println(object);
 	}
 
-	public static void logIssue(IResource file, Issue issue) {
+	public static void logIssue(IResource file, FileIssue issue) {
 		bug("Found " + issue.getType() + " error in " + file.getLocation().toString() + " at line "
 				+ issue.getBeginLine() + ":" + NL + "Start index: " + issue.getStartIndex() + " End index: "
 				+ issue.getEndIndex() + NL + issue.getProblemArea());
+	}
+
+	public static void logIssue(IResource file, ProjectIssue issue) {
+		bug("Found " + issue.getType() + " error in project");
 	}
 }
