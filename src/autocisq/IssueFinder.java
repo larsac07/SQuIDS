@@ -2,12 +2,11 @@ package autocisq;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,11 +17,9 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.body.VariableDeclaratorId;
-import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -31,29 +28,36 @@ import com.github.javaparser.ast.stmt.TryStmt;
 
 import autocisq.debug.Logger;
 import autocisq.io.IOUtils;
+import autocisq.measure.EmptyExceptionHandlingBlock;
+import autocisq.measure.HorizontalLayers;
+import autocisq.measure.LayerSkippingCall;
+import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.JavaResource;
 
 public class IssueFinder {
-
+	
 	private static IssueFinder instance;
-
+	
 	private List<JavaResource> javaResources;
 	private Map<String, Integer> layerMap;
-
+	private List<Measure> measures;
+	
 	public static IssueFinder getInstance() {
 		if (instance == null) {
 			instance = new IssueFinder();
 		}
 		return instance;
 	}
-
+	
 	private IssueFinder() {
 		this.javaResources = new LinkedList<>();
 		this.layerMap = new LinkedHashMap<>();
+		this.measures = new ArrayList<>();
+		
 	}
-
+	
 	public Map<File, List<Issue>> findIssues(List<File> files, Map<String, Integer> layerMap) {
 		this.javaResources = new LinkedList<>();
 		if (files != null) {
@@ -63,7 +67,7 @@ public class IssueFinder {
 		for (File file : files) {
 			List<String> fileStringLines = IOUtils.fileToStringLines(file);
 			String fileString = String.join(System.lineSeparator(), fileStringLines);
-
+			
 			try {
 				CompilationUnit compilationUnit = JavaParser.parse(file);
 				Logger.log(compilationUnit.getPackage().getPackageName() + "."
@@ -77,29 +81,30 @@ public class IssueFinder {
 				e.printStackTrace();
 			}
 		}
-
-		Set<Integer> distinctLayers = new HashSet<Integer>(this.layerMap.values());
-		if (distinctLayers.size() > 8) {
-			List<Issue> issues = new LinkedList<>();
-			issues.add(new ProjectIssue("Too Many Horizontal Layers"));
-			fileIssuesMap.put(new File("."), issues);
+		
+		this.measures.add(new HorizontalLayers(this.layerMap));
+		List<CompilationUnit> compilationUnits = new ArrayList<>();
+		for (JavaResource javaResource : this.javaResources) {
+			compilationUnits.add(javaResource.getCompilationUnit());
 		}
-
+		this.measures.add(new LayerSkippingCall(compilationUnits, layerMap));
+		this.measures.add(new EmptyExceptionHandlingBlock());
+		
 		for (JavaResource javaResource : this.javaResources) {
 			List<Issue> issues = new LinkedList<>();
-
+			
 			CompilationUnit compilationUnit = javaResource.getCompilationUnit();
 			String fileString = javaResource.getFileString();
 			File file = javaResource.getFile();
-
+			
 			analyzeNode(compilationUnit, issues, fileString);
-
+			
 			fileIssuesMap.put(file, issues);
 		}
-
+		
 		return fileIssuesMap;
 	}
-
+	
 	/**
 	 * Find the line number of a string index based on "\n" or "\r"
 	 *
@@ -112,40 +117,40 @@ public class IssueFinder {
 	public static int findLineNumber(String string, int index) {
 		return string.substring(0, index).split("[\n|\r]").length;
 	}
-
+	
 	public static int[] columnsToIndexes(String string, int startLine, int endLine, int startColumn, int endColumn) {
 		int startIndex = 0;
 		int endIndex = 0;
 		int lineIndex = 1;
-
+		
 		String[] lines = string.split("[\n|\r]");
 		for (String line : lines) {
-
+			
 			// Account for newline characters
 			int lineLength = line.length() + 1;
-
+			
 			if (lineIndex > endLine) {
 				break;
 			}
-
+			
 			if (lineIndex < startLine) {
 				startIndex += lineLength;
 			} else if (lineIndex == startLine) {
 				startIndex += startColumn - 1;
 			}
-
+			
 			if (lineIndex == endLine) {
 				endIndex += endColumn;
 			} else {
 				endIndex += lineLength;
 			}
-
+			
 			lineIndex++;
 		}
-
+		
 		return new int[] { startIndex, endIndex };
 	}
-
+	
 	public static List<FileIssue> analyzeRegex(String fileString) {
 		// Pattern for finding multiple occurrances of empty or
 		// generic catch blocks
@@ -153,7 +158,7 @@ public class IssueFinder {
 		Pattern pattern = Pattern.compile("catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}");
 		// + "|catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO Auto-generated catch
 		// block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}");
-
+		
 		Matcher matcher = pattern.matcher(fileString);
 		while (matcher.find()) {
 			int errorLineNumber = findLineNumber(fileString, matcher.start());
@@ -162,84 +167,34 @@ public class IssueFinder {
 		}
 		return issues;
 	}
-
+	
 	/**
 	 *
 	 * @param rootNode
 	 * @param file
 	 * @throws JavaModelException
 	 */
-
+	
 	public List<Issue> analyzeNode(Node rootNode, List<Issue> issues, String fileAsString) {
 		if (issues == null) {
 			issues = new LinkedList<>();
 		}
-
-		if (rootNode instanceof CatchClause) {
-			CatchClause catchClause = (CatchClause) rootNode;
-			checkEmptyBlockStmt(catchClause.getCatchBlock(), fileAsString, issues);
-		} else if (rootNode instanceof MethodDeclaration) {
-			List<Comment> comments = rootNode.getAllContainedComments();
-			for (Comment comment : comments) {
-				String content = comment.toString();
-				if (content.endsWith(";")
-						&& (content.contains("()") || content.contains("=") || content.contains("new"))) {
-
-					int[] indexes = columnsToIndexes(fileAsString, rootNode.getBeginLine(), rootNode.getEndLine(),
-							rootNode.getBeginColumn(), rootNode.getEndColumn());
-					issues.add(new FileIssue(rootNode.getBeginLine(), indexes[0], indexes[1],
-							"Commented Out Instruction", rootNode.toString(), rootNode));
-				}
-			}
+		
+		for (Measure measure : this.measures) {
+			issues.addAll(measure.analyzeNode(rootNode, fileAsString));
 		}
-
-		else if (rootNode instanceof BlockStmt && rootNode.getParentNode() instanceof TryStmt) {
-			BlockStmt blockStmt = (BlockStmt) rootNode;
-			checkEmptyBlockStmt(blockStmt, fileAsString, issues);
-		} else if (rootNode instanceof MethodCallExpr) {
-			MethodCallExpr methodCall = (MethodCallExpr) rootNode;
-			if (!methodCallFromSameType(methodCall)) {
-				CompilationUnit methodCompilationUnit = findMethodCompilationUnit(methodCall);
-				if (methodCompilationUnit != null) {
-					CompilationUnit methodCallCompilationUnit = null;
-					try {
-						methodCallCompilationUnit = findNodeCompilationUnit(methodCall);
-					} catch (NoAncestorFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					String methodClass = methodCompilationUnit.getPackage().getPackageName() + "."
-							+ methodCompilationUnit.getTypes().get(0).getName();
-					String methodCallClass = methodCallCompilationUnit.getPackage().getPackageName() + "."
-							+ methodCallCompilationUnit.getTypes().get(0).getName();
-
-					Integer methodLayer = this.layerMap.get(methodClass);
-					Integer methodCallLayer = this.layerMap.get(methodCallClass);
-
-					if (methodLayer != null) {
-						if (Math.abs(methodLayer - methodCallLayer) > 1) {
-							int[] indexes = columnsToIndexes(fileAsString, rootNode.getBeginLine(),
-									rootNode.getEndLine(), rootNode.getBeginColumn(), rootNode.getEndColumn());
-							issues.add(new FileIssue(methodCall.getBeginLine(), indexes[0], indexes[1],
-									"Layer-Skipping Call", methodCall.toString(), methodCall));
-						}
-					}
-				}
-			}
-		}
-
+		
 		// Recursive call for each child node
 		for (Node node : rootNode.getChildrenNodes()) {
 			analyzeNode(node, issues, fileAsString);
 		}
 		return issues;
 	}
-
+	
 	public static List<Issue> checkEmptyBlockStmt(BlockStmt catchClause, String fileAsString) {
 		return checkEmptyBlockStmt(catchClause, fileAsString, null);
 	}
-
+	
 	/**
 	 * Detects empty or generic catch blocks, and adds a marker to it
 	 *
@@ -272,7 +227,7 @@ public class IssueFinder {
 		}
 		return issues;
 	}
-
+	
 	public CompilationUnit findCompilationUnit(String className) {
 		for (JavaResource javaResource : this.javaResources) {
 			for (TypeDeclaration typeDeclaration : javaResource.getCompilationUnit().getTypes()) {
@@ -283,7 +238,7 @@ public class IssueFinder {
 		}
 		return null;
 	}
-
+	
 	public CompilationUnit findMethodCompilationUnit(MethodCallExpr methodCall) {
 		CompilationUnit compilationUnit = null;
 		Expression scopeExpression = methodCall.getScope();
@@ -302,19 +257,19 @@ public class IssueFinder {
 			if (compilationUnit == null) {
 				compilationUnit = findCompilationUnit(scopeExpression.toString());
 			}
-
+			
 		} catch (NoAncestorFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		return compilationUnit;
 	}
-
+	
 	public static boolean methodCallFromSameType(MethodCallExpr methodCall) {
 		return methodCall.getScope() == null;
 	}
-
+	
 	public static List<FieldDeclaration> findTypeFields(TypeDeclaration typeDeclaration) {
 		List<FieldDeclaration> fields = new LinkedList<>();
 		for (BodyDeclaration bodyDeclaration : typeDeclaration.getMembers()) {
@@ -324,16 +279,16 @@ public class IssueFinder {
 		}
 		return fields;
 	}
-
+	
 	public static ClassOrInterfaceDeclaration findNodeClassOrInterfaceDeclaration(Node node)
 			throws NoAncestorFoundException {
 		return (ClassOrInterfaceDeclaration) findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
 	}
-
+	
 	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoAncestorFoundException {
 		return (CompilationUnit) findNodeAncestorOfType(node, CompilationUnit.class);
 	}
-
+	
 	/**
 	 * Find a Node's ancestor of a specified class
 	 *
@@ -354,8 +309,16 @@ public class IssueFinder {
 			return findNodeAncestorOfType(node.getParentNode(), ancestorClass);
 		}
 	}
-
+	
 	public List<JavaResource> getJavaResources() {
 		return this.javaResources;
+	}
+	
+	public Map<String, Integer> getLayerMap() {
+		return this.layerMap;
+	}
+	
+	public List<Measure> getMeasures() {
+		return this.measures;
 	}
 }
