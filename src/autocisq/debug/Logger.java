@@ -2,8 +2,8 @@ package autocisq.debug;
 
 import org.eclipse.core.resources.IResource;
 
-import autocisq.ProjectIssue;
 import autocisq.models.FileIssue;
+import autocisq.models.ProjectIssue;
 
 public class Logger {
 

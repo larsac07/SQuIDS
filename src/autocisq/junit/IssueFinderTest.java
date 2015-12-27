@@ -23,9 +23,9 @@ import com.github.javaparser.ast.stmt.CatchClause;
 
 import autocisq.IssueFinder;
 import autocisq.NoAncestorFoundException;
-import autocisq.ProjectIssue;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
+import autocisq.models.ProjectIssue;
 
 public class IssueFinderTest {
 
@@ -100,7 +100,7 @@ public class IssueFinderTest {
 
 	@Test
 	public void testCheckEmptyBlockStmt() {
-		assertTrue(this.issues.size() == 3);
+		assertEquals(3, this.issues.size());
 		assertEquals(33, ((FileIssue) this.issues.get(0)).getBeginLine());
 		assertEquals(36, ((FileIssue) this.issues.get(1)).getBeginLine());
 		assertEquals(38, ((FileIssue) this.issues.get(2)).getBeginLine());

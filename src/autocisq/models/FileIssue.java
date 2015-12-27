@@ -39,4 +39,30 @@ public class FileIssue extends Issue {
 		return this.node;
 	}
 
+	@Override
+	public String getID() {
+		return getType() + this.node.toString() + this.beginLine + this.startIndex + this.endIndex;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof FileIssue) {
+			FileIssue otherIssue = (FileIssue) other;
+			if (super.equals(otherIssue) && otherIssue.beginLine == this.beginLine
+					&& otherIssue.startIndex == this.startIndex && otherIssue.endIndex == this.endIndex
+					&& otherIssue.node.equals(this.node) && otherIssue.problemArea.equals(this.problemArea)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return getType() + " at line " + getBeginLine() + ": " + this.node.toString();
+	}
+
 }

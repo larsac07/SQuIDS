@@ -18,11 +18,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import autocisq.IssueFinder;
-import autocisq.ProjectIssue;
 import autocisq.debug.Logger;
 import autocisq.io.EclipseFiles;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
+import autocisq.models.ProjectIssue;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
