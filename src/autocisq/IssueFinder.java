@@ -26,7 +26,6 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.TryStmt;
 
-import autocisq.debug.Logger;
 import autocisq.io.IOUtils;
 import autocisq.measure.EmptyExceptionHandlingBlock;
 import autocisq.measure.HorizontalLayers;
@@ -70,8 +69,6 @@ public class IssueFinder {
 			
 			try {
 				CompilationUnit compilationUnit = JavaParser.parse(file);
-				Logger.log(compilationUnit.getPackage().getPackageName() + "."
-						+ compilationUnit.getTypes().get(0).getName());
 				this.javaResources.add(new JavaResource(compilationUnit, file, fileString, fileStringLines));
 			} catch (ParseException e) {
 				System.err.println(e.getClass().getName() + ": Could not parse file " + file.getAbsolutePath());

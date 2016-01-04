@@ -23,13 +23,24 @@ measure
 			
 			
 			
-easy measures: maintainability.
+Easy measures: Maintainability.
 
-	measure 9
-	measure 10
-	measure 11
-	Measure 14
-	measure 15
-	measure 17
-	measure 19
+	M9:  # of methods that are directly using fields from other classes
+	
+	M10: # of variables declared public
+	
+	M11: # of functions that have a fan-out ≥ 10
+		The fan-out is calculated by summing up the number of
+		called functions (methods) and the number of member
+		variables set.
+	
+	M14: # of functions with > 2% commented out instructions
+	
+	M15: # files > 1000 LOC 
+	
+	M17: # of GO TOs, CONTINUE, and BREAK outside the switch
+	
+	M19: # of methods with ≥ 7 data or file operations
+	
+	M20: # functions passing >= 7 parameters
 	
