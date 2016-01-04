@@ -30,7 +30,14 @@ public class MoreThan1000LOCTest {
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
-		if (issueFinder.getMeasures().isEmpty()) {
+		boolean found = false;
+		for (Measure measure : issueFinder.getMeasures()) {
+			if (measure instanceof MoreThan1000LOC) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
 			issueFinder.getMeasures().add(this.moreThan1000LOC);
 		}
 		File testFile1702 = new File("res/test/DumpVisitor.java");

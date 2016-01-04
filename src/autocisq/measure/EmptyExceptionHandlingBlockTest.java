@@ -25,7 +25,14 @@ public class EmptyExceptionHandlingBlockTest {
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
-		if (issueFinder.getMeasures().isEmpty()) {
+		boolean found = false;
+		for (Measure measure : issueFinder.getMeasures()) {
+			if (measure instanceof EmptyExceptionHandlingBlock) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
 			issueFinder.getMeasures().add(this.emptyExceptionHandlingBlock);
 		}
 		File testFile = new File("res/test/EntropyManualCalculator.java");
