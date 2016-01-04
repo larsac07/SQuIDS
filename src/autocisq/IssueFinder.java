@@ -31,12 +31,13 @@ import autocisq.measure.EmptyExceptionHandlingBlock;
 import autocisq.measure.HorizontalLayers;
 import autocisq.measure.LayerSkippingCall;
 import autocisq.measure.Measure;
+import autocisq.measure.MoreThan1000LOC;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.JavaResource;
 
 public class IssueFinder {
-	
+
 	private static IssueFinder instance;
 	
 	private List<JavaResource> javaResources;
@@ -86,6 +87,7 @@ public class IssueFinder {
 		}
 		this.measures.add(new LayerSkippingCall(compilationUnits, layerMap));
 		this.measures.add(new EmptyExceptionHandlingBlock());
+		this.measures.add(new MoreThan1000LOC());
 		
 		for (JavaResource javaResource : this.javaResources) {
 			List<Issue> issues = new LinkedList<>();
