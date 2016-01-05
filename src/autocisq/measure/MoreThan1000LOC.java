@@ -11,14 +11,16 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The LayerSkippingCall class represents the CISQ Maintainability Measure 2: #
- * of layer-skipping calls.
+ * The MoreThan1000LOC class represents the CISQ Maintainability Measure 15: #
+ * files > 1000 LOC.
+ *
+ * It counts all lines directly from the source file
  *
  * @author Lars A. V. Cabrera
  *		
  */
 public class MoreThan1000LOC implements Measure {
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString) {
 		List<Issue> issues = new LinkedList<>();
@@ -33,5 +35,5 @@ public class MoreThan1000LOC implements Measure {
 		}
 		return issues;
 	}
-	
+
 }
