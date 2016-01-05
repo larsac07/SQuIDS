@@ -32,6 +32,7 @@ import autocisq.measure.HorizontalLayers;
 import autocisq.measure.LayerSkippingCall;
 import autocisq.measure.Measure;
 import autocisq.measure.MoreThan1000LOC;
+import autocisq.measure.VariableDeclaredPublic;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.JavaResource;
@@ -42,7 +43,7 @@ public class IssueFinder {
 	
 	private List<JavaResource> javaResources;
 	private Map<String, Integer> layerMap;
-	private List<Measure> measures;
+	private Map<String, Measure> measures;
 	
 	public static IssueFinder getInstance() {
 		if (instance == null) {
@@ -54,7 +55,7 @@ public class IssueFinder {
 	private IssueFinder() {
 		this.javaResources = new LinkedList<>();
 		this.layerMap = new LinkedHashMap<>();
-		this.measures = new ArrayList<>();
+		this.measures = new LinkedHashMap<>();
 		
 	}
 	
@@ -80,14 +81,15 @@ public class IssueFinder {
 			}
 		}
 		
-		this.measures.add(new HorizontalLayers(this.layerMap));
 		List<CompilationUnit> compilationUnits = new ArrayList<>();
 		for (JavaResource javaResource : this.javaResources) {
 			compilationUnits.add(javaResource.getCompilationUnit());
 		}
-		this.measures.add(new LayerSkippingCall(compilationUnits, layerMap));
-		this.measures.add(new EmptyExceptionHandlingBlock());
-		this.measures.add(new MoreThan1000LOC());
+		putMeasure(new HorizontalLayers(this.layerMap));
+		putMeasure(new LayerSkippingCall(compilationUnits, layerMap));
+		putMeasure(new EmptyExceptionHandlingBlock());
+		putMeasure(new MoreThan1000LOC());
+		putMeasure(new VariableDeclaredPublic());
 		
 		for (JavaResource javaResource : this.javaResources) {
 			List<Issue> issues = new LinkedList<>();
@@ -179,7 +181,7 @@ public class IssueFinder {
 			issues = new LinkedList<>();
 		}
 		
-		for (Measure measure : this.measures) {
+		for (Measure measure : this.measures.values()) {
 			issues.addAll(measure.analyzeNode(rootNode, fileAsString));
 		}
 		
@@ -317,7 +319,23 @@ public class IssueFinder {
 		return this.layerMap;
 	}
 	
-	public List<Measure> getMeasures() {
+	public Map<String, Measure> getMeasures() {
 		return this.measures;
+	}
+
+	public void putMeasure(Measure measure) {
+		this.measures.put(measure.getClass().getSimpleName(), measure);
+	}
+
+	public Measure getMeasure(String classSimpleName) {
+		return this.measures.get(classSimpleName);
+	}
+
+	public boolean hasMeasure(Measure measure) {
+		return hasMeasure(measure.getClass().getSimpleName());
+	}
+
+	public boolean hasMeasure(String classSimpleName) {
+		return getMeasure(classSimpleName) != null;
 	}
 }

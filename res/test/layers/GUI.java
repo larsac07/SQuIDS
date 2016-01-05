@@ -20,16 +20,16 @@ public class GUI extends JFrame {
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = -8444329352701950508L;
+	public static final long serialVersionUID = -8444329352701950508L;
 
-	private static GUI instance;
+	public static GUI instance;
 
 	private JMenuItem openMenuItem;
 	private JMenuItem saveMenuItem;
 	private JMenuItem copyMenuItem;
 	private JMenuItem prefsMenuItem;
 
-	private JTextArea textArea;
+	public JTextArea textArea;
 
 	private JButton previousButton;
 	private JButton nextButton;

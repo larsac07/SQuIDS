@@ -19,9 +19,8 @@ import autocisq.io.IOUtils;
 import autocisq.models.Issue;
 
 public class FunctionPassing7OrMoreParametersTest {
-
+	
 	private List<Issue> issues;
-	private FunctionPassing7OrMoreParameters functionPassing7OrMoreParameters = new FunctionPassing7OrMoreParameters();
 	private ConstructorDeclaration constructor10Params;
 	private MethodDeclaration method10Params;
 	private MethodDeclaration method8Params;
@@ -30,26 +29,18 @@ public class FunctionPassing7OrMoreParametersTest {
 	private MethodDeclaration function7Params;
 	private MethodDeclaration function6Params;
 	private String fileString;
-
+	
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
-		boolean found = false;
-		for (Measure measure : issueFinder.getMeasures()) {
-			if (measure instanceof FunctionPassing7OrMoreParametersTest) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			issueFinder.getMeasures().add(this.functionPassing7OrMoreParameters);
-		}
+		issueFinder.putMeasure(new FunctionPassing7OrMoreParameters());
+		
 		File testFile = new File("res/test/Person.java");
-		
+
 		this.fileString = IOUtils.fileToString(testFile);
-		
+
 		CompilationUnit personCU = JavaParser.parse(testFile);
-		
+
 		this.constructor10Params = (ConstructorDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(11);
 		this.method10Params = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(12);
 		this.method8Params = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(13);
@@ -58,49 +49,49 @@ public class FunctionPassing7OrMoreParametersTest {
 		this.function7Params = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(16);
 		this.function6Params = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(17);
 	}
-
+	
 	@Test
 	public void skipConstructorWith10Parameters() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.constructor10Params, null, this.fileString);
 		assertFalse(this.issues.size() > 0);
 	}
-
+	
 	@Test
 	public void skipMethodWith10Parameters() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.method10Params, null, this.fileString);
 		assertFalse(this.issues.size() > 0);
 	}
-
+	
 	@Test
 	public void skipMethodWith8Parameters() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.method8Params, null, this.fileString);
 		assertFalse(this.issues.size() > 0);
 	}
-
+	
 	@Test
 	public void findFunctionWith10Parameters() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.function10Params, null, this.fileString);
 		foundIssue();
 	}
-	
+
 	@Test
 	public void findFunctionWith8Parameters() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.function8Params, null, this.fileString);
 		foundIssue();
 	}
-	
+
 	@Test
 	public void findFunctionWith7Parameters() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.function7Params, null, this.fileString);
 		foundIssue();
 	}
-	
+
 	@Test
 	public void skipFunctionWith6Parameters() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.function6Params, null, this.fileString);
 		assertFalse(this.issues.size() > 0);
 	}
-
+	
 	private void foundIssue() {
 		assertTrue(this.issues.size() > 0);
 		boolean found = false;
@@ -111,5 +102,5 @@ public class FunctionPassing7OrMoreParametersTest {
 		}
 		assertTrue(found);
 	}
-
+	
 }

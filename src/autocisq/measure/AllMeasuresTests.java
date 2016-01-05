@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ EmptyExceptionHandlingBlockTest.class, HorizontalLayersTest.class, LayerSkippingCallTest.class,
-		MoreThan1000LOCTest.class, FunctionPassing7OrMoreParametersTest.class })
+		MoreThan1000LOCTest.class, FunctionPassing7OrMoreParametersTest.class, VariableDeclaredPublicTest.class })
 public class AllMeasuresTests {
 
 }

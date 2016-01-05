@@ -19,7 +19,6 @@ import autocisq.models.Issue;
 public class MoreThan1000LOCTest {
 
 	private List<Issue> issues;
-	private MoreThan1000LOC moreThan1000LOC = new MoreThan1000LOC();
 	private CompilationUnit cu1702;
 	private CompilationUnit cu1001;
 	private CompilationUnit cu1000;
@@ -30,16 +29,7 @@ public class MoreThan1000LOCTest {
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
-		boolean found = false;
-		for (Measure measure : issueFinder.getMeasures()) {
-			if (measure instanceof MoreThan1000LOC) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			issueFinder.getMeasures().add(this.moreThan1000LOC);
-		}
+		issueFinder.putMeasure(new MoreThan1000LOC());
 		File testFile1702 = new File("res/test/DumpVisitor.java");
 		File testFile1001 = new File("res/test/DumpVisitor1001.java");
 		File testFile1000 = new File("res/test/DumpVisitor1000.java");
