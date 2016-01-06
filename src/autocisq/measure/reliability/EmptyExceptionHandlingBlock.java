@@ -19,10 +19,10 @@ import autocisq.models.Issue;
  * empty.
  *
  * @author Lars A. V. Cabrera
- *
+ *		
  */
 public class EmptyExceptionHandlingBlock implements Measure {
-
+	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString) {
 		List<Issue> issues = new LinkedList<>();
@@ -33,7 +33,7 @@ public class EmptyExceptionHandlingBlock implements Measure {
 		}
 		return issues;
 	}
-
+	
 	/**
 	 * Detects empty or generic catch blocks, and adds a marker to it
 	 *
@@ -47,18 +47,18 @@ public class EmptyExceptionHandlingBlock implements Measure {
 		Node parent = blockStmt.getParentNode();
 		if (blockStmt.getStmts().isEmpty() && parent instanceof CatchClause) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
-					parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
+					parent.getBeginColumn(), parent.getEndColumn());
 			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block",
 					parent.toString(), parent));
 		} else if (blockStmt.getStmts().size() == 1 && parent instanceof CatchClause
 				&& blockStmt.getStmts().get(0).toString().equals("e.printStackTrace();")) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
-					parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
+					parent.getBeginColumn(), parent.getEndColumn());
 			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], "Auto Generated Catch Block",
 					parent.toString(), parent));
 		} else if (blockStmt.getStmts().isEmpty() && blockStmt.getParentNode() instanceof TryStmt) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, blockStmt.getBeginLine(),
-					blockStmt.getEndLine(), parent.getBeginColumn() - 14, parent.getEndColumn() - 14);
+					blockStmt.getEndLine(), parent.getBeginColumn(), parent.getEndColumn());
 			issues.add(new FileIssue(blockStmt.getBeginLine(), indexes[0], indexes[1], "Empty Finally Block",
 					blockStmt.toString(), blockStmt));
 		}

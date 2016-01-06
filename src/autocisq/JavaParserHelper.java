@@ -18,7 +18,7 @@ public abstract class JavaParserHelper {
 	public static boolean methodCallFromSameType(MethodCallExpr methodCall) {
 		return methodCall.getScope() == null;
 	}
-
+	
 	public static CompilationUnit findMethodCompilationUnit(MethodCallExpr methodCall,
 			List<CompilationUnit> compilationUnits) {
 		CompilationUnit compilationUnit = null;
@@ -38,24 +38,24 @@ public abstract class JavaParserHelper {
 			if (compilationUnit == null) {
 				compilationUnit = findCompilationUnit(scopeExpression.toString(), compilationUnits);
 			}
-
+			
 		} catch (NoAncestorFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		return compilationUnit;
 	}
-
+	
 	public static ClassOrInterfaceDeclaration findNodeClassOrInterfaceDeclaration(Node node)
 			throws NoAncestorFoundException {
 		return (ClassOrInterfaceDeclaration) findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
 	}
-
+	
 	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoAncestorFoundException {
 		return (CompilationUnit) findNodeAncestorOfType(node, CompilationUnit.class);
 	}
-
+	
 	/**
 	 * Find a Node's ancestor of a specified class
 	 *
@@ -76,7 +76,7 @@ public abstract class JavaParserHelper {
 			return findNodeAncestorOfType(node.getParentNode(), ancestorClass);
 		}
 	}
-
+	
 	public static List<FieldDeclaration> findTypeFields(TypeDeclaration typeDeclaration) {
 		List<FieldDeclaration> fields = new LinkedList<>();
 		for (BodyDeclaration bodyDeclaration : typeDeclaration.getMembers()) {
@@ -86,7 +86,7 @@ public abstract class JavaParserHelper {
 		}
 		return fields;
 	}
-
+	
 	public static CompilationUnit findCompilationUnit(String className, List<CompilationUnit> compilationUnits) {
 		for (CompilationUnit compilationUnit : compilationUnits) {
 			for (TypeDeclaration typeDeclaration : compilationUnit.getTypes()) {
@@ -97,7 +97,7 @@ public abstract class JavaParserHelper {
 		}
 		return null;
 	}
-
+	
 	public static int[] columnsToIndexes(String string, int startLine, int endLine, int startColumn, int endColumn) {
 		int startIndex = 0;
 		int endIndex = 0;
@@ -116,11 +116,11 @@ public abstract class JavaParserHelper {
 			if (lineIndex < startLine) {
 				startIndex += lineLength;
 			} else if (lineIndex == startLine) {
-				startIndex += startColumn - 1;
+				startIndex += startColumn - (line.split("\t").length * 5);
 			}
 
 			if (lineIndex == endLine) {
-				endIndex += endColumn;
+				endIndex += endColumn + 1 - (line.split("\t").length * 5);
 			} else {
 				endIndex += lineLength;
 			}
