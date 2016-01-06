@@ -1,6 +1,6 @@
 package autocisq.measure;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -46,7 +46,7 @@ public class MoreThan1000LOCTest {
 	@Test
 	public void skipFileWith1000Lines() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.cu1000, null, this.fileString1000);
-		assertFalse(this.issues.size() > 0);
+		assertEquals(0, this.issues.size());
 	}
 
 	@Test

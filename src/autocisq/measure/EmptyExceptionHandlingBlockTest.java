@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.List;
 
 import org.junit.Before;
@@ -15,6 +14,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import autocisq.IssueFinder;
+import autocisq.io.IOUtils;
 import autocisq.models.Issue;
 
 public class EmptyExceptionHandlingBlockTest {
@@ -27,14 +27,7 @@ public class EmptyExceptionHandlingBlockTest {
 		issueFinder.putMeasure(new EmptyExceptionHandlingBlock());
 		File testFile = new File("res/test/EntropyManualCalculator.java");
 
-		List<String> lines = Files.readAllLines(testFile.toPath());
-
-		String fileString = "";
-
-		String nl = System.lineSeparator();
-		for (String line : lines) {
-			fileString += line + nl;
-		}
+		String fileString = IOUtils.fileToString(testFile);
 
 		CompilationUnit compilationUnit = JavaParser.parse(testFile);
 		Node tryStmt = compilationUnit.getTypes().get(0).getMembers().get(2).getChildrenNodes().get(3)

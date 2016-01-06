@@ -47,19 +47,19 @@ public class VariableDeclaredPublicTest {
 	@Test
 	public void skipPublicConstants() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.publicConstant, null, this.fileString);
-		assertFalse(this.issues.size() > 0);
+		skipIssue();
 	}
 
 	@Test
 	public void skipPublicStaticVariable() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.publicStaticVariable, null, this.fileString);
-		assertFalse(this.issues.size() > 0);
+		skipIssue();
 	}
 
 	@Test
 	public void skipPrivateVariable() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.privateVariable, null, this.fileString);
-		assertFalse(this.issues.size() > 0);
+		skipIssue();
 	}
 
 	@Test
@@ -73,6 +73,16 @@ public class VariableDeclaredPublicTest {
 			}
 		}
 		assertTrue(found);
+	}
+	
+	private void skipIssue() {
+		boolean found = false;
+		for (Issue issue : this.issues) {
+			if (issue.getType().equals("Function passing 7 or more parameters")) {
+				found = true;
+			}
+		}
+		assertFalse(found);
 	}
 
 }
