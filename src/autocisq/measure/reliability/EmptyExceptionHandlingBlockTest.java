@@ -1,4 +1,4 @@
-package autocisq.measure;
+package autocisq.measure.reliability;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

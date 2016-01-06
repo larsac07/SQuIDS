@@ -1,4 +1,4 @@
-package autocisq.measure;
+package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
 import autocisq.JavaParserHelper;
+import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -29,53 +30,51 @@ import autocisq.models.Issue;
  *
  *
  * @author Lars A. V. Cabrera
- *
+ *		
  */
 public class FunctionWithFanOut10OrMore implements Measure {
-
-	private String fileString = "";
-	int counter = 0;
 	
+	private String fileString = "";
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString) {
 		List<Issue> issues = new ArrayList<>();
-		this.counter = 0;
 		if (node instanceof MethodDeclaration) {
 			MethodDeclaration methodDeclaration = (MethodDeclaration) node;
 			boolean isFunction = ModifierSet.isStatic(methodDeclaration.getModifiers());
 			if (isFunction) {
-				issues = calculateFanOut(node);
+				int fanOut = calculateFanOut(node);
+				if (fanOut >= 10) {
+					int[] indexes = JavaParserHelper.columnsToIndexes(this.fileString, node.getBeginLine(),
+							node.getEndLine(), node.getBeginColumn(), node.getEndColumn());
+					issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1],
+							"Function with fan-out of 10 or more", node.toString(), node));
+				}
 			}
-		}
-		return issues;
-	}
-
-	private List<Issue> calculateFanOut(Node node) {
-		List<Issue> issues = new ArrayList<>();
-		return calculateFanOut(node, issues);
-	}
-
-	private List<Issue> calculateFanOut(Node node, List<Issue> issues) {
-		if (node instanceof AssignExpr) {
-			AssignExpr assignExpr = (AssignExpr) node;
-			if (assignExpr.getTarget() instanceof FieldAccessExpr) {
-				this.counter++;
-			}
-		} else if (node instanceof MethodCallExpr) {
-			this.counter++;
-		}
-		if (this.counter >= 10) {
-			int[] indexes = JavaParserHelper.columnsToIndexes(this.fileString, node.getBeginLine(), node.getEndLine(),
-					node.getBeginColumn(), node.getEndColumn());
-			issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], "Function with fan-out of 10 or more",
-					node.toString(), node));
-			return issues;
-		}
-		
-		for (Node child : node.getChildrenNodes()) {
-			calculateFanOut(child, issues);
 		}
 		return issues;
 	}
 	
+	private int calculateFanOut(Node node) {
+		List<Issue> issues = new ArrayList<>();
+		return calculateFanOut(node, issues);
+	}
+	
+	private int calculateFanOut(Node node, List<Issue> issues) {
+		int fanOut = 0;
+		if (node instanceof AssignExpr) {
+			AssignExpr assignExpr = (AssignExpr) node;
+			if (assignExpr.getTarget() instanceof FieldAccessExpr) {
+				fanOut++;
+			}
+		} else if (node instanceof MethodCallExpr) {
+			fanOut++;
+		}
+
+		for (Node child : node.getChildrenNodes()) {
+			fanOut += calculateFanOut(child, issues);
+		}
+		return fanOut;
+	}
+
 }

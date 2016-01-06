@@ -1,4 +1,4 @@
-package autocisq.measure;
+package autocisq.measure.maintainability;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +7,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import autocisq.JavaParserHelper;
+import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 

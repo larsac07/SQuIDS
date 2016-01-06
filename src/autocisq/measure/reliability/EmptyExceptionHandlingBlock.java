@@ -1,4 +1,4 @@
-package autocisq.measure;
+package autocisq.measure.reliability;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +9,7 @@ import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.TryStmt;
 
 import autocisq.JavaParserHelper;
+import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 

@@ -1,4 +1,4 @@
-package autocisq.measure;
+package autocisq.measure.maintainability;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.github.javaparser.ast.Node;
 
+import autocisq.measure.Measure;
 import autocisq.models.Issue;
 import autocisq.models.ProjectIssue;
 

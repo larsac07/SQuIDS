@@ -1,4 +1,4 @@
-package autocisq.measure;
+package autocisq.measure.maintainability;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +11,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 
 import autocisq.JavaParserHelper;
 import autocisq.NoAncestorFoundException;
+import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 

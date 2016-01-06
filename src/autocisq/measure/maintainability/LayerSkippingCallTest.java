@@ -1,4 +1,4 @@
-package autocisq.measure;
+package autocisq.measure.maintainability;
 
 import static org.junit.Assert.assertTrue;
 
