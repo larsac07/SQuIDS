@@ -24,7 +24,9 @@ public class EmptyExceptionHandlingBlockTest {
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
+		issueFinder.getMeasures().clear();
 		issueFinder.putMeasure(new EmptyExceptionHandlingBlock());
+
 		File testFile = new File("res/test/EntropyManualCalculator.java");
 
 		String fileString = IOUtils.fileToString(testFile);

@@ -29,7 +29,9 @@ public class MoreThan1000LOCTest {
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
+		issueFinder.getMeasures().clear();
 		issueFinder.putMeasure(new MoreThan1000LOC());
+
 		File testFile1702 = new File("res/test/DumpVisitor.java");
 		File testFile1001 = new File("res/test/DumpVisitor1001.java");
 		File testFile1000 = new File("res/test/DumpVisitor1000.java");

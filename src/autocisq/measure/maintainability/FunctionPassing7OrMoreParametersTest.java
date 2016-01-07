@@ -33,6 +33,7 @@ public class FunctionPassing7OrMoreParametersTest {
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
+		issueFinder.getMeasures().clear();
 		issueFinder.putMeasure(new FunctionPassing7OrMoreParameters());
 
 		File testFile = new File("res/test/Person.java");
