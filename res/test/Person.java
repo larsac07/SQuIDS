@@ -156,5 +156,21 @@ public class Person {
 	public static createEmptyPerson() {
 		return new Person(null, new String[10], 0, 0, 0, null, 0, 0, 0, 0);
 	}
+
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
+	}
+	public void setStreetNo(String streetNo) {
+		this.streetNo = streetNo;
+	}
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
 	
 }
