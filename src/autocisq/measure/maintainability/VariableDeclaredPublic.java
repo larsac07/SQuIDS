@@ -2,7 +2,9 @@ package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
@@ -21,14 +23,15 @@ import autocisq.models.Issue;
  * declared as public static final are considered constants.
  *
  * @author Lars A. V. Cabrera
- *		
+ * 		
  */
 public class VariableDeclaredPublic implements Measure {
-	
-	@Override
-	public List<Issue> analyzeNode(Node node, String fileString) {
-		List<Issue> issues = new ArrayList<>();
 
+	@Override
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
+			Map<String, Integer> layerMap) {
+		List<Issue> issues = new ArrayList<>();
+		
 		if (node instanceof FieldDeclaration) {
 			FieldDeclaration field = (FieldDeclaration) node;
 			int modifiers = field.getModifiers();
@@ -40,10 +43,10 @@ public class VariableDeclaredPublic implements Measure {
 				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], "Variable declared public",
 						node.toString(), node));
 			}
-
+			
 		}
-
+		
 		return issues;
 	}
-	
+
 }

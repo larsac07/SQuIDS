@@ -2,7 +2,9 @@ package autocisq.measure.reliability;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
@@ -19,12 +21,13 @@ import autocisq.models.Issue;
  * empty.
  *
  * @author Lars A. V. Cabrera
- *		
+ * 		
  */
 public class EmptyExceptionHandlingBlock implements Measure {
-	
+
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
+			Map<String, Integer> layerMap) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof BlockStmt
 				&& (node.getParentNode() instanceof TryStmt || node.getParentNode() instanceof CatchClause)) {
@@ -33,7 +36,7 @@ public class EmptyExceptionHandlingBlock implements Measure {
 		}
 		return issues;
 	}
-	
+
 	/**
 	 * Detects empty or generic catch blocks, and adds a marker to it
 	 *

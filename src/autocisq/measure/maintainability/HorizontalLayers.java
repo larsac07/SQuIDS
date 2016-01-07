@@ -1,12 +1,13 @@
 package autocisq.measure.maintainability;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import autocisq.measure.Measure;
@@ -18,61 +19,49 @@ import autocisq.models.ProjectIssue;
  * of layers (threshold 4 ≤ # Layers ≤ 8).
  *
  * @author Lars A. V. Cabrera
- *
+ * 		
  */
 public class HorizontalLayers implements Measure {
-
+	
 	private Map<String, Integer> layerMap;
 	private List<Issue> issues;
 	private boolean returned;
-
+	
+	public HorizontalLayers() {
+		this.layerMap = new HashMap<>();
+		this.issues = new ArrayList<>();
+		this.returned = false;
+	}
+	
 	/**
-	 * Constructs a new HorizontalLayers measure with a map of layers and
-	 * analyzes them.
+	 * This override differs much from the other implementations. The analysis
+	 * is done when analyzing the first node in the project, and returns the
+	 * issue once.
 	 *
-	 * If the map passed through the parameter is null, a new map is created.
-	 *
-	 * The required layerMap is a map of which compilation units are assigned to
-	 * which layer. The compilation unit is represented as package name + class
-	 * name, e.g. java.util.List, and the layer is represented as a simple
-	 * integer, e.g. "layer 1" = 1.
-	 *
+	 * @param node
+	 *            - not required
+	 * @param fileString
+	 *            - not required
+	 * @param compilationUnits
+	 *            - not required
 	 * @param layerMap
 	 *            - a map of which compilation units are assigned to which
 	 *            layer.
-	 */
-	public HorizontalLayers(Map<String, Integer> layerMap) {
-		if (layerMap == null) {
-			layerMap = new HashMap<>();
-		}
-		this.layerMap = layerMap;
-		this.issues = new LinkedList<>();
-		this.returned = false;
-		analyzeLayers();
-	}
-
-	/**
-	 * This override differs much from the other implementations. The analysis
-	 * is done when creating an object of this class, and any possible issue
-	 * will only returned once, when analyzing the first node in the project.
-	 *
-	 * @param node
-	 *            - the Node to be analyzed
-	 * @param fileString
-	 *            - the original source file string
-	 * @return a List of Issue objects, containing none, one or many element(s),
-	 *         but cannot be null.
+	 * @return a List of Issue objects, containing one or no elements.
 	 */
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
+			Map<String, Integer> layerMap) {
 		if (this.returned) {
-			return new LinkedList<>();
+			return new ArrayList<>();
 		} else {
 			this.returned = true;
+			this.layerMap = layerMap;
+			analyzeLayers();
 			return this.issues;
 		}
 	}
-
+	
 	/**
 	 * Analyzes the layer map provided in the constructor. If the number of
 	 * layers is higher than 8, an issue is created and added to the list.
@@ -83,5 +72,5 @@ public class HorizontalLayers implements Measure {
 			this.issues.add(new ProjectIssue("Too Many Horizontal Layers"));
 		}
 	}
-
+	
 }

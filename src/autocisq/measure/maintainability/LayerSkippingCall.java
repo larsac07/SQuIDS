@@ -1,6 +1,5 @@
 package autocisq.measure.maintainability;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,51 +19,19 @@ import autocisq.models.Issue;
  * of layer-skipping calls.
  *
  * @author Lars A. V. Cabrera
- *
+ *		
  */
 public class LayerSkippingCall implements Measure {
 
-	private List<CompilationUnit> compilationUnits;
-	private Map<String, Integer> layerMap;
-
-	/**
-	 * Constructs a new LayerSkipppingCall measure with a list of compilation
-	 * units in the project and a map of layers.
-	 *
-	 * If either values passed through the parameters are null, new are created.
-	 *
-	 * The required layerMap is a map of which compilation units are assigned to
-	 * which layer. The compilation unit is represented as package name + class
-	 * name, e.g. java.util.List, and the layer is represented as a simple
-	 * integer, e.g. "layer 1" = 1.
-	 *
-	 * @param compilationUnits
-	 *            - a list of all the CompilationUnit objects in the current
-	 *            project.
-	 * @param layerMap
-	 *            - a map of which compilation units are assigned to which
-	 *            layer.
-	 */
-	public LayerSkippingCall(List<CompilationUnit> compilationUnits, Map<String, Integer> layerMap) {
-		if (compilationUnits == null) {
-			compilationUnits = new LinkedList<>();
-		}
-		if (layerMap == null) {
-			layerMap = new HashMap<>();
-		}
-
-		this.compilationUnits = compilationUnits;
-		this.layerMap = layerMap;
-	}
-
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
+			Map<String, Integer> layerMap) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr methodCall = (MethodCallExpr) node;
 			if (!JavaParserHelper.methodCallFromSameType(methodCall)) {
 				CompilationUnit methodCompilationUnit = JavaParserHelper.findMethodCompilationUnit(methodCall,
-						this.compilationUnits);
+						compilationUnits);
 				if (methodCompilationUnit != null) {
 					CompilationUnit methodCallCompilationUnit = null;
 					try {
@@ -79,8 +46,8 @@ public class LayerSkippingCall implements Measure {
 					String methodCallClass = methodCallCompilationUnit.getPackage().getPackageName() + "."
 							+ methodCallCompilationUnit.getTypes().get(0).getName();
 
-					Integer methodLayer = this.layerMap.get(methodClass);
-					Integer methodCallLayer = this.layerMap.get(methodCallClass);
+					Integer methodLayer = layerMap.get(methodClass);
+					Integer methodCallLayer = layerMap.get(methodCallClass);
 
 					if (methodLayer != null) {
 						if (Math.abs(methodLayer - methodCallLayer) > 1) {

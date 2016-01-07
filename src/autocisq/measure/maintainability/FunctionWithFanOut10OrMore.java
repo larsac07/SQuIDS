@@ -2,7 +2,9 @@ package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
@@ -30,14 +32,15 @@ import autocisq.models.Issue;
  *
  *
  * @author Lars A. V. Cabrera
- *		
+ * 		
  */
 public class FunctionWithFanOut10OrMore implements Measure {
-	
-	private String fileString = "";
 
+	private String fileString = "";
+	
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
+			Map<String, Integer> layerMap) {
 		List<Issue> issues = new ArrayList<>();
 		if (node instanceof MethodDeclaration) {
 			MethodDeclaration methodDeclaration = (MethodDeclaration) node;
@@ -54,12 +57,12 @@ public class FunctionWithFanOut10OrMore implements Measure {
 		}
 		return issues;
 	}
-	
+
 	private int calculateFanOut(Node node) {
 		List<Issue> issues = new ArrayList<>();
 		return calculateFanOut(node, issues);
 	}
-	
+
 	private int calculateFanOut(Node node, List<Issue> issues) {
 		int fanOut = 0;
 		if (node instanceof AssignExpr) {
@@ -70,11 +73,11 @@ public class FunctionWithFanOut10OrMore implements Measure {
 		} else if (node instanceof MethodCallExpr) {
 			fanOut++;
 		}
-
+		
 		for (Node child : node.getChildrenNodes()) {
 			fanOut += calculateFanOut(child, issues);
 		}
 		return fanOut;
 	}
-
+	
 }

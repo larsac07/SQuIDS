@@ -44,6 +44,7 @@ public class IssueFinder {
 	private static IssueFinder instance;
 
 	private List<JavaResource> javaResources;
+	private List<CompilationUnit> compilationUnits;
 	private Map<String, Integer> layerMap;
 	private Map<String, Measure> measures;
 
@@ -83,12 +84,9 @@ public class IssueFinder {
 			}
 		}
 
-		List<CompilationUnit> compilationUnits = new ArrayList<>();
-		for (JavaResource javaResource : this.javaResources) {
-			compilationUnits.add(javaResource.getCompilationUnit());
-		}
-		putMeasure(new HorizontalLayers(this.layerMap));
-		putMeasure(new LayerSkippingCall(compilationUnits, layerMap));
+		this.compilationUnits = createCompilationUnitList();
+		putMeasure(new HorizontalLayers());
+		putMeasure(new LayerSkippingCall());
 		putMeasure(new EmptyExceptionHandlingBlock());
 		putMeasure(new MoreThan1000LOC());
 		putMeasure(new VariableDeclaredPublic());
@@ -108,6 +106,14 @@ public class IssueFinder {
 		}
 
 		return fileIssuesMap;
+	}
+
+	private List<CompilationUnit> createCompilationUnitList() {
+		List<CompilationUnit> compilationUnits = new ArrayList<>();
+		for (JavaResource javaResource : this.javaResources) {
+			compilationUnits.add(javaResource.getCompilationUnit());
+		}
+		return compilationUnits;
 	}
 
 	/**
@@ -186,7 +192,7 @@ public class IssueFinder {
 		}
 
 		for (Measure measure : this.measures.values()) {
-			issues.addAll(measure.analyzeNode(rootNode, fileAsString));
+			issues.addAll(measure.analyzeNode(rootNode, fileAsString, this.compilationUnits, this.layerMap));
 		}
 
 		// Recursive call for each child node
@@ -341,5 +347,13 @@ public class IssueFinder {
 	
 	public boolean hasMeasure(String classSimpleName) {
 		return getMeasure(classSimpleName) != null;
+	}
+
+	public List<CompilationUnit> getCompilationUnits() {
+		return this.compilationUnits;
+	}
+	
+	public void setCompilationUnits(List<CompilationUnit> compilationUnits) {
+		this.compilationUnits = compilationUnits;
 	}
 }

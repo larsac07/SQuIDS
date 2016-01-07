@@ -2,6 +2,7 @@ package autocisq.measure.maintainability;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -18,12 +19,13 @@ import autocisq.models.Issue;
  * It counts all lines directly from the source file
  *
  * @author Lars A. V. Cabrera
- *		
+ * 		
  */
 public class MoreThan1000LOC implements Measure {
-
+	
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
+			Map<String, Integer> layerMap) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof CompilationUnit) {
 			String[] lines = fileString.split("\r?\n|\r");
@@ -36,5 +38,5 @@ public class MoreThan1000LOC implements Measure {
 		}
 		return issues;
 	}
-
+	
 }
