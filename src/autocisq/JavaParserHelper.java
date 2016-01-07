@@ -1,5 +1,6 @@
 package autocisq;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,17 +9,21 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MultiTypeParameter;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.type.Type;
 
 public abstract class JavaParserHelper {
 	public static boolean methodCallFromSameType(MethodCallExpr methodCall) {
 		return methodCall.getScope() == null;
 	}
-	
+
 	public static CompilationUnit findMethodCompilationUnit(MethodCallExpr methodCall,
 			List<CompilationUnit> compilationUnits) {
 		CompilationUnit compilationUnit = null;
@@ -38,24 +43,24 @@ public abstract class JavaParserHelper {
 			if (compilationUnit == null) {
 				compilationUnit = findCompilationUnit(scopeExpression.toString(), compilationUnits);
 			}
-			
+
 		} catch (NoAncestorFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return compilationUnit;
 	}
-	
+
 	public static ClassOrInterfaceDeclaration findNodeClassOrInterfaceDeclaration(Node node)
 			throws NoAncestorFoundException {
 		return (ClassOrInterfaceDeclaration) findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
 	}
-	
+
 	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoAncestorFoundException {
 		return (CompilationUnit) findNodeAncestorOfType(node, CompilationUnit.class);
 	}
-	
+
 	/**
 	 * Find a Node's ancestor of a specified class
 	 *
@@ -76,7 +81,7 @@ public abstract class JavaParserHelper {
 			return findNodeAncestorOfType(node.getParentNode(), ancestorClass);
 		}
 	}
-	
+
 	public static List<FieldDeclaration> findTypeFields(TypeDeclaration typeDeclaration) {
 		List<FieldDeclaration> fields = new LinkedList<>();
 		for (BodyDeclaration bodyDeclaration : typeDeclaration.getMembers()) {
@@ -86,7 +91,7 @@ public abstract class JavaParserHelper {
 		}
 		return fields;
 	}
-	
+
 	public static CompilationUnit findCompilationUnit(String className, List<CompilationUnit> compilationUnits) {
 		for (CompilationUnit compilationUnit : compilationUnits) {
 			for (TypeDeclaration typeDeclaration : compilationUnit.getTypes()) {
@@ -97,37 +102,101 @@ public abstract class JavaParserHelper {
 		}
 		return null;
 	}
-	
+
 	public static int[] columnsToIndexes(String string, int startLine, int endLine, int startColumn, int endColumn) {
 		int startIndex = 0;
 		int endIndex = 0;
 		int lineIndex = 1;
-
+		
 		String[] lines = string.split("[\n|\r]");
 		for (String line : lines) {
-
+			
 			// Account for newline characters
 			int lineLength = line.length() + 1;
-
+			
 			if (lineIndex > endLine) {
 				break;
 			}
-
+			
 			if (lineIndex < startLine) {
 				startIndex += lineLength;
 			} else if (lineIndex == startLine) {
 				startIndex += startColumn - (line.split("\t").length * 5);
 			}
-
+			
 			if (lineIndex == endLine) {
 				endIndex += endColumn + 1 - (line.split("\t").length * 5);
 			} else {
 				endIndex += lineLength;
 			}
-
+			
 			lineIndex++;
 		}
-
+		
 		return new int[] { startIndex, endIndex };
+	}
+
+	public static FieldDeclaration findFieldDeclarationTopDown(String fieldName, Node node) {
+		if (node instanceof FieldDeclaration) {
+			FieldDeclaration fieldDeclaration = (FieldDeclaration) node;
+			for (VariableDeclarator variableDeclarator : fieldDeclaration.getVariables()) {
+				if (variableDeclarator.getId().getName().equals(fieldName)) {
+					return fieldDeclaration;
+				}
+			}
+		}
+		
+		for (Node child : node.getChildrenNodes()) {
+			FieldDeclaration childFieldDeclaration = findFieldDeclarationTopDown(fieldName, child);
+			if (childFieldDeclaration != null) {
+				return childFieldDeclaration;
+			}
+		}
+
+		return null;
+	}
+
+	public static List<Type> findVariableTypeBottomUp(String variableName, Node node) {
+		Node parent = node.getParentNode();
+		List<Type> types = new ArrayList<>();
+
+		if (parent != null) {
+			for (Node sibling : parent.getChildrenNodes()) {
+				if (sibling instanceof VariableDeclarationExpr) {
+					VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) sibling;
+					for (VariableDeclarator variableDeclarator : variableDeclarationExpr.getVars()) {
+						if (variableDeclarator.getId().getName().equals(variableName)) {
+							types.add(variableDeclarationExpr.getType());
+							return types;
+						}
+					}
+				} else if (sibling instanceof Parameter) {
+					Parameter parameter = (Parameter) sibling;
+					if (parameter.getId().getName().equals(variableName)) {
+						types.add(parameter.getType());
+						return types;
+					}
+				} else if (sibling instanceof MultiTypeParameter) {
+					MultiTypeParameter multiTypeParameter = (MultiTypeParameter) sibling;
+					if (multiTypeParameter.getId().getName().equals(variableName)) {
+						types.addAll(multiTypeParameter.getType().getElements());
+						return types;
+					}
+				} else if (sibling instanceof FieldDeclaration) {
+					FieldDeclaration fieldDeclaration = (FieldDeclaration) sibling;
+					for (VariableDeclarator variableDeclarator : fieldDeclaration.getVariables()) {
+						if (variableDeclarator.getId().getName().equals(variableName)) {
+							types.add(fieldDeclaration.getType());
+							return types;
+						}
+					}
+				}
+			}
+
+			return findVariableTypeBottomUp(variableName, parent);
+
+		} else {
+			return types;
+		}
 	}
 }
