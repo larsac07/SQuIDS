@@ -15,7 +15,7 @@ import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
-public class FunctionPassing7OrMoreParameters implements Measure {
+public class FunctionParameters implements Measure {
 	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,

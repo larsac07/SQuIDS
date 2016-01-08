@@ -16,7 +16,7 @@ import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.models.Issue;
 
-public class MoreThan1000LOCTest {
+public class FileLOCTest {
 
 	private List<Issue> issues;
 	private CompilationUnit cu1702;
@@ -30,7 +30,7 @@ public class MoreThan1000LOCTest {
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new MoreThan1000LOC());
+		issueFinder.putMeasure(new FileLOC());
 
 		File testFile1702 = new File("res/test/DumpVisitor.java");
 		File testFile1001 = new File("res/test/DumpVisitor1001.java");

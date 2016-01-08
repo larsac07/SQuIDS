@@ -18,7 +18,7 @@ import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.models.Issue;
 
-public class FunctionWithFanOut10OrMoreTest {
+public class FunctionFanOutTest {
 
 	private List<Issue> issues;
 	private ConstructorDeclaration constructorFanOut10;
@@ -34,7 +34,7 @@ public class FunctionWithFanOut10OrMoreTest {
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new FunctionWithFanOut10OrMore());
+		issueFinder.putMeasure(new FunctionFanOut());
 
 		File testFile = new File("res/test/Person.java");
 		

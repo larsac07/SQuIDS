@@ -18,7 +18,7 @@ import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.models.Issue;
 
-public class FunctionPassing7OrMoreParametersTest {
+public class FunctionParametersTest {
 
 	private List<Issue> issues;
 	private ConstructorDeclaration constructor10Params;
@@ -34,7 +34,7 @@ public class FunctionPassing7OrMoreParametersTest {
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new FunctionPassing7OrMoreParameters());
+		issueFinder.putMeasure(new FunctionParameters());
 
 		File testFile = new File("res/test/Person.java");
 		
