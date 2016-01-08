@@ -192,7 +192,11 @@ public class IssueFinder {
 		}
 
 		for (Measure measure : this.measures.values()) {
-			issues.addAll(measure.analyzeNode(rootNode, fileAsString, this.compilationUnits, this.layerMap));
+			List<Issue> measureIssues = measure.analyzeNode(rootNode, fileAsString, this.compilationUnits,
+					this.layerMap);
+			if (measureIssues != null) {
+				issues.addAll(measureIssues);
+			}
 		}
 
 		// Recursive call for each child node
