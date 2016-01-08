@@ -2,6 +2,8 @@ package autocisq.models;
 
 import com.github.javaparser.ast.Node;
 
+import autocisq.JavaParserHelper;
+
 public class FileIssue extends Issue {
 
 	private int beginLine;
@@ -16,6 +18,17 @@ public class FileIssue extends Issue {
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
 		this.problemArea = problemArea;
+		this.node = node;
+	}
+	
+	public FileIssue(String type, Node node, String fileString) {
+		super(type);
+		int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
+				node.getBeginColumn(), node.getEndColumn());
+		this.beginLine = node.getBeginLine();
+		this.startIndex = indexes[0];
+		this.endIndex = indexes[1];
+		this.problemArea = node.toString();
 		this.node = node;
 	}
 
