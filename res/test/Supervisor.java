@@ -3,6 +3,7 @@ public class Supervisor {
 	private String name;
 	public int id;
 	private Person person;
+	public static int count;
 	
 	public Supervisor(String name, int id, Person person) {
 		this.name = name;
@@ -16,6 +17,8 @@ public class Supervisor {
 		person.zipCode = zipCode;
 		person.setCity(city);
 		person.country = country;
+		this.name = person.firstName;
+		Supervisor.count++;
 	}
 	
 	public void changePersonCountry(Person person, String country) {
