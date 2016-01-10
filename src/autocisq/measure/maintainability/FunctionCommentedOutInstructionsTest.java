@@ -20,7 +20,7 @@ import autocisq.models.Issue;
 
 public class FunctionCommentedOutInstructionsTest {
 	
-	private final static double threshold = 0.02d;
+	private final static double threshold = FunctionCommentedOutInstructions.threshold;
 	private List<Issue> issues;
 	private MethodDeclaration functionClean;
 	private MethodDeclaration function36COI;
@@ -71,8 +71,6 @@ public class FunctionCommentedOutInstructionsTest {
 
 	@Test
 	public void moreThanTwoPercentCommentedOutInstructions() {
-		double threshold = 0.02d;
-		
 		int instructions = FunctionCommentedOutInstructions.countInstructions(this.functionOverThreshold);
 		int commOutInstructions = FunctionCommentedOutInstructions
 				.countCommentedOutInstructions(this.functionOverThreshold);
