@@ -9,7 +9,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
 import autocisq.JavaParserHelper;
-import autocisq.NoAncestorFoundException;
+import autocisq.NoSuchAncestorFoundException;
 import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -36,7 +36,7 @@ public class LayerSkippingCall implements Measure {
 					CompilationUnit methodCallCompilationUnit = null;
 					try {
 						methodCallCompilationUnit = JavaParserHelper.findNodeCompilationUnit(methodCall);
-					} catch (NoAncestorFoundException e) {
+					} catch (NoSuchAncestorFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

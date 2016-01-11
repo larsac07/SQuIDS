@@ -11,7 +11,7 @@ import com.github.javaparser.ast.stmt.ContinueStmt;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 
 import autocisq.JavaParserHelper;
-import autocisq.NoAncestorFoundException;
+import autocisq.NoSuchAncestorFoundException;
 import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -40,7 +40,7 @@ public class ContinueOrBreakOutsideSwitch implements Measure {
 		if (node instanceof ContinueStmt || node instanceof BreakStmt) {
 			try {
 				JavaParserHelper.findNodeAncestorOfType(node, SwitchStmt.class);
-			} catch (NoAncestorFoundException e) {
+			} catch (NoSuchAncestorFoundException e) {
 				List<Issue> issues = new ArrayList<>();
 				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
 				return issues;

@@ -44,7 +44,7 @@ public abstract class JavaParserHelper {
 				compilationUnit = findCompilationUnit(scopeExpression.toString(), compilationUnits);
 			}
 
-		} catch (NoAncestorFoundException e) {
+		} catch (NoSuchAncestorFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -53,11 +53,11 @@ public abstract class JavaParserHelper {
 	}
 
 	public static ClassOrInterfaceDeclaration findNodeClassOrInterfaceDeclaration(Node node)
-			throws NoAncestorFoundException {
+			throws NoSuchAncestorFoundException {
 		return (ClassOrInterfaceDeclaration) findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
 	}
 
-	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoAncestorFoundException {
+	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoSuchAncestorFoundException {
 		return (CompilationUnit) findNodeAncestorOfType(node, CompilationUnit.class);
 	}
 
@@ -69,12 +69,12 @@ public abstract class JavaParserHelper {
 	 * @param ancestorClass
 	 *            - the class of the ancestor you wish to find
 	 * @return the closest ancestor found of the specified class
-	 * @throws NoAncestorFoundException
+	 * @throws NoSuchAncestorFoundException
 	 */
 	public static Node findNodeAncestorOfType(Node node, Class<? extends Node> ancestorClass)
-			throws NoAncestorFoundException {
+			throws NoSuchAncestorFoundException {
 		if (node == null) {
-			throw new NoAncestorFoundException();
+			throw new NoSuchAncestorFoundException();
 		} else if (node.getClass().equals(ancestorClass)) {
 			return node;
 		} else {

@@ -13,7 +13,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.type.Type;
 
 import autocisq.JavaParserHelper;
-import autocisq.NoAncestorFoundException;
+import autocisq.NoSuchAncestorFoundException;
 import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -74,7 +74,7 @@ public class MethodDirectlyUsingFieldFromOtherClass implements Measure {
 						}
 					}
 				}
-			} catch (NoAncestorFoundException e) {
+			} catch (NoSuchAncestorFoundException e) {
 				return issues;
 			}
 		}

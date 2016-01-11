@@ -22,7 +22,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.CatchClause;
 
 import autocisq.IssueFinder;
-import autocisq.NoAncestorFoundException;
+import autocisq.NoSuchAncestorFoundException;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.ProjectIssue;
@@ -183,7 +183,7 @@ public class IssueFinderTest {
 	}
 
 	@Test
-	public void testFindNodeAncestorOfType() throws NoAncestorFoundException {
+	public void testFindNodeAncestorOfType() throws NoSuchAncestorFoundException {
 		Node node = this.layerCompilationUnit.getTypes().get(0).getMembers().get(9).getChildrenNodes().get(2)
 				.getChildrenNodes().get(1).getChildrenNodes().get(0);
 		MethodDeclaration expected = (MethodDeclaration) this.layerCompilationUnit.getTypes().get(0).getMembers()
