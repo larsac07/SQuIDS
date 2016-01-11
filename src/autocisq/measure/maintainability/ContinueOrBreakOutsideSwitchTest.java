@@ -1,32 +1,23 @@
 package autocisq.measure.maintainability;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
 import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
-import autocisq.models.Issue;
+import autocisq.measure.MeasureTest;
 
-public class ContinueOrBreakOutsideSwitchTest {
-
-	private String issueType;
-	private List<Issue> issues;
+public class ContinueOrBreakOutsideSwitchTest extends MeasureTest {
 	private MethodDeclaration nodeA;
 	private MethodDeclaration nodeB;
 	private MethodDeclaration nodeC;
 	private MethodDeclaration nodeD;
-	private String fileString;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -66,29 +57,6 @@ public class ContinueOrBreakOutsideSwitchTest {
 	@Test
 	public void skipBreakInsideSwitch() {
 		skipIssue(this.nodeD);
-	}
-	
-	private void findIssue(Node nodeToAnalyze) {
-		this.issues = IssueFinder.getInstance().analyzeNode(nodeToAnalyze, null, this.fileString);
-		assertTrue(this.issues.size() > 0);
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals(this.issueType)) {
-				found = true;
-			}
-		}
-		assertTrue(found);
-	}
-
-	private void skipIssue(Node nodeToAnalyze) {
-		this.issues = IssueFinder.getInstance().analyzeNode(nodeToAnalyze, null, this.fileString);
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals(this.issueType)) {
-				found = true;
-			}
-		}
-		assertFalse(found);
 	}
 
 }
