@@ -1,7 +1,6 @@
 package autocisq.measure.maintainability;
 
 import java.io.File;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,11 +15,9 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
-import autocisq.models.Issue;
 
 public class HardCodedLiteralTest extends MeasureTest {
 	
-	private List<Issue> issues;
 	private FieldDeclaration fieldVariableInteger;
 	private FieldDeclaration fieldStaticInteger;
 	private FieldDeclaration fieldConstantInteger;
@@ -57,7 +54,6 @@ public class HardCodedLiteralTest extends MeasureTest {
 	private ExpressionStmt assignFieldVariableInteger0;
 	private ExpressionStmt assignFieldVariableInteger1;
 	private ExpressionStmt assignFieldVariableInteger2;
-	private String fileString;
 
 	@Before
 	public void setUp() throws Exception {
@@ -295,6 +291,11 @@ public class HardCodedLiteralTest extends MeasureTest {
 	@Test
 	public void skipAssignFieldVariableInteger2() {
 		skipIssue(this.assignFieldVariableInteger2);
+	}
+	
+	@Override
+	public String getIssueType() {
+		return HardCodedLiteral.ISSUE_TYPE;
 	}
 	
 }

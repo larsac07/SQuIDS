@@ -18,45 +18,49 @@ public class ContinueOrBreakOutsideSwitchTest extends MeasureTest {
 	private MethodDeclaration nodeB;
 	private MethodDeclaration nodeC;
 	private MethodDeclaration nodeD;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		this.issueType = "Continue or Break outside switch";
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
 		issueFinder.putMeasure(new ContinueOrBreakOutsideSwitch());
-		
+
 		File testFile = new File("res/test/ContinuesAndBreaks.java");
-		
+
 		this.fileString = IOUtils.fileToString(testFile);
-		
-		CompilationUnit supervisorCU = JavaParser.parse(testFile);
-		
-		this.nodeA = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(0);
-		this.nodeB = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(1);
-		this.nodeC = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(2);
-		this.nodeD = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(3);
-		
+
+		CompilationUnit cabCU = JavaParser.parse(testFile);
+
+		this.nodeA = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(0);
+		this.nodeB = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(1);
+		this.nodeC = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(2);
+		this.nodeD = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(3);
+
 	}
-	
+
 	@Test
 	public void findContinue() {
 		findIssue(this.nodeA);
 	}
-	
+
 	@Test
 	public void findBreak() {
 		findIssue(this.nodeB);
 	}
-	
+
 	@Test
 	public void skipContinueInsideSwitch() {
 		skipIssue(this.nodeC);
 	}
-	
+
 	@Test
 	public void skipBreakInsideSwitch() {
 		skipIssue(this.nodeD);
 	}
-
+	
+	@Override
+	public String getIssueType() {
+		return ContinueOrBreakOutsideSwitch.ISSUE_TYPE;
+	}
+	
 }
