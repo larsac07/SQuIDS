@@ -204,8 +204,8 @@ public class HardCodedLiteralTest extends MeasureTest {
 	}
 
 	@Test
-	public void findAssignVariableInteger() {
-		findIssue(this.assignVariableInteger);
+	public void skipAssignVariableInteger() {
+		skipIssue(this.assignVariableInteger);
 	}
 	
 	@Test
@@ -219,13 +219,13 @@ public class HardCodedLiteralTest extends MeasureTest {
 	}
 	
 	@Test
-	public void findAssignVariableDouble() {
-		findIssue(this.assignVariableDouble);
+	public void skipAssignVariableDouble() {
+		skipIssue(this.assignVariableDouble);
 	}
 	
 	@Test
-	public void findAssignVariableString() {
-		findIssue(this.assignVariableString);
+	public void skipAssignVariableString() {
+		skipIssue(this.assignVariableString);
 	}
 
 	@Test
@@ -249,8 +249,8 @@ public class HardCodedLiteralTest extends MeasureTest {
 	}
 	
 	@Test
-	public void findAssignFieldVariableInteger() {
-		findIssue(this.assignFieldVariableInteger);
+	public void skipAssignFieldVariableInteger() {
+		skipIssue(this.assignFieldVariableInteger);
 	}
 	
 	@Test
@@ -264,13 +264,13 @@ public class HardCodedLiteralTest extends MeasureTest {
 	}
 	
 	@Test
-	public void findAssignFieldVariableDouble() {
-		findIssue(this.assignFieldVariableDouble);
+	public void skipAssignFieldVariableDouble() {
+		skipIssue(this.assignFieldVariableDouble);
 	}
 	
 	@Test
-	public void findAssignFieldVariableString() {
-		findIssue(this.assignFieldVariableString);
+	public void skipAssignFieldVariableString() {
+		skipIssue(this.assignFieldVariableString);
 	}
 
 	@Test
