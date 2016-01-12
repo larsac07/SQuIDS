@@ -54,6 +54,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	private ExpressionStmt assignFieldVariableInteger0;
 	private ExpressionStmt assignFieldVariableInteger1;
 	private ExpressionStmt assignFieldVariableInteger2;
+	private String fileString;
 
 	@Before
 	public void setUp() throws Exception {
@@ -115,182 +116,182 @@ public class HardCodedLiteralTest extends MeasureTest {
 	
 	@Test
 	public void findFieldVariableInteger() {
-		findIssue(this.fieldVariableInteger);
+		findIssue(this.fieldVariableInteger, this.fileString);
 	}
 	
 	@Test
 	public void skipStaticField() {
-		skipIssue(this.fieldStaticInteger);
+		skipIssue(this.fieldStaticInteger, this.fileString);
 	}
 
 	@Test
 	public void skipConstantField() {
-		skipIssue(this.fieldConstantInteger);
+		skipIssue(this.fieldConstantInteger, this.fileString);
 	}
 	
 	@Test
 	public void findFieldVariableDouble() {
-		findIssue(this.fieldVariableDouble);
+		findIssue(this.fieldVariableDouble, this.fileString);
 	}
 	
 	@Test
 	public void findFieldVariableString() {
-		findIssue(this.fieldVariableString);
+		findIssue(this.fieldVariableString, this.fileString);
 	}
 
 	@Test
 	public void skipFieldVariableIntegerMinus1() {
-		skipIssue(this.fieldVariableIntegerMinus1);
+		skipIssue(this.fieldVariableIntegerMinus1, this.fileString);
 	}
 	
 	@Test
 	public void skipFieldVariableInteger0() {
-		skipIssue(this.fieldVariableInteger0);
+		skipIssue(this.fieldVariableInteger0, this.fileString);
 	}
 	
 	@Test
 	public void skipFieldVariableInteger1() {
-		skipIssue(this.fieldVariableInteger1);
+		skipIssue(this.fieldVariableInteger1, this.fileString);
 	}
 	
 	@Test
 	public void skipFieldVariableInteger2() {
-		skipIssue(this.fieldVariableInteger2);
+		skipIssue(this.fieldVariableInteger2, this.fileString);
 	}
 	
 	@Test
 	public void findVariableInteger() {
-		findIssue(this.variableInteger);
+		findIssue(this.variableInteger, this.fileString);
 	}
 	
 	@Test
 	public void skipStatic() {
-		skipIssue(this.staticInteger);
+		skipIssue(this.staticInteger, this.fileString);
 	}
 
 	@Test
 	public void skipConstant() {
-		skipIssue(this.constantInteger);
+		skipIssue(this.constantInteger, this.fileString);
 	}
 	
 	@Test
 	public void findVariableDouble() {
-		findIssue(this.variableDouble);
+		findIssue(this.variableDouble, this.fileString);
 	}
 	
 	@Test
 	public void findVariableString() {
-		findIssue(this.variableString);
+		findIssue(this.variableString, this.fileString);
 	}
 
 	@Test
 	public void skipVariableIntegerMinus1() {
-		skipIssue(this.variableIntegerMinus1);
+		skipIssue(this.variableIntegerMinus1, this.fileString);
 	}
 	
 	@Test
 	public void skipVariableInteger0() {
-		skipIssue(this.variableInteger0);
+		skipIssue(this.variableInteger0, this.fileString);
 	}
 	
 	@Test
 	public void skipVariableInteger1() {
-		skipIssue(this.variableInteger1);
+		skipIssue(this.variableInteger1, this.fileString);
 	}
 	
 	@Test
 	public void skipVariableInteger2() {
-		skipIssue(this.variableInteger2);
+		skipIssue(this.variableInteger2, this.fileString);
 	}
 
 	@Test
 	public void skipAssignVariableInteger() {
-		skipIssue(this.assignVariableInteger);
+		skipIssue(this.assignVariableInteger, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignStatic() {
-		skipIssue(this.assignStaticInteger);
+		skipIssue(this.assignStaticInteger, this.fileString);
 	}
 
 	@Test
 	public void skipAssignConstant() {
-		skipIssue(this.assignConstantInteger);
+		skipIssue(this.assignConstantInteger, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignVariableDouble() {
-		skipIssue(this.assignVariableDouble);
+		skipIssue(this.assignVariableDouble, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignVariableString() {
-		skipIssue(this.assignVariableString);
+		skipIssue(this.assignVariableString, this.fileString);
 	}
 
 	@Test
 	public void skipAssignVariableIntegerMinus1() {
-		skipIssue(this.assignVariableIntegerMinus1);
+		skipIssue(this.assignVariableIntegerMinus1, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignVariableInteger0() {
-		skipIssue(this.assignVariableInteger0);
+		skipIssue(this.assignVariableInteger0, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignVariableInteger1() {
-		skipIssue(this.assignVariableInteger1);
+		skipIssue(this.assignVariableInteger1, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignVariableInteger2() {
-		skipIssue(this.assignVariableInteger2);
+		skipIssue(this.assignVariableInteger2, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignFieldVariableInteger() {
-		skipIssue(this.assignFieldVariableInteger);
+		skipIssue(this.assignFieldVariableInteger, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignStaticField() {
-		skipIssue(this.assignFieldStaticInteger);
+		skipIssue(this.assignFieldStaticInteger, this.fileString);
 	}
 
 	@Test
 	public void skipAssignConstantField() {
-		skipIssue(this.assignFieldConstantInteger);
+		skipIssue(this.assignFieldConstantInteger, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignFieldVariableDouble() {
-		skipIssue(this.assignFieldVariableDouble);
+		skipIssue(this.assignFieldVariableDouble, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignFieldVariableString() {
-		skipIssue(this.assignFieldVariableString);
+		skipIssue(this.assignFieldVariableString, this.fileString);
 	}
 
 	@Test
 	public void skipAssignFieldVariableIntegerMinus1() {
-		skipIssue(this.assignFieldVariableIntegerMinus1);
+		skipIssue(this.assignFieldVariableIntegerMinus1, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignFieldVariableInteger0() {
-		skipIssue(this.assignFieldVariableInteger0);
+		skipIssue(this.assignFieldVariableInteger0, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignFieldVariableInteger1() {
-		skipIssue(this.assignFieldVariableInteger1);
+		skipIssue(this.assignFieldVariableInteger1, this.fileString);
 	}
 	
 	@Test
 	public void skipAssignFieldVariableInteger2() {
-		skipIssue(this.assignFieldVariableInteger2);
+		skipIssue(this.assignFieldVariableInteger2, this.fileString);
 	}
 	
 	@Override

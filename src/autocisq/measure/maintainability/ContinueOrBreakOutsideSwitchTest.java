@@ -18,6 +18,7 @@ public class ContinueOrBreakOutsideSwitchTest extends MeasureTest {
 	private MethodDeclaration nodeB;
 	private MethodDeclaration nodeC;
 	private MethodDeclaration nodeD;
+	private String fileString;
 
 	@Before
 	public void setUp() throws Exception {
@@ -40,22 +41,22 @@ public class ContinueOrBreakOutsideSwitchTest extends MeasureTest {
 
 	@Test
 	public void findContinue() {
-		findIssue(this.nodeA);
+		findIssue(this.nodeA, this.fileString);
 	}
 
 	@Test
 	public void findBreak() {
-		findIssue(this.nodeB);
+		findIssue(this.nodeB, this.fileString);
 	}
 
 	@Test
 	public void skipContinueInsideSwitch() {
-		skipIssue(this.nodeC);
+		skipIssue(this.nodeC, this.fileString);
 	}
 
 	@Test
 	public void skipBreakInsideSwitch() {
-		skipIssue(this.nodeD);
+		skipIssue(this.nodeD, this.fileString);
 	}
 	
 	@Override
