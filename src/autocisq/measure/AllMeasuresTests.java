@@ -9,6 +9,7 @@ import autocisq.measure.maintainability.FileLOCTest;
 import autocisq.measure.maintainability.FunctionCommentedOutInstructionsTest;
 import autocisq.measure.maintainability.FunctionFanOutTest;
 import autocisq.measure.maintainability.FunctionParametersTest;
+import autocisq.measure.maintainability.HardCodedLiteralTest;
 import autocisq.measure.maintainability.HorizontalLayersTest;
 import autocisq.measure.maintainability.LayerSkippingCallTest;
 import autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClassTest;
@@ -19,7 +20,7 @@ import autocisq.measure.reliability.EmptyExceptionHandlingBlockTest;
 @SuiteClasses({ EmptyExceptionHandlingBlockTest.class, HorizontalLayersTest.class, LayerSkippingCallTest.class,
 		FileLOCTest.class, FunctionParametersTest.class, VariableDeclaredPublicTest.class, FunctionFanOutTest.class,
 		MethodDirectlyUsingFieldFromOtherClassTest.class, FunctionCommentedOutInstructionsTest.class,
-		ContinueOrBreakOutsideSwitchTest.class })
+		ContinueOrBreakOutsideSwitchTest.class, HardCodedLiteralTest.class })
 public class AllMeasuresTests {
 
 }
