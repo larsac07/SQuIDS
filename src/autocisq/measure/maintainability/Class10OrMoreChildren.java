@@ -30,32 +30,31 @@ import autocisq.models.Issue;
  * {@link #analyzeNode(Node, String, List, Map)} are ignored.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
 public class Class10OrMoreChildren implements Measure {
-
+	
 	public final static String ISSUE_TYPE = "Class with >= 10 children";
 	public final static int THRESHOLD = 10;
-
+	
 	private Map<ClassOrInterfaceType, List<ClassOrInterfaceDeclaration>> classSubClassMap;
-
+	
 	public Class10OrMoreChildren() {
 		this.classSubClassMap = new HashMap<>();
 	}
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
 			Map<String, Integer> layerMap) {
 		if (node instanceof ClassOrInterfaceDeclaration) {
 			ClassOrInterfaceDeclaration classDeclaration = (ClassOrInterfaceDeclaration) node;
-			System.out.println(classDeclaration);
 			List<ClassOrInterfaceType> superClasses = classDeclaration.getExtends();
 			for (ClassOrInterfaceType superClass : superClasses) {
 				List<ClassOrInterfaceDeclaration> subClasses = this.classSubClassMap.get(superClass);
 				if (subClasses == null) {
 					subClasses = new ArrayList<>();
 				}
-				
+
 				if (existsInProject(superClass, compilationUnits)) {
 					subClasses.add(classDeclaration);
 					this.classSubClassMap.put(superClass, subClasses);
@@ -65,19 +64,19 @@ public class Class10OrMoreChildren implements Measure {
 								fileString));
 						return issues;
 					}
-
+					
 				}
 			}
-			
+
 		}
 		return null;
 	}
-
+	
 	public static boolean existsInProject(ClassOrInterfaceType classOrInterfaceType,
 			List<CompilationUnit> projectCompilationUnits) {
 		return getTypeCompilationUnit(classOrInterfaceType, projectCompilationUnits) != null;
 	}
-	
+
 	public static CompilationUnit getTypeCompilationUnit(ClassOrInterfaceType classOrInterfaceType,
 			List<CompilationUnit> projectCompilationUnits) {
 		for (CompilationUnit cu : projectCompilationUnits) {
@@ -89,5 +88,5 @@ public class Class10OrMoreChildren implements Measure {
 		}
 		return null;
 	}
-
+	
 }
