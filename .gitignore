@@ -40,3 +40,4 @@ local.properties
 
 # Ubuntu lock-files
 *~
+/target/
