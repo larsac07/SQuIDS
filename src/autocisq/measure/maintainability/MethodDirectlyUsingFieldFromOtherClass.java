@@ -14,6 +14,7 @@ import com.github.javaparser.ast.type.Type;
 
 import autocisq.JavaParserHelper;
 import autocisq.NoSuchAncestorFoundException;
+import autocisq.NoSuchVariableException;
 import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -31,29 +32,29 @@ import autocisq.models.Issue;
  * final).
  *
  * @author Lars A. V. Cabrera
- *
+ *		
  */
 public class MethodDirectlyUsingFieldFromOtherClass implements Measure {
-
+	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
 			Map<String, Integer> layerMap) {
 		List<Issue> issues = new ArrayList<>();
-		
+
 		if (node instanceof FieldAccessExpr) {
 			try {
 				MethodDeclaration enclosingMethod = (MethodDeclaration) JavaParserHelper.findNodeAncestorOfType(node,
 						MethodDeclaration.class);
 				boolean enclosingMethodStatic = ModifierSet.isStatic(enclosingMethod.getModifiers());
 				if (!enclosingMethodStatic) {
-
+					
 					FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) node;
 					String variableName = fieldAccessExpr.getScope().toString();
 					String fieldName = fieldAccessExpr.getField();
 					List<Type> types = JavaParserHelper.findVariableTypeBottomUp(variableName, node);
-
+					
 					for (Type variableType : types) {
-
+						
 						CompilationUnit fieldClass = JavaParserHelper.findCompilationUnit(variableType.toString(),
 								compilationUnits);
 						if (!fieldClass.equals(JavaParserHelper.findNodeCompilationUnit(node))) {
@@ -63,7 +64,7 @@ public class MethodDirectlyUsingFieldFromOtherClass implements Measure {
 								boolean isStatic = ModifierSet.isStatic(fieldDeclaration.getModifiers());
 								boolean isFinal = ModifierSet.isFinal(fieldDeclaration.getModifiers());
 								boolean isVariable = !(isStatic || isFinal);
-								
+
 								if (isVariable) {
 									int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(),
 											node.getEndLine(), node.getBeginColumn(), node.getEndColumn());
@@ -76,9 +77,11 @@ public class MethodDirectlyUsingFieldFromOtherClass implements Measure {
 				}
 			} catch (NoSuchAncestorFoundException e) {
 				return issues;
+			} catch (NoSuchVariableException e) {
+				return issues;
 			}
 		}
-		
+
 		return issues;
 	}
 }
