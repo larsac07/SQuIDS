@@ -19,10 +19,10 @@ import autocisq.models.Issue;
  * of layer-skipping calls.
  *
  * @author Lars A. V. Cabrera
- *		
+ * 		
  */
 public class LayerSkippingCall implements Measure {
-
+	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
 			Map<String, Integer> layerMap) {
@@ -40,15 +40,15 @@ public class LayerSkippingCall implements Measure {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
-					String methodClass = methodCompilationUnit.getPackage().getPackageName() + "."
+					
+					String methodClass = methodCompilationUnit.getPackage().getName() + "."
 							+ methodCompilationUnit.getTypes().get(0).getName();
-					String methodCallClass = methodCallCompilationUnit.getPackage().getPackageName() + "."
+					String methodCallClass = methodCallCompilationUnit.getPackage().getName() + "."
 							+ methodCallCompilationUnit.getTypes().get(0).getName();
-
+							
 					Integer methodLayer = layerMap.get(methodClass);
 					Integer methodCallLayer = layerMap.get(methodCallClass);
-
+					
 					if (methodLayer != null) {
 						if (Math.abs(methodLayer - methodCallLayer) > 1) {
 							int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(),
