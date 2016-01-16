@@ -28,13 +28,16 @@ import com.github.javaparser.ast.stmt.TryStmt;
 
 import autocisq.io.IOUtils;
 import autocisq.measure.Measure;
+import autocisq.measure.maintainability.Class10OrMoreChildren;
 import autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch;
 import autocisq.measure.maintainability.FileLOC;
 import autocisq.measure.maintainability.FunctionCommentedOutInstructions;
 import autocisq.measure.maintainability.FunctionFanOut;
 import autocisq.measure.maintainability.FunctionParameters;
+import autocisq.measure.maintainability.HardCodedLiteral;
 import autocisq.measure.maintainability.HorizontalLayers;
 import autocisq.measure.maintainability.LayerSkippingCall;
+import autocisq.measure.maintainability.Method7OrMoreDataOrFileOperations;
 import autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass;
 import autocisq.measure.maintainability.VariableDeclaredPublic;
 import autocisq.measure.reliability.EmptyExceptionHandlingBlock;
@@ -43,28 +46,28 @@ import autocisq.models.Issue;
 import autocisq.models.JavaResource;
 
 public class IssueFinder {
-	
-	private static IssueFinder instance;
 
+	private static IssueFinder instance;
+	
 	private List<JavaResource> javaResources;
 	private List<CompilationUnit> compilationUnits;
 	private Map<String, Integer> layerMap;
 	private Map<String, Measure> measures;
-
+	
 	public static IssueFinder getInstance() {
 		if (instance == null) {
 			instance = new IssueFinder();
 		}
 		return instance;
 	}
-
+	
 	private IssueFinder() {
 		this.javaResources = new LinkedList<>();
 		this.layerMap = new LinkedHashMap<>();
 		this.measures = new LinkedHashMap<>();
-
+		
 	}
-
+	
 	public Map<File, List<Issue>> findIssues(List<File> files, Map<String, Integer> layerMap) {
 		this.javaResources = new LinkedList<>();
 		if (files != null) {
@@ -74,7 +77,7 @@ public class IssueFinder {
 		for (File file : files) {
 			List<String> fileStringLines = IOUtils.fileToStringLines(file);
 			String fileString = String.join(System.lineSeparator(), fileStringLines);
-
+			
 			try {
 				CompilationUnit compilationUnit = JavaParser.parse(file);
 				this.javaResources.add(new JavaResource(compilationUnit, file, fileString, fileStringLines));
@@ -86,7 +89,7 @@ public class IssueFinder {
 				e.printStackTrace();
 			}
 		}
-
+		
 		this.compilationUnits = createCompilationUnitList();
 		putMeasure(new HorizontalLayers());
 		putMeasure(new LayerSkippingCall());
@@ -98,22 +101,25 @@ public class IssueFinder {
 		putMeasure(new MethodDirectlyUsingFieldFromOtherClass());
 		putMeasure(new FunctionCommentedOutInstructions());
 		putMeasure(new ContinueOrBreakOutsideSwitch());
-
+		putMeasure(new Class10OrMoreChildren());
+		putMeasure(new HardCodedLiteral());
+		putMeasure(new Method7OrMoreDataOrFileOperations());
+		
 		for (JavaResource javaResource : this.javaResources) {
 			List<Issue> issues = new LinkedList<>();
-
+			
 			CompilationUnit compilationUnit = javaResource.getCompilationUnit();
 			String fileString = javaResource.getFileString();
 			File file = javaResource.getFile();
-
+			
 			analyzeNode(compilationUnit, issues, fileString);
-
+			
 			fileIssuesMap.put(file, issues);
 		}
-
+		
 		return fileIssuesMap;
 	}
-
+	
 	private List<CompilationUnit> createCompilationUnitList() {
 		List<CompilationUnit> compilationUnits = new ArrayList<>();
 		for (JavaResource javaResource : this.javaResources) {
@@ -121,7 +127,7 @@ public class IssueFinder {
 		}
 		return compilationUnits;
 	}
-
+	
 	/**
 	 * Find the line number of a string index based on "\n" or "\r"
 	 *
@@ -134,40 +140,40 @@ public class IssueFinder {
 	public static int findLineNumber(String string, int index) {
 		return string.substring(0, index).split("[\n|\r]").length;
 	}
-
+	
 	public static int[] columnsToIndexes(String string, int startLine, int endLine, int startColumn, int endColumn) {
 		int startIndex = 0;
 		int endIndex = 0;
 		int lineIndex = 1;
-
+		
 		String[] lines = string.split("[\n|\r]");
 		for (String line : lines) {
-
+			
 			// Account for newline characters
 			int lineLength = line.length() + 1;
-
+			
 			if (lineIndex > endLine) {
 				break;
 			}
-
+			
 			if (lineIndex < startLine) {
 				startIndex += lineLength;
 			} else if (lineIndex == startLine) {
 				startIndex += startColumn - 1;
 			}
-
+			
 			if (lineIndex == endLine) {
 				endIndex += endColumn;
 			} else {
 				endIndex += lineLength;
 			}
-
+			
 			lineIndex++;
 		}
-
+		
 		return new int[] { startIndex, endIndex };
 	}
-
+	
 	public static List<FileIssue> analyzeRegex(String fileString) {
 		// Pattern for finding multiple occurrances of empty or
 		// generic catch blocks
@@ -175,7 +181,7 @@ public class IssueFinder {
 		Pattern pattern = Pattern.compile("catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\}");
 		// + "|catch\\s*\\([^\\)]+\\)\\s*\\{\\s*\\/\\/ TODO Auto-generated catch
 		// block\\s*e\\.printStackTrace\\(\\)\\;\\s*\\}");
-
+		
 		Matcher matcher = pattern.matcher(fileString);
 		while (matcher.find()) {
 			int errorLineNumber = findLineNumber(fileString, matcher.start());
@@ -184,19 +190,19 @@ public class IssueFinder {
 		}
 		return issues;
 	}
-
+	
 	/**
 	 *
 	 * @param rootNode
 	 * @param file
 	 * @throws JavaModelException
 	 */
-
+	
 	public List<Issue> analyzeNode(Node rootNode, List<Issue> issues, String fileAsString) {
 		if (issues == null) {
 			issues = new LinkedList<>();
 		}
-
+		
 		for (Measure measure : this.measures.values()) {
 			List<Issue> measureIssues = measure.analyzeNode(rootNode, fileAsString, this.compilationUnits,
 					this.layerMap);
@@ -204,18 +210,18 @@ public class IssueFinder {
 				issues.addAll(measureIssues);
 			}
 		}
-
+		
 		// Recursive call for each child node
 		for (Node node : rootNode.getChildrenNodes()) {
 			analyzeNode(node, issues, fileAsString);
 		}
 		return issues;
 	}
-
+	
 	public static List<Issue> checkEmptyBlockStmt(BlockStmt catchClause, String fileAsString) {
 		return checkEmptyBlockStmt(catchClause, fileAsString, null);
 	}
-
+	
 	/**
 	 * Detects empty or generic catch blocks, and adds a marker to it
 	 *
@@ -248,7 +254,7 @@ public class IssueFinder {
 		}
 		return issues;
 	}
-
+	
 	public CompilationUnit findCompilationUnit(String className) {
 		for (JavaResource javaResource : this.javaResources) {
 			for (TypeDeclaration typeDeclaration : javaResource.getCompilationUnit().getTypes()) {
@@ -259,7 +265,7 @@ public class IssueFinder {
 		}
 		return null;
 	}
-
+	
 	public CompilationUnit findMethodCompilationUnit(MethodCallExpr methodCall) {
 		CompilationUnit compilationUnit = null;
 		Expression scopeExpression = methodCall.getScope();
@@ -278,19 +284,19 @@ public class IssueFinder {
 			if (compilationUnit == null) {
 				compilationUnit = findCompilationUnit(scopeExpression.toString());
 			}
-
+			
 		} catch (NoSuchAncestorFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		return compilationUnit;
 	}
-
+	
 	public static boolean methodCallFromSameType(MethodCallExpr methodCall) {
 		return methodCall.getScope() == null;
 	}
-
+	
 	public static List<FieldDeclaration> findTypeFields(TypeDeclaration typeDeclaration) {
 		List<FieldDeclaration> fields = new LinkedList<>();
 		for (BodyDeclaration bodyDeclaration : typeDeclaration.getMembers()) {
@@ -300,16 +306,16 @@ public class IssueFinder {
 		}
 		return fields;
 	}
-
+	
 	public static ClassOrInterfaceDeclaration findNodeClassOrInterfaceDeclaration(Node node)
 			throws NoSuchAncestorFoundException {
 		return (ClassOrInterfaceDeclaration) findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
 	}
-
+	
 	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoSuchAncestorFoundException {
 		return (CompilationUnit) findNodeAncestorOfType(node, CompilationUnit.class);
 	}
-
+	
 	/**
 	 * Find a Node's ancestor of a specified class
 	 *
@@ -330,39 +336,39 @@ public class IssueFinder {
 			return findNodeAncestorOfType(node.getParentNode(), ancestorClass);
 		}
 	}
-
+	
 	public List<JavaResource> getJavaResources() {
 		return this.javaResources;
 	}
-
+	
 	public Map<String, Integer> getLayerMap() {
 		return this.layerMap;
 	}
-
+	
 	public Map<String, Measure> getMeasures() {
 		return this.measures;
 	}
-	
+
 	public void putMeasure(Measure measure) {
 		this.measures.put(measure.getClass().getSimpleName(), measure);
 	}
-	
+
 	public Measure getMeasure(String classSimpleName) {
 		return this.measures.get(classSimpleName);
 	}
-	
+
 	public boolean hasMeasure(Measure measure) {
 		return hasMeasure(measure.getClass().getSimpleName());
 	}
-	
+
 	public boolean hasMeasure(String classSimpleName) {
 		return getMeasure(classSimpleName) != null;
 	}
-
+	
 	public List<CompilationUnit> getCompilationUnits() {
 		return this.compilationUnits;
 	}
-	
+
 	public void setCompilationUnits(List<CompilationUnit> compilationUnits) {
 		this.compilationUnits = compilationUnits;
 	}
