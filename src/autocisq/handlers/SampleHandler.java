@@ -78,17 +78,17 @@ public class SampleHandler extends AbstractHandler {
 		dbOrIoClasses.add("com.github.javaparser.JavaParser");
 		
 		List<String> measures = new LinkedList<>();
-		measures.add("autocisq.measure.maintainability.Class10OrMoreChildren");
+		measures.add("autocisq.measure.maintainability.ClassTooManyChildren");
 		measures.add("autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch");
 		measures.add("autocisq.measure.maintainability.FileLOC");
-		measures.add("autocisq.measure.maintainability.Function100DuplicateTokens");
+		measures.add("autocisq.measure.maintainability.FunctionDuplicateTokens");
 		measures.add("autocisq.measure.maintainability.FunctionCommentedOutInstructions");
 		measures.add("autocisq.measure.maintainability.FunctionFanOut");
 		measures.add("autocisq.measure.maintainability.FunctionParameters");
 		measures.add("autocisq.measure.maintainability.HardCodedLiteral");
 		measures.add("autocisq.measure.maintainability.HorizontalLayers");
 		measures.add("autocisq.measure.maintainability.LayerSkippingCall");
-		measures.add("autocisq.measure.maintainability.Method7OrMoreDataOrFileOperations");
+		measures.add("autocisq.measure.maintainability.MethodTooManyDataOrFileOperations");
 		measures.add("autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass");
 		measures.add("autocisq.measure.maintainability.VariableDeclaredPublic");
 		measures.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");

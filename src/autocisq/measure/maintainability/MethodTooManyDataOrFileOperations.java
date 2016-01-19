@@ -29,7 +29,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *		
  */
-public class Method7OrMoreDataOrFileOperations extends Measure {
+public class MethodTooManyDataOrFileOperations extends Measure {
 
 	public final static String ISSUE_TYPE = "Method with >= 7 data or file operations";
 
@@ -41,7 +41,7 @@ public class Method7OrMoreDataOrFileOperations extends Measure {
 	private int count;
 	
 	@SuppressWarnings("unchecked")
-	public Method7OrMoreDataOrFileOperations(Map<String, Object> settings) {
+	public MethodTooManyDataOrFileOperations(Map<String, Object> settings) {
 		super(settings);
 		try {
 			this.dbOrIoClasses = (List<String>) settings.get("db_or_io_classes");

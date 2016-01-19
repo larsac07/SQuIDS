@@ -16,7 +16,7 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link Function100DuplicateTokens} class represents the CISQ
+ * The {@link FunctionDuplicateTokens} class represents the CISQ
  * Maintainability measure 4: # files that contain 100+ consecutive duplicate
  * tokens.
  *
@@ -34,7 +34,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class Function100DuplicateTokens extends Measure {
+public class FunctionDuplicateTokens extends Measure {
 	
 	public final static String ISSUE_TYPE = "File with 100+ consecutive duplicate tokens";
 	public final static int THRESHOLD = 100;
@@ -52,7 +52,7 @@ public class Function100DuplicateTokens extends Measure {
 	private Map<CompilationUnit, List<String>> fileTokensMap;
 	private List<CompilationUnit> markedCUs;
 	
-	public Function100DuplicateTokens(Map<String, Object> settings) {
+	public FunctionDuplicateTokens(Map<String, Object> settings) {
 		super(settings);
 		this.pattern = Pattern
 				.compile(KEYWORDS + "|" + SEPARATORS + "|" + OPERATORS + "|" + IDENTIFIERS + "|" + LITERALS);
