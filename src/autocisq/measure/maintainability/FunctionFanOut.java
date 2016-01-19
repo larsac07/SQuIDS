@@ -34,13 +34,16 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class FunctionFanOut implements Measure {
-	
-	private String fileString = "";
+public class FunctionFanOut extends Measure {
 
+	public FunctionFanOut(Map<String, Object> settings) {
+		super(settings);
+	}
+
+	private String fileString = "";
+	
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new ArrayList<>();
 		if (node instanceof MethodDeclaration) {
 			MethodDeclaration methodDeclaration = (MethodDeclaration) node;
@@ -57,12 +60,12 @@ public class FunctionFanOut implements Measure {
 		}
 		return issues;
 	}
-	
+
 	private int calculateFanOut(Node node) {
 		List<Issue> issues = new ArrayList<>();
 		return calculateFanOut(node, issues);
 	}
-	
+
 	private int calculateFanOut(Node node, List<Issue> issues) {
 		int fanOut = 0;
 		if (node instanceof AssignExpr) {
@@ -73,11 +76,11 @@ public class FunctionFanOut implements Measure {
 		} else if (node instanceof MethodCallExpr) {
 			fanOut++;
 		}
-
+		
 		for (Node child : node.getChildrenNodes()) {
 			fanOut += calculateFanOut(child, issues);
 		}
 		return fanOut;
 	}
-
+	
 }

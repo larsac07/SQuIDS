@@ -1,5 +1,6 @@
 package autocisq.measure.maintainability;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +20,32 @@ import autocisq.models.Issue;
  * of layer-skipping calls.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *		
  */
-public class LayerSkippingCall implements Measure {
+public class LayerSkippingCall extends Measure {
+	
+	private Map<String, Integer> layerMap;
+	
+	@SuppressWarnings("unchecked")
+	public LayerSkippingCall(Map<String, Object> settings) {
+		super(settings);
+		try {
+			this.layerMap = (Map<String, Integer>) settings.get("layer_map");
+			if (this.layerMap == null) {
+				System.err.println(this.getClass().getSimpleName()
+						+ " was provided an empty layer_map and will not work. Please provide a layer_map");
+				this.layerMap = new HashMap<>();
+			}
+		} catch (NullPointerException | ClassCastException e) {
+			this.layerMap = new HashMap<>();
+			System.err.println(this.getClass().getSimpleName()
+					+ " was not provided a layer_map and will not work. Please provide a layer_map");
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr methodCall = (MethodCallExpr) node;
@@ -46,8 +66,8 @@ public class LayerSkippingCall implements Measure {
 					String methodCallClass = methodCallCompilationUnit.getPackage().getName() + "."
 							+ methodCallCompilationUnit.getTypes().get(0).getName();
 							
-					Integer methodLayer = layerMap.get(methodClass);
-					Integer methodCallLayer = layerMap.get(methodCallClass);
+					Integer methodLayer = this.layerMap.get(methodClass);
+					Integer methodCallLayer = this.layerMap.get(methodCallClass);
 					
 					if (methodLayer != null) {
 						if (Math.abs(methodLayer - methodCallLayer) > 1) {

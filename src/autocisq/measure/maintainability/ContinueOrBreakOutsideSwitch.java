@@ -30,13 +30,16 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class ContinueOrBreakOutsideSwitch implements Measure {
-	
+public class ContinueOrBreakOutsideSwitch extends Measure {
+
+	public ContinueOrBreakOutsideSwitch(Map<String, Object> settings) {
+		super(settings);
+	}
+
 	public final static String ISSUE_TYPE = "Continue or Break outside switch";
-	
+
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof ContinueStmt || node instanceof BreakStmt) {
 			try {
 				JavaParserHelper.findNodeAncestorOfType(node, SwitchStmt.class);
@@ -48,5 +51,5 @@ public class ContinueOrBreakOutsideSwitch implements Measure {
 		}
 		return null;
 	}
-	
+
 }

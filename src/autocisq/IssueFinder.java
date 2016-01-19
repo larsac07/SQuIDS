@@ -2,6 +2,7 @@ package autocisq;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -28,20 +29,6 @@ import com.github.javaparser.ast.stmt.TryStmt;
 
 import autocisq.io.IOUtils;
 import autocisq.measure.Measure;
-import autocisq.measure.maintainability.Class10OrMoreChildren;
-import autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch;
-import autocisq.measure.maintainability.FileLOC;
-import autocisq.measure.maintainability.FunctionCommentedOutInstructions;
-import autocisq.measure.maintainability.Function100DuplicateTokens;
-import autocisq.measure.maintainability.FunctionFanOut;
-import autocisq.measure.maintainability.FunctionParameters;
-import autocisq.measure.maintainability.HardCodedLiteral;
-import autocisq.measure.maintainability.HorizontalLayers;
-import autocisq.measure.maintainability.LayerSkippingCall;
-import autocisq.measure.maintainability.Method7OrMoreDataOrFileOperations;
-import autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass;
-import autocisq.measure.maintainability.VariableDeclaredPublic;
-import autocisq.measure.reliability.EmptyExceptionHandlingBlock;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.JavaResource;
@@ -52,7 +39,6 @@ public class IssueFinder {
 
 	private List<JavaResource> javaResources;
 	private List<CompilationUnit> compilationUnits;
-	private Map<String, Integer> layerMap;
 	private Map<String, Measure> measures;
 
 	public static IssueFinder getInstance() {
@@ -64,16 +50,12 @@ public class IssueFinder {
 
 	private IssueFinder() {
 		this.javaResources = new LinkedList<>();
-		this.layerMap = new LinkedHashMap<>();
 		this.measures = new LinkedHashMap<>();
 
 	}
 
-	public Map<File, List<Issue>> findIssues(List<File> files, Map<String, Integer> layerMap) {
+	public Map<File, List<Issue>> findIssues(List<File> files, Map<String, Object> settings) {
 		this.javaResources = new LinkedList<>();
-		if (files != null) {
-			this.layerMap = layerMap;
-		}
 		Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
 		for (File file : files) {
 			List<String> fileStringLines = IOUtils.fileToStringLines(file);
@@ -92,20 +74,32 @@ public class IssueFinder {
 		}
 
 		this.compilationUnits = createCompilationUnitList();
-		putMeasure(new HorizontalLayers());
-		putMeasure(new LayerSkippingCall());
-		putMeasure(new EmptyExceptionHandlingBlock());
-		putMeasure(new FileLOC());
-		putMeasure(new VariableDeclaredPublic());
-		putMeasure(new FunctionParameters());
-		putMeasure(new FunctionFanOut());
-		putMeasure(new MethodDirectlyUsingFieldFromOtherClass());
-		putMeasure(new FunctionCommentedOutInstructions());
-		putMeasure(new ContinueOrBreakOutsideSwitch());
-		putMeasure(new Class10OrMoreChildren());
-		putMeasure(new HardCodedLiteral());
-		putMeasure(new Method7OrMoreDataOrFileOperations());
-		putMeasure(new Function100DuplicateTokens());
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> measureStrings = (List<String>) settings.get("measures");
+			if (!measureStrings.isEmpty()) {
+				for (String measureString : measureStrings) {
+					try {
+						Class<?> clazz = Class.forName(measureString);
+						Measure measure = (Measure) clazz.getDeclaredConstructor(Map.class).newInstance(settings);
+						putMeasure(measure);
+					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+							| SecurityException e) {
+						System.err.println("Could not instantiate measure " + measureString);
+						e.printStackTrace();
+					}
+				}
+			} else {
+				System.err.println(this.getClass().getSimpleName()
+						+ " was provided an empty list of measures. Please add a list of measures.");
+			}
+		} catch (NullPointerException | ClassCastException e) {
+			
+			System.err.println(this.getClass().getSimpleName()
+					+ " was not provided a list of measures. Please add a list of measures.");
+			e.printStackTrace();
+		}
 
 		for (JavaResource javaResource : this.javaResources) {
 			List<Issue> issues = new LinkedList<>();
@@ -206,8 +200,7 @@ public class IssueFinder {
 		}
 
 		for (Measure measure : this.measures.values()) {
-			List<Issue> measureIssues = measure.analyzeNode(rootNode, fileAsString, this.compilationUnits,
-					this.layerMap);
+			List<Issue> measureIssues = measure.analyzeNode(rootNode, fileAsString, this.compilationUnits);
 			if (measureIssues != null) {
 				issues.addAll(measureIssues);
 			}
@@ -341,10 +334,6 @@ public class IssueFinder {
 
 	public List<JavaResource> getJavaResources() {
 		return this.javaResources;
-	}
-
-	public Map<String, Integer> getLayerMap() {
-		return this.layerMap;
 	}
 
 	public Map<String, Measure> getMeasures() {

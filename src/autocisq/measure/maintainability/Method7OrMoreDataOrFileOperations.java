@@ -2,7 +2,6 @@ package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *		
  */
-public class Method7OrMoreDataOrFileOperations implements Measure {
+public class Method7OrMoreDataOrFileOperations extends Measure {
 
 	public final static String ISSUE_TYPE = "Method with >= 7 data or file operations";
 
@@ -41,22 +40,27 @@ public class Method7OrMoreDataOrFileOperations implements Measure {
 	private Map<String, String> variableTypes;
 	private int count;
 	
-	public Method7OrMoreDataOrFileOperations() {
-		// TODO push to user input
-		this.dbOrIoClasses = new LinkedList<>();
-		this.dbOrIoClasses.add("java.io.File");
-		this.dbOrIoClasses.add("java.nio.file.Files");
-		this.dbOrIoClasses.add("java.sql.Connection");
-		this.dbOrIoClasses.add("java.sql.DriverManager");
-		this.dbOrIoClasses.add("java.sql.PreparedStatement");
-		this.dbOrIoClasses.add("java.sql.Statement");
-		this.dbOrIoClasses.add("com.github.javaparser.JavaParser");
+	@SuppressWarnings("unchecked")
+	public Method7OrMoreDataOrFileOperations(Map<String, Object> settings) {
+		super(settings);
+		try {
+			this.dbOrIoClasses = (List<String>) settings.get("db_or_io_classes");
+			if (this.dbOrIoClasses == null) {
+				System.err.println(this.getClass().getSimpleName()
+						+ " was provided an empty db_or_io_classes list and will not work. Please provide a db_or_io_classes list");
+				this.dbOrIoClasses = new ArrayList<>();
+			}
+		} catch (NullPointerException | ClassCastException e) {
+			this.dbOrIoClasses = new ArrayList<>();
+			System.err.println(this.getClass().getSimpleName()
+					+ " was not provided a db_or_io_classes list and will not work. Please provide a db_or_io_classes list");
+			e.printStackTrace();
+		}
 		reset();
 	}
 
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr methodCallExpr = (MethodCallExpr) node;
 

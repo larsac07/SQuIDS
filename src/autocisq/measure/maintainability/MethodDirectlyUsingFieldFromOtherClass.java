@@ -30,24 +30,27 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class MethodDirectlyUsingFieldFromOtherClass implements Measure {
+public class MethodDirectlyUsingFieldFromOtherClass extends Measure {
+	
+	public MethodDirectlyUsingFieldFromOtherClass(Map<String, Object> settings) {
+		super(settings);
+	}
 
 	public final static String ISSUE_TYPE = "Method directly using field from other class";
-	
+
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new ArrayList<>();
-		
+
 		if (node instanceof FieldAccessExpr) {
 			try {
 				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) node;
 				String variableName = fieldAccessExpr.getScope().toString();
 				String fieldName = fieldAccessExpr.getField();
 				List<Type> types = JavaParserHelper.findVariableTypeBottomUp(variableName, node);
-				
+
 				for (Type variableType : types) {
-					
+
 					String varNoArrayBrackets = withoutArrayBrackets(variableType.toString());
 					CompilationUnit fieldClass = JavaParserHelper.findCompilationUnit(varNoArrayBrackets,
 							compilationUnits);
@@ -68,17 +71,17 @@ public class MethodDirectlyUsingFieldFromOtherClass implements Measure {
 				return issues;
 			}
 		}
-		
+
 		return issues;
 	}
-
+	
 	public boolean isVariable(FieldDeclaration fieldDeclaration) {
 		boolean isStatic = ModifierSet.isStatic(fieldDeclaration.getModifiers());
 		boolean isFinal = ModifierSet.isFinal(fieldDeclaration.getModifiers());
 		boolean isVariable = !(isStatic || isFinal);
 		return isVariable;
 	}
-
+	
 	private static String withoutArrayBrackets(String string) {
 		return string.replace("(\\[)|(\\])", "");
 	}

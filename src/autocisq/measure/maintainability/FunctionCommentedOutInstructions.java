@@ -26,13 +26,16 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  * 		
  */
-public class FunctionCommentedOutInstructions implements Measure {
+public class FunctionCommentedOutInstructions extends Measure {
+	
+	public FunctionCommentedOutInstructions(Map<String, Object> settings) {
+		super(settings);
+	}
 
 	public final static double threshold = 0.02d;
-
+	
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof MethodDeclaration) {
 			MethodDeclaration methodDeclaration = (MethodDeclaration) node;
 			int instructions = FunctionCommentedOutInstructions.countInstructions(methodDeclaration);
@@ -46,7 +49,7 @@ public class FunctionCommentedOutInstructions implements Measure {
 		}
 		return null;
 	}
-	
+
 	public static int countCommentedOutInstructions(MethodDeclaration methodDeclaration) {
 		List<Comment> comments = methodDeclaration.getAllContainedComments();
 		String instructions = "";
@@ -63,22 +66,22 @@ public class FunctionCommentedOutInstructions implements Measure {
 			return 0;
 		}
 	}
-	
+
 	public static int countInstructions(MethodDeclaration methodDeclaration) {
 		return countNodesOfType(methodDeclaration, Expression.class);
 	}
-
+	
 	public static int countNodesOfType(Node rootNode, Class<? extends Node> klass) {
 		int count = 0;
 		if (klass.isAssignableFrom(rootNode.getClass())) {
 			count++;
 		}
-
+		
 		for (Node child : rootNode.getChildrenNodes()) {
 			count += countNodesOfType(child, klass);
 		}
-
+		
 		return count;
 	}
-
+	
 }

@@ -23,11 +23,14 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  * 		
  */
-public class EmptyExceptionHandlingBlock implements Measure {
+public class EmptyExceptionHandlingBlock extends Measure {
+	
+	public EmptyExceptionHandlingBlock(Map<String, Object> settings) {
+		super(settings);
+	}
 
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof BlockStmt
 				&& (node.getParentNode() instanceof TryStmt || node.getParentNode() instanceof CatchClause)) {
@@ -36,7 +39,7 @@ public class EmptyExceptionHandlingBlock implements Measure {
 		}
 		return issues;
 	}
-
+	
 	/**
 	 * Detects empty or generic catch blocks, and adds a marker to it
 	 *

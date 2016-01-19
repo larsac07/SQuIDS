@@ -21,11 +21,14 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class FileLOC implements Measure {
+public class FileLOC extends Measure {
+	
+	public FileLOC(Map<String, Object> settings) {
+		super(settings);
+	}
 
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof CompilationUnit) {
 			String[] lines = fileString.split("\r?\n|\r");
@@ -38,5 +41,5 @@ public class FileLOC implements Measure {
 		}
 		return issues;
 	}
-
+	
 }

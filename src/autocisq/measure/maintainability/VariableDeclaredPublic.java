@@ -25,13 +25,16 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  * 		
  */
-public class VariableDeclaredPublic implements Measure {
+public class VariableDeclaredPublic extends Measure {
+	
+	public VariableDeclaredPublic(Map<String, Object> settings) {
+		super(settings);
+	}
 
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new ArrayList<>();
-		
+
 		if (node instanceof FieldDeclaration) {
 			FieldDeclaration field = (FieldDeclaration) node;
 			int modifiers = field.getModifiers();
@@ -43,10 +46,10 @@ public class VariableDeclaredPublic implements Measure {
 				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], "Variable declared public",
 						node.toString(), node));
 			}
-			
+
 		}
-		
+
 		return issues;
 	}
-
+	
 }

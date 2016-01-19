@@ -15,11 +15,14 @@ import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
-public class FunctionParameters implements Measure {
+public class FunctionParameters extends Measure {
+	
+	public FunctionParameters(Map<String, Object> settings) {
+		super(settings);
+	}
 	
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new ArrayList<>();
 		if (node instanceof MethodDeclaration) {
 

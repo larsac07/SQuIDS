@@ -67,10 +67,39 @@ public class SampleHandler extends AbstractHandler {
 		layerMap.put("no.uib.mof077.shortbytes.som.Layer", 3);
 		layerMap.put("no.uib.mof077.shortbytes.som.Neuron", 3);
 		layerMap.put("no.uib.mof077.shortbytes.som.SomMain", 3);
-
+		
+		List<String> dbOrIoClasses = new LinkedList<>();
+		dbOrIoClasses.add("java.io.File");
+		dbOrIoClasses.add("java.nio.file.Files");
+		dbOrIoClasses.add("java.sql.Connection");
+		dbOrIoClasses.add("java.sql.DriverManager");
+		dbOrIoClasses.add("java.sql.PreparedStatement");
+		dbOrIoClasses.add("java.sql.Statement");
+		dbOrIoClasses.add("com.github.javaparser.JavaParser");
+		
+		List<String> measures = new LinkedList<>();
+		measures.add("autocisq.measure.maintainability.Class10OrMoreChildren");
+		measures.add("autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch");
+		measures.add("autocisq.measure.maintainability.FileLOC");
+		measures.add("autocisq.measure.maintainability.Function100DuplicateTokens");
+		measures.add("autocisq.measure.maintainability.FunctionCommentedOutInstructions");
+		measures.add("autocisq.measure.maintainability.FunctionFanOut");
+		measures.add("autocisq.measure.maintainability.FunctionParameters");
+		measures.add("autocisq.measure.maintainability.HardCodedLiteral");
+		measures.add("autocisq.measure.maintainability.HorizontalLayers");
+		measures.add("autocisq.measure.maintainability.LayerSkippingCall");
+		measures.add("autocisq.measure.maintainability.Method7OrMoreDataOrFileOperations");
+		measures.add("autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass");
+		measures.add("autocisq.measure.maintainability.VariableDeclaredPublic");
+		measures.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");
+		
+		Map<String, Object> settings = new HashMap<>();
+		settings.put("layer_map", layerMap);
+		settings.put("db_or_io_classes", dbOrIoClasses);
+		settings.put("measures", measures);
+		
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
-
 			List<IFile> iFiles;
 			List<File> files = new LinkedList<>();
 			Map<File, IFile> iFileMap = new HashMap<>();
@@ -82,7 +111,8 @@ public class SampleHandler extends AbstractHandler {
 					files.add(file);
 					iFileMap.put(file, iFile);
 				}
-				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files, layerMap);
+				
+				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files, settings);
 
 				for (File file : fileIssuesMap.keySet()) {
 					List<Issue> issues = fileIssuesMap.get(file);

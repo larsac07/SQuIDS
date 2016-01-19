@@ -2,6 +2,7 @@ package autocisq.measure.maintainability;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -28,7 +29,7 @@ public class Class10OrMoreChildrenTest extends MeasureTest {
 	public void setUp() throws Exception {
 		this.issueFinder = IssueFinder.getInstance();
 		this.issueFinder.getMeasures().clear();
-		this.issueFinder.putMeasure(new Class10OrMoreChildren());
+		this.issueFinder.putMeasure(new Class10OrMoreChildren(new HashMap<>()));
 
 		File superClass = new File("res/test/inheritance/SuperClass.java");
 		File subClass1 = new File("res/test/inheritance/SubClass1.java");

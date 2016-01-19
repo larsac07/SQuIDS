@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -19,7 +20,7 @@ import autocisq.io.IOUtils;
 import autocisq.models.Issue;
 
 public class MethodDirectlyUsingFieldFromOtherClassTest {
-	
+
 	private List<Issue> issues;
 	private List<CompilationUnit> compilationUnits;
 	private MethodDeclaration methodMultipleDirectAccess;
@@ -27,55 +28,55 @@ public class MethodDirectlyUsingFieldFromOtherClassTest {
 	private MethodDeclaration methodSingleDirectAccess;
 	private MethodDeclaration functionNoDirectAccess;
 	private String fileString;
-
+	
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new MethodDirectlyUsingFieldFromOtherClass());
-		
+		issueFinder.putMeasure(new MethodDirectlyUsingFieldFromOtherClass(new HashMap<>()));
+
 		File testFile = new File("res/test/Supervisor.java");
-		
+
 		this.fileString = IOUtils.fileToString(testFile);
-		
+
 		CompilationUnit supervisorCU = JavaParser.parse(testFile);
-		
+
 		this.methodMultipleDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(5);
 		this.methodNoDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(6);
 		this.methodSingleDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(7);
 		this.functionNoDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(9);
-		
+
 		this.compilationUnits = new ArrayList<>();
 		this.compilationUnits.add(supervisorCU);
 		this.compilationUnits.add(JavaParser.parse(new File("res/test/Person.java")));
 		issueFinder.setCompilationUnits(this.compilationUnits);
-		
-	}
 
+	}
+	
 	@Test
 	public void findMethodMultipleDirectAccess() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.methodMultipleDirectAccess, null, this.fileString);
 		findIssue();
 	}
-	
+
 	@Test
 	public void skipMethodNoDirectAccess() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.methodNoDirectAccess, null, this.fileString);
 		skipIssue();
 	}
-	
+
 	@Test
 	public void findMethodSingleDirectAccess() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.methodSingleDirectAccess, null, this.fileString);
 		findIssue();
 	}
-	
+
 	@Test
 	public void skipFunctionNoDirectAccess() {
 		this.issues = IssueFinder.getInstance().analyzeNode(this.functionNoDirectAccess, null, this.fileString);
 		skipIssue();
 	}
-
+	
 	private void findIssue() {
 		assertTrue(this.issues.size() > 0);
 		boolean found = false;
@@ -86,7 +87,7 @@ public class MethodDirectlyUsingFieldFromOtherClassTest {
 		}
 		assertTrue(found);
 	}
-
+	
 	private void skipIssue() {
 		boolean found = false;
 		for (Issue issue : this.issues) {
@@ -96,5 +97,5 @@ public class MethodDirectlyUsingFieldFromOtherClassTest {
 		}
 		assertFalse(found);
 	}
-	
+
 }

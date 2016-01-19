@@ -32,9 +32,9 @@ import autocisq.models.Issue;
  * (i.e. the measure "stops counting" at 100).
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
-public class Function100DuplicateTokens implements Measure {
+public class Function100DuplicateTokens extends Measure {
 	
 	public final static String ISSUE_TYPE = "File with 100+ consecutive duplicate tokens";
 	public final static int THRESHOLD = 100;
@@ -52,7 +52,8 @@ public class Function100DuplicateTokens implements Measure {
 	private Map<CompilationUnit, List<String>> fileTokensMap;
 	private List<CompilationUnit> markedCUs;
 	
-	public Function100DuplicateTokens() {
+	public Function100DuplicateTokens(Map<String, Object> settings) {
+		super(settings);
 		this.pattern = Pattern
 				.compile(KEYWORDS + "|" + SEPARATORS + "|" + OPERATORS + "|" + IDENTIFIERS + "|" + LITERALS);
 		this.fileTokensMap = new HashMap<>();
@@ -60,8 +61,7 @@ public class Function100DuplicateTokens implements Measure {
 	}
 
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof CompilationUnit) {
 			CompilationUnit compilationUnit = (CompilationUnit) node;
 			Matcher matcher = this.pattern.matcher(node.toStringWithoutComments());
@@ -69,8 +69,6 @@ public class Function100DuplicateTokens implements Measure {
 			while (matcher.find()) {
 				tokens.add(matcher.group());
 			}
-			System.out.println(compilationUnit.getTypes().get(0).getName() + " " + tokens.size() + " "
-					+ fileString.split("\n").length + " " + tokens);
 			if (tokens.size() >= THRESHOLD) {
 				this.fileTokensMap.put(compilationUnit, tokens);
 				List<CompilationUnit> cusWithDuplicates = getCusWithDuplicates(compilationUnit, tokens);

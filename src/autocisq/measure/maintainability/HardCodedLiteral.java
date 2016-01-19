@@ -30,15 +30,18 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  * 		
  */
-public class HardCodedLiteral implements Measure {
-	
+public class HardCodedLiteral extends Measure {
+
+	public HardCodedLiteral(Map<String, Object> settings) {
+		super(settings);
+	}
+
 	public final static int MIN_INTEGER_LITERAL = -1;
 	public final static int MAX_INTEGER_LITERAL = 2;
 	public final static String ISSUE_TYPE = "Non-valid, hard coded literal";
-	
+
 	@Override
-	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits,
-			Map<String, Integer> layerMap) {
+	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof LiteralExpr) {
 			LiteralExpr literalExpr = (LiteralExpr) node;
 			if (literalExpr instanceof IntegerLiteralExpr) {
@@ -48,9 +51,9 @@ public class HardCodedLiteral implements Measure {
 					return null;
 				}
 			}
-			
+
 			boolean isNonStatic = isNonStaticVariable(literalExpr);
-			
+
 			if (isNonStatic) {
 				List<Issue> issues = new ArrayList<>();
 				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
@@ -59,7 +62,7 @@ public class HardCodedLiteral implements Measure {
 		}
 		return null;
 	}
-	
+
 	public static boolean isWithinThreshold(int value) {
 		if (value < MIN_INTEGER_LITERAL || value > MAX_INTEGER_LITERAL) {
 			return false;
@@ -67,7 +70,7 @@ public class HardCodedLiteral implements Measure {
 			return true;
 		}
 	}
-	
+
 	private boolean isNonStaticVariable(LiteralExpr literalExpr) {
 		boolean isNonStaticVariable = false;
 		try {

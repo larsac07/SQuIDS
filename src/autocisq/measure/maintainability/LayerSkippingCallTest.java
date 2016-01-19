@@ -3,6 +3,7 @@ package autocisq.measure.maintainability;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,10 +17,10 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 public class LayerSkippingCallTest {
-
+	
 	private List<File> layerTestFiles;
-	private LinkedHashMap<String, Integer> layerMap;
-
+	private Map<String, Object> settings;
+	
 	@Before
 	public void setUp() throws Exception {
 		this.layerTestFiles = new LinkedList<>();
@@ -29,24 +30,31 @@ public class LayerSkippingCallTest {
 		this.layerTestFiles.add(new File("res/test/layers/ThemeManager.java"));
 		this.layerTestFiles.add(new File("res/test/layers/TsvToHtml.java"));
 		this.layerTestFiles.add(new File("res/test/layers/Parser.java"));
-
-		this.layerMap = new LinkedHashMap<>();
-		this.layerMap.put("no.uib.lca092.rtms.gui.GUI", 1);
-		this.layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", 2);
-		this.layerMap.put("no.uib.lca092.rtms.gui.SettingsGUI", 3);
-		this.layerMap.put("no.uib.lca092.rtms.gui.ThemeManager", 4);
-		this.layerMap.put("no.uib.lca092.rtms.TsvToHtml", 5);
-		this.layerMap.put("no.uib.lca092.rtms.io.Parser", 6);
-		this.layerMap.put("no.uib.lca092.rtms.gui.ThemeManager2", 7);
-		this.layerMap.put("no.uib.lca092.rtms.TsvToHtml2", 8);
-		this.layerMap.put("no.uib.lca092.rtms.io.Parser2", 9);
+		
+		Map<String, Integer> layerMap = new LinkedHashMap<>();
+		layerMap.put("no.uib.lca092.rtms.gui.GUI", 1);
+		layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", 2);
+		layerMap.put("no.uib.lca092.rtms.gui.SettingsGUI", 3);
+		layerMap.put("no.uib.lca092.rtms.gui.ThemeManager", 4);
+		layerMap.put("no.uib.lca092.rtms.TsvToHtml", 5);
+		layerMap.put("no.uib.lca092.rtms.io.Parser", 6);
+		layerMap.put("no.uib.lca092.rtms.gui.ThemeManager2", 7);
+		layerMap.put("no.uib.lca092.rtms.TsvToHtml2", 8);
+		layerMap.put("no.uib.lca092.rtms.io.Parser2", 9);
+		
+		List<String> measureStrings = new LinkedList<>();
+		measureStrings.add(LayerSkippingCall.class.getCanonicalName());
+		
+		this.settings = new HashMap<>();
+		this.settings.put("layer_map", layerMap);
+		this.settings.put("measures", measureStrings);
 	}
-
+	
 	@Test
 	public void findLayerSkippingCalls() {
 		Map<File, List<Issue>> layerIssuesMap = IssueFinder.getInstance().findIssues(this.layerTestFiles,
-				this.layerMap);
-
+				this.settings);
+				
 		boolean found = false;
 		search: for (List<Issue> fileIssues : layerIssuesMap.values()) {
 			for (Issue issue : fileIssues) {
@@ -58,5 +66,5 @@ public class LayerSkippingCallTest {
 		}
 		assertTrue(found);
 	}
-
+	
 }
