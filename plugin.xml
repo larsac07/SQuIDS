@@ -88,6 +88,14 @@
             symbolicIcon="error"
             	/>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+         <page
+            class="autocisq.PreferencePage"
+            id="autocisq.preferencePage"
+            name="AutoCISQ Settings">
+      </page>
+   </extension>
    
 
 </plugin>
