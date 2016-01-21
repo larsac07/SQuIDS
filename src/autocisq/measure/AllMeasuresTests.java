@@ -8,7 +8,7 @@ import autocisq.measure.maintainability.ClassTooManyChildrenTest;
 import autocisq.measure.maintainability.ContinueOrBreakOutsideSwitchTest;
 import autocisq.measure.maintainability.FileLOCTest;
 import autocisq.measure.maintainability.FunctionCommentedOutInstructionsTest;
-import autocisq.measure.maintainability.FunctionDuplicateTokensTest;
+import autocisq.measure.maintainability.FileDuplicateTokensTest;
 import autocisq.measure.maintainability.FunctionFanOutTest;
 import autocisq.measure.maintainability.FunctionParametersTest;
 import autocisq.measure.maintainability.HardCodedLiteralTest;
@@ -24,7 +24,7 @@ import autocisq.measure.reliability.EmptyExceptionHandlingBlockTest;
 		FileLOCTest.class, FunctionParametersTest.class, VariableDeclaredPublicTest.class, FunctionFanOutTest.class,
 		MethodDirectlyUsingFieldFromOtherClassTest.class, FunctionCommentedOutInstructionsTest.class,
 		ContinueOrBreakOutsideSwitchTest.class, HardCodedLiteralTest.class, ClassTooManyChildrenTest.class,
-		MethodTooManyDataOrFileOperationsTest.class, FunctionDuplicateTokensTest.class })
+		MethodTooManyDataOrFileOperationsTest.class, FileDuplicateTokensTest.class })
 public class AllMeasuresTests {
 
 }

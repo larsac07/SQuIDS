@@ -15,7 +15,7 @@ import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
-public class FunctionDuplicateTokensTest extends MeasureTest {
+public class FileDuplicateTokensTest extends MeasureTest {
 	
 	private CompilationUnit fileCU99;
 	private CompilationUnit fileCU100;
@@ -29,7 +29,7 @@ public class FunctionDuplicateTokensTest extends MeasureTest {
 	public void setUp() throws Exception {
 		this.issueFinder = IssueFinder.getInstance();
 		this.issueFinder.getMeasures().clear();
-		this.issueFinder.putMeasure(new FunctionDuplicateTokens(new HashMap<>()));
+		this.issueFinder.putMeasure(new FileDuplicateTokens(new HashMap<>()));
 		
 		File testFile99 = new File("res/test/duplicate/Class1.java");
 		File testFile100 = new File("res/test/duplicate/Class2.java");
@@ -67,7 +67,7 @@ public class FunctionDuplicateTokensTest extends MeasureTest {
 
 	@Override
 	public String getIssueType() {
-		return FunctionDuplicateTokens.ISSUE_TYPE;
+		return FileDuplicateTokens.ISSUE_TYPE;
 	}
 	
 }

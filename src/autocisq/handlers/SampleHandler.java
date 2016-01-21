@@ -81,7 +81,7 @@ public class SampleHandler extends AbstractHandler {
 		measures.add("autocisq.measure.maintainability.ClassTooManyChildren");
 		measures.add("autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch");
 		measures.add("autocisq.measure.maintainability.FileLOC");
-		measures.add("autocisq.measure.maintainability.FunctionDuplicateTokens");
+		measures.add("autocisq.measure.maintainability.FileDuplicateTokens");
 		measures.add("autocisq.measure.maintainability.FunctionCommentedOutInstructions");
 		measures.add("autocisq.measure.maintainability.FunctionFanOut");
 		measures.add("autocisq.measure.maintainability.FunctionParameters");
