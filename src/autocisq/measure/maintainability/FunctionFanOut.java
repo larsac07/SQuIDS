@@ -35,6 +35,9 @@ import autocisq.models.Issue;
  *
  */
 public class FunctionFanOut extends Measure {
+	
+	public final static int THRESHOLD = 10;
+	public final static String ISSUE_TYPE = "Function with fan-out >= " + THRESHOLD;
 
 	public FunctionFanOut(Map<String, Object> settings) {
 		super(settings);
@@ -50,11 +53,11 @@ public class FunctionFanOut extends Measure {
 			boolean isFunction = ModifierSet.isStatic(methodDeclaration.getModifiers());
 			if (isFunction) {
 				int fanOut = calculateFanOut(node);
-				if (fanOut >= 10) {
+				if (fanOut >= THRESHOLD) {
 					int[] indexes = JavaParserHelper.columnsToIndexes(this.fileString, node.getBeginLine(),
 							node.getEndLine(), node.getBeginColumn(), node.getEndColumn());
-					issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1],
-							"Function with fan-out of 10 or more", node.toString(), node));
+					issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], getIssueType(),
+							node.toString(), node));
 				}
 			}
 		}
@@ -81,6 +84,11 @@ public class FunctionFanOut extends Measure {
 			fanOut += calculateFanOut(child, issues);
 		}
 		return fanOut;
+	}
+	
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
 	}
 	
 }

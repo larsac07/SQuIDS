@@ -48,4 +48,19 @@ public class EntropyManualCalculator {
 		}
 		return infoGain;
 	}
+	
+	public static double calculateEntropy2(double divider, double[] values) {
+		try {
+			fw = new FileWriter(f);
+			fw.write("adfg");
+		} catch (IOException e) {
+			System.err.println("Could not get file");
+			e.printStackTrace();
+		} catch (Exception e) {
+			
+		} finally {
+			
+		}
+		return entropy;
+	}
 }

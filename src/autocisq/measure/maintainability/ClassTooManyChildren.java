@@ -30,20 +30,20 @@ import autocisq.models.Issue;
  * {@link #analyzeNode(Node, String, List, Map)} are ignored.
  *
  * @author Lars A. V. Cabrera
- *
+ *		
  */
 public class ClassTooManyChildren extends Measure {
-
+	
 	public final static String ISSUE_TYPE = "Class with >= 10 children";
 	public final static int THRESHOLD = 10;
-
+	
 	private Map<ClassOrInterfaceType, List<ClassOrInterfaceDeclaration>> classSubClassMap;
-
+	
 	public ClassTooManyChildren(Map<String, Object> settings) {
 		super(settings);
 		this.classSubClassMap = new HashMap<>();
 	}
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof ClassOrInterfaceDeclaration) {
@@ -54,7 +54,7 @@ public class ClassTooManyChildren extends Measure {
 				if (subClasses == null) {
 					subClasses = new ArrayList<>();
 				}
-				
+
 				if (existsInProject(superClass, compilationUnits)) {
 					subClasses.add(classDeclaration);
 					this.classSubClassMap.put(superClass, subClasses);
@@ -64,19 +64,19 @@ public class ClassTooManyChildren extends Measure {
 								fileString));
 						return issues;
 					}
-
+					
 				}
 			}
-			
+
 		}
 		return null;
 	}
-
+	
 	public static boolean existsInProject(ClassOrInterfaceType classOrInterfaceType,
 			List<CompilationUnit> projectCompilationUnits) {
 		return getTypeCompilationUnit(classOrInterfaceType, projectCompilationUnits) != null;
 	}
-	
+
 	public static CompilationUnit getTypeCompilationUnit(ClassOrInterfaceType classOrInterfaceType,
 			List<CompilationUnit> projectCompilationUnits) {
 		for (CompilationUnit cu : projectCompilationUnits) {
@@ -88,5 +88,10 @@ public class ClassTooManyChildren extends Measure {
 		}
 		return null;
 	}
-
+	
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
+	}
+	
 }

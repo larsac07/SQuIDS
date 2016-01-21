@@ -16,6 +16,9 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 public class FunctionParameters extends Measure {
+
+	public final static int THRESHOLD = 7;
+	public final static String ISSUE_TYPE = "Function passing >= " + THRESHOLD + " parameters";
 	
 	public FunctionParameters(Map<String, Object> settings) {
 		super(settings);
@@ -35,11 +38,16 @@ public class FunctionParameters extends Measure {
 			if (isFunction && meq7Params) {
 				int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
 						node.getBeginColumn(), node.getEndColumn());
-				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1],
-						"Function passing 7 or more parameters", node.toString(), node));
+				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], getIssueType(), node.toString(),
+						node));
 			}
 		}
 		return issues;
+	}
+
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
 	}
 	
 }

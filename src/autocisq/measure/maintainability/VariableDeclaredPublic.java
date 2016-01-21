@@ -23,9 +23,11 @@ import autocisq.models.Issue;
  * declared as public static final are considered constants.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
 public class VariableDeclaredPublic extends Measure {
+	
+	public final static String ISSUE_TYPE = "Variable declared public";
 	
 	public VariableDeclaredPublic(Map<String, Object> settings) {
 		super(settings);
@@ -43,13 +45,18 @@ public class VariableDeclaredPublic extends Measure {
 			if (isVariable && isPublic) {
 				int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
 						node.getBeginColumn(), node.getEndColumn());
-				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], "Variable declared public",
-						node.toString(), node));
+				issues.add(
+						new FileIssue(node.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE, node.toString(), node));
 			}
 
 		}
 
 		return issues;
+	}
+
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
 	}
 	
 }

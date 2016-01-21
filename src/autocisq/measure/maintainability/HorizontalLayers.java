@@ -23,11 +23,14 @@ import autocisq.models.ProjectIssue;
  *		
  */
 public class HorizontalLayers extends Measure {
-
+	
+	public final static int THRESHOLD = 8;
+	public final static String ISSUE_TYPE = "Horizontal Layers > " + THRESHOLD;
+	
 	private Map<String, Integer> layerMap;
 	private List<Issue> issues;
 	private boolean returned;
-
+	
 	@SuppressWarnings("unchecked")
 	public HorizontalLayers(Map<String, Object> settings) {
 		super(settings);
@@ -47,7 +50,7 @@ public class HorizontalLayers extends Measure {
 		this.issues = new ArrayList<>();
 		this.returned = false;
 	}
-
+	
 	/**
 	 * This override differs much from the other implementations. The analysis
 	 * is done when analyzing the first node in the project, and returns the
@@ -74,7 +77,7 @@ public class HorizontalLayers extends Measure {
 			return this.issues;
 		}
 	}
-
+	
 	/**
 	 * Analyzes the layer map provided in the constructor. If the number of
 	 * layers is higher than 8, an issue is created and added to the list.
@@ -84,9 +87,14 @@ public class HorizontalLayers extends Measure {
 		if (layers != null) {
 			Set<Integer> distinctLayers = new HashSet<Integer>(layers);
 			if (distinctLayers.size() > 8) {
-				this.issues.add(new ProjectIssue("Too Many Horizontal Layers"));
+				this.issues.add(new ProjectIssue(getIssueType()));
 			}
 		}
 	}
-
+	
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
+	}
+	
 }

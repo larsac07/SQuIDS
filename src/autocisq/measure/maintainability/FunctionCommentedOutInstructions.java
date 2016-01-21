@@ -24,16 +24,18 @@ import autocisq.models.Issue;
  * instructions.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
 public class FunctionCommentedOutInstructions extends Measure {
 	
+	public final static double THRESHOLD = 0.02d;
+	public final static String ISSUE_TYPE = "Function with > " + (int) (THRESHOLD * 100)
+			+ "% commented out instructions";
+			
 	public FunctionCommentedOutInstructions(Map<String, Object> settings) {
 		super(settings);
 	}
 
-	public final static double threshold = 0.02d;
-	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof MethodDeclaration) {
@@ -41,15 +43,15 @@ public class FunctionCommentedOutInstructions extends Measure {
 			int instructions = FunctionCommentedOutInstructions.countInstructions(methodDeclaration);
 			int commOutInstructions = FunctionCommentedOutInstructions.countCommentedOutInstructions(methodDeclaration);
 			double result = (double) commOutInstructions / (instructions + commOutInstructions);
-			if (result > threshold) {
+			if (result > THRESHOLD) {
 				List<Issue> issues = new ArrayList<>();
-				issues.add(new FileIssue("Function with > 2% commented out instructions", node, fileString));
+				issues.add(new FileIssue(getIssueType(), node, fileString));
 				return issues;
 			}
 		}
 		return null;
 	}
-
+	
 	public static int countCommentedOutInstructions(MethodDeclaration methodDeclaration) {
 		List<Comment> comments = methodDeclaration.getAllContainedComments();
 		String instructions = "";
@@ -66,22 +68,27 @@ public class FunctionCommentedOutInstructions extends Measure {
 			return 0;
 		}
 	}
-
+	
 	public static int countInstructions(MethodDeclaration methodDeclaration) {
 		return countNodesOfType(methodDeclaration, Expression.class);
 	}
-	
+
 	public static int countNodesOfType(Node rootNode, Class<? extends Node> klass) {
 		int count = 0;
 		if (klass.isAssignableFrom(rootNode.getClass())) {
 			count++;
 		}
-		
+
 		for (Node child : rootNode.getChildrenNodes()) {
 			count += countNodesOfType(child, klass);
 		}
-		
+
 		return count;
 	}
 	
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
+	}
+
 }

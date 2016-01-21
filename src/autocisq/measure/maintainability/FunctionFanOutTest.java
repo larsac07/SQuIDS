@@ -1,11 +1,7 @@
 package autocisq.measure.maintainability;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,11 +13,10 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 
 import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
-import autocisq.models.Issue;
+import autocisq.measure.MeasureTest;
 
-public class FunctionFanOutTest {
-	
-	private List<Issue> issues;
+public class FunctionFanOutTest extends MeasureTest {
+
 	private ConstructorDeclaration constructorFanOut10;
 	private MethodDeclaration methodFanOut12;
 	private MethodDeclaration methodFanOut10;
@@ -30,19 +25,19 @@ public class FunctionFanOutTest {
 	private MethodDeclaration functionFanOut10;
 	private MethodDeclaration functionFanOut9;
 	private String fileString;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
 		issueFinder.putMeasure(new FunctionFanOut(new HashMap<>()));
-		
+
 		File testFile = new File("res/test/Person.java");
-
+		
 		this.fileString = IOUtils.fileToString(testFile);
-
+		
 		CompilationUnit personCU = JavaParser.parse(testFile);
-
+		
 		this.constructorFanOut10 = (ConstructorDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(10);
 		this.methodFanOut12 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(17);
 		this.methodFanOut10 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(18);
@@ -51,68 +46,44 @@ public class FunctionFanOutTest {
 		this.functionFanOut10 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(21);
 		this.functionFanOut9 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(22);
 	}
-	
+
 	@Test
 	public void skipConstructorWithFanOut10() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.constructorFanOut10, null, this.fileString);
-		skipIssue();
+		skipIssue(this.constructorFanOut10, this.fileString);
 	}
-
+	
 	@Test
 	public void skipMethodWithFanOut12() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.methodFanOut12, null, this.fileString);
-		skipIssue();
+		skipIssue(this.methodFanOut12, this.fileString);
 	}
-
+	
 	@Test
 	public void skipMethodWithFanOut10() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.methodFanOut10, null, this.fileString);
-		skipIssue();
+		skipIssue(this.methodFanOut10, this.fileString);
 	}
-
+	
 	@Test
 	public void findFunctionWithFanOut12() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.functionFanOut12, null, this.fileString);
-		findIssue();
+		findIssue(this.functionFanOut12, this.fileString);
 	}
-	
+
 	@Test
 	public void findFunctionWithFanOut11() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.functionFanOut11, null, this.fileString);
-		findIssue();
+		findIssue(this.functionFanOut11, this.fileString);
 	}
-	
+
 	@Test
 	public void findFunctionWithFanOut10() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.functionFanOut10, null, this.fileString);
-		findIssue();
+		findIssue(this.functionFanOut10, this.fileString);
 	}
-	
+
 	@Test
 	public void skipFunctionWithFanOut9() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.functionFanOut9, null, this.fileString);
-		skipIssue();
+		skipIssue(this.functionFanOut9, this.fileString);
 	}
 
-	private void findIssue() {
-		assertTrue(this.issues.size() > 0);
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals("Function with fan-out of 10 or more")) {
-				found = true;
-			}
-		}
-		assertTrue(found);
+	@Override
+	public String getIssueType() {
+		return FunctionFanOut.ISSUE_TYPE;
 	}
-
-	private void skipIssue() {
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals("Function with fan-out of 10 or more")) {
-				found = true;
-			}
-		}
-		assertFalse(found);
-	}
-	
 }

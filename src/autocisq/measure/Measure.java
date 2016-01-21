@@ -16,12 +16,12 @@ import autocisq.models.Issue;
  * {@link com.github.javaparser.ast.Node Node} in the project's AST.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *		
  */
 public abstract class Measure {
-
+	
 	private Map<String, Object> settings;
-
+	
 	/**
 	 * Creates a new {@link MeasureTest} with settings.
 	 *
@@ -35,7 +35,7 @@ public abstract class Measure {
 		}
 		this.settings = settings;
 	}
-	
+
 	/**
 	 * Analyzes a Node and the original file string (if required) according to a
 	 * specific measure, and returns a list of issues. The list can contain 0, 1
@@ -53,9 +53,23 @@ public abstract class Measure {
 	 *         but cannot be null.
 	 */
 	public abstract List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits);
-
+	
+	/**
+	 * Returns the settings map which was provided when initializing this
+	 * measure.
+	 *
+	 * @return the settings map which was provided when initializing this
+	 *         measure
+	 */
 	public Map<String, Object> getSettings() {
 		return this.settings;
 	}
-	
+
+	/**
+	 * Returns a description of the type of issue this measure can find.
+	 *
+	 * @return the type of issue this measure can find
+	 */
+	public abstract String getIssueType();
+
 }

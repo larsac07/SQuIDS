@@ -28,15 +28,15 @@ import autocisq.models.Issue;
  * final).
  *
  * @author Lars A. V. Cabrera
- *
+ * 		
  */
 public class MethodDirectlyUsingFieldFromOtherClass extends Measure {
+	
+	public final static String ISSUE_TYPE = "Method directly using field from other class";
 	
 	public MethodDirectlyUsingFieldFromOtherClass(Map<String, Object> settings) {
 		super(settings);
 	}
-
-	public final static String ISSUE_TYPE = "Method directly using field from other class";
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
@@ -84,5 +84,10 @@ public class MethodDirectlyUsingFieldFromOtherClass extends Measure {
 	
 	private static String withoutArrayBrackets(String string) {
 		return string.replace("(\\[)|(\\])", "");
+	}
+
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
 	}
 }

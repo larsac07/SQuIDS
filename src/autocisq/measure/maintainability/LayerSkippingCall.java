@@ -20,10 +20,12 @@ import autocisq.models.Issue;
  * of layer-skipping calls.
  *
  * @author Lars A. V. Cabrera
- *		
+ * 		
  */
 public class LayerSkippingCall extends Measure {
 	
+	public final static String ISSUE_TYPE = "Layer-Skipping Call";
+
 	private Map<String, Integer> layerMap;
 	
 	@SuppressWarnings("unchecked")
@@ -73,13 +75,18 @@ public class LayerSkippingCall extends Measure {
 						if (Math.abs(methodLayer - methodCallLayer) > 1) {
 							int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(),
 									node.getEndLine(), node.getBeginColumn(), node.getEndColumn());
-							issues.add(new FileIssue(methodCall.getBeginLine(), indexes[0], indexes[1],
-									"Layer-Skipping Call", methodCall.toString(), methodCall));
+							issues.add(new FileIssue(methodCall.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE,
+									methodCall.toString(), methodCall));
 						}
 					}
 				}
 			}
 		}
 		return issues;
+	}
+
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
 	}
 }

@@ -21,7 +21,7 @@ import autocisq.models.Issue;
 
 public class FunctionCommentedOutInstructionsTest {
 
-	private final static double threshold = FunctionCommentedOutInstructions.threshold;
+	private final static double threshold = FunctionCommentedOutInstructions.THRESHOLD;
 	private List<Issue> issues;
 	private MethodDeclaration functionClean;
 	private MethodDeclaration function36COI;

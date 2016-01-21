@@ -17,10 +17,10 @@ import autocisq.models.Issue;
 import autocisq.models.ProjectIssue;
 
 public class HorizontalLayersTest {
-	
+
 	private List<File> layerTestFiles;
 	private Map<String, Object> settings;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		this.layerTestFiles = new LinkedList<>();
@@ -30,7 +30,7 @@ public class HorizontalLayersTest {
 		this.layerTestFiles.add(new File("res/test/layers/ThemeManager.java"));
 		this.layerTestFiles.add(new File("res/test/layers/TsvToHtml.java"));
 		this.layerTestFiles.add(new File("res/test/layers/Parser.java"));
-
+		
 		Map<String, Integer> layerMap = new LinkedHashMap<>();
 		layerMap.put("no.uib.lca092.rtms.gui.GUI", 1);
 		layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", 2);
@@ -41,24 +41,24 @@ public class HorizontalLayersTest {
 		layerMap.put("no.uib.lca092.rtms.gui.ThemeManager2", 7);
 		layerMap.put("no.uib.lca092.rtms.TsvToHtml2", 8);
 		layerMap.put("no.uib.lca092.rtms.io.Parser2", 9);
-
+		
 		List<String> measureStrings = new LinkedList<>();
 		measureStrings.add(HorizontalLayers.class.getCanonicalName());
-
+		
 		this.settings = new HashMap<>();
 		this.settings.put("layer_map", layerMap);
 		this.settings.put("measures", measureStrings);
 	}
-	
+
 	@Test
 	public void findProjectWithTooManyHorizontalLayers() {
 		Map<File, List<Issue>> layerIssuesMap = IssueFinder.getInstance().findIssues(this.layerTestFiles,
 				this.settings);
-				
+
 		boolean found = false;
 		search: for (List<Issue> fileIssues : layerIssuesMap.values()) {
 			for (Issue issue : fileIssues) {
-				if (issue.getType().equals("Too Many Horizontal Layers") && issue instanceof ProjectIssue) {
+				if (issue.getType().equals(HorizontalLayers.ISSUE_TYPE) && issue instanceof ProjectIssue) {
 					found = true;
 					break search;
 				}
@@ -66,5 +66,5 @@ public class HorizontalLayersTest {
 		}
 		assertTrue(found);
 	}
-	
+
 }

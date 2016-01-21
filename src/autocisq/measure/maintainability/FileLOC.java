@@ -23,6 +23,9 @@ import autocisq.models.Issue;
  */
 public class FileLOC extends Measure {
 	
+	public final static int THRESHOLD = 1000;
+	public final static String ISSUE_TYPE = "More than " + THRESHOLD + " Lines of Code";
+	
 	public FileLOC(Map<String, Object> settings) {
 		super(settings);
 	}
@@ -32,14 +35,19 @@ public class FileLOC extends Measure {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof CompilationUnit) {
 			String[] lines = fileString.split("\r?\n|\r");
-			if (lines.length > 1000) {
+			if (lines.length > THRESHOLD) {
 				int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
 						node.getBeginColumn(), node.getEndColumn());
-				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], "More than 1000 Lines of Code",
-						node.toString(), node));
+				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], getIssueType(), node.toString(),
+						node));
 			}
 		}
 		return issues;
+	}
+	
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
 	}
 	
 }

@@ -28,16 +28,16 @@ import autocisq.models.Issue;
  * an ancestor node which is an instance of {@link SwitchStmt}.
  *
  * @author Lars A. V. Cabrera
- *
+ *		
  */
 public class ContinueOrBreakOutsideSwitch extends Measure {
-
+	
 	public ContinueOrBreakOutsideSwitch(Map<String, Object> settings) {
 		super(settings);
 	}
-
+	
 	public final static String ISSUE_TYPE = "Continue or Break outside switch";
-
+	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof ContinueStmt || node instanceof BreakStmt) {
@@ -51,5 +51,10 @@ public class ContinueOrBreakOutsideSwitch extends Measure {
 		}
 		return null;
 	}
-
+	
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
+	}
+	
 }

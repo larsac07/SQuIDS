@@ -1,11 +1,7 @@
 package autocisq.measure.maintainability;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,11 +13,10 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 
 import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
-import autocisq.models.Issue;
+import autocisq.measure.MeasureTest;
 
-public class FunctionParametersTest {
+public class FunctionParametersTest extends MeasureTest {
 	
-	private List<Issue> issues;
 	private ConstructorDeclaration constructor10Params;
 	private MethodDeclaration method10Params;
 	private MethodDeclaration method8Params;
@@ -54,65 +49,42 @@ public class FunctionParametersTest {
 	
 	@Test
 	public void skipConstructorWith10Parameters() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.constructor10Params, null, this.fileString);
-		skipIssue();
+		skipIssue(this.constructor10Params, this.fileString);
 	}
 	
 	@Test
 	public void skipMethodWith10Parameters() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.method10Params, null, this.fileString);
-		skipIssue();
+		skipIssue(this.method10Params, this.fileString);
 	}
 	
 	@Test
 	public void skipMethodWith8Parameters() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.method8Params, null, this.fileString);
-		skipIssue();
+		skipIssue(this.method8Params, this.fileString);
 	}
 	
 	@Test
 	public void findFunctionWith10Parameters() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.function10Params, null, this.fileString);
-		findIssue();
+		findIssue(this.function10Params, this.fileString);
 	}
 
 	@Test
 	public void findFunctionWith8Parameters() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.function8Params, null, this.fileString);
-		findIssue();
+		findIssue(this.function8Params, this.fileString);
 	}
 
 	@Test
 	public void findFunctionWith7Parameters() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.function7Params, null, this.fileString);
-		findIssue();
+		findIssue(this.function7Params, this.fileString);
 	}
 
 	@Test
 	public void skipFunctionWith6Parameters() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.function6Params, null, this.fileString);
-		skipIssue();
+		skipIssue(this.function6Params, this.fileString);
 	}
 	
-	private void findIssue() {
-		assertTrue(this.issues.size() > 0);
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals("Function passing 7 or more parameters")) {
-				found = true;
-			}
-		}
-		assertTrue(found);
-	}
-	
-	private void skipIssue() {
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals("Function passing 7 or more parameters")) {
-				found = true;
-			}
-		}
-		assertFalse(found);
+	@Override
+	public String getIssueType() {
+		return FunctionParameters.ISSUE_TYPE;
 	}
 	
 }

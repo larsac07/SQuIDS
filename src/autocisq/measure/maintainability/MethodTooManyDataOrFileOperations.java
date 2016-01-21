@@ -42,16 +42,16 @@ import autocisq.models.Issue;
  * 		
  */
 public class MethodTooManyDataOrFileOperations extends Measure {
-	
-	public final static String ISSUE_TYPE = "Method with >= 7 data or file operations";
-	
+
 	private final static int THRESHOLD = 7;
-	
+
+	public final static String ISSUE_TYPE = "Method with >= " + THRESHOLD + " data or file operations";
+
 	private List<String> dbOrIoClasses;
 	private Map<String, String> typeImports;
 	private Map<String, String> variableTypes;
 	private int count;
-	
+
 	/**
 	 * Creates a new {@link MethodTooManyDataOrFileOperations} object and tries
 	 * to retrieve a list of classes which contain data or file operations.
@@ -80,7 +80,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 		}
 		reset();
 	}
-	
+
 	/**
 	 * Filters out {@link MethodCallExpr} objects to check if they are called
 	 * upon classes which contain data or file operations. Calls
@@ -94,7 +94,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr methodCallExpr = (MethodCallExpr) node;
-			
+
 			Expression expression = methodCallExpr.getScope();
 			if (expression instanceof FieldAccessExpr) {
 				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) expression;
@@ -109,7 +109,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Stores imports from {@link CompilationUnit}, parameters from
 	 * {@link ConstructorDeclaration} and {@link MethodDeclaration}, and
@@ -140,7 +140,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 			storeVariables(variableDeclarationExpr.getVars(), variableDeclarationExpr.getType().toString());
 		}
 	}
-
+	
 	/**
 	 * Stores import declarations in type - package pairs
 	 *
@@ -154,7 +154,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 			this.variableTypes.put(packageType, packageType);
 		}
 	}
-	
+
 	/**
 	 * Returns the last joint from a package string, e.g. "File" from
 	 * "java.io.File".
@@ -169,7 +169,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 		String packageType = packageStringParts[packageStringParts.length - 1];
 		return packageType;
 	}
-
+	
 	/**
 	 * Returns a list of issues with 0 or 1 {@link FileIssue}, depending on
 	 * whether or not the {@link NameExpr} is found in the db_or_io_classes
@@ -200,7 +200,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Stores the parameters in both identifier - type and type - type pairs
 	 * (for static calls), e.g. "file" - "File" and "File" - "File".
@@ -214,7 +214,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 			this.variableTypes.put(parameter.getType().toString(), parameter.getType().toString());
 		}
 	}
-	
+
 	/**
 	 * Stores the variables in both identifier - type and type - type pairs (for
 	 * static calls), e.g. "file" - "File" and "File" - "File".
@@ -230,7 +230,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 			this.variableTypes.put(type.toString(), type);
 		}
 	}
-
+	
 	/**
 	 * Returns the package of a type, e.g. "File" returns "java.io.File"
 	 *
@@ -240,7 +240,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 	private String typeToPackage(String type) {
 		return this.typeImports.get(type);
 	}
-	
+
 	/**
 	 * Decides whether or not a class contains data or file operations.
 	 *
@@ -256,7 +256,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Get the type of a {@link NameExpr}. Works for cases such as System.out
 	 * and Files.
@@ -274,7 +274,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 			return nameExprString;
 		}
 	}
-	
+
 	/**
 	 * Resets import and variable maps and calls
 	 * {@link MethodTooManyDataOrFileOperations#resetCount()}.
@@ -284,12 +284,17 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 		this.variableTypes = new HashMap<>();
 		resetCount();
 	}
-
+	
 	/**
 	 * Resets the count of {@link MethodCallExpr} which contain data or file
 	 * operations in a {@link CompilationUnit}.
 	 */
 	private void resetCount() {
 		this.count = 0;
+	}
+	
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
 	}
 }

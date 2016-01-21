@@ -16,9 +16,8 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link FunctionDuplicateTokens} class represents the CISQ
- * Maintainability measure 4: # files that contain 100+ consecutive duplicate
- * tokens.
+ * The {@link FunctionDuplicateTokens} class represents the CISQ Maintainability
+ * measure 4: # files that contain 100+ consecutive duplicate tokens.
  *
  * It considers tokens as Java keywords, identifiers, separators, operators and
  * literals. In other words, comments and whitespace is not considered.
@@ -35,10 +34,10 @@ import autocisq.models.Issue;
  *
  */
 public class FunctionDuplicateTokens extends Measure {
-	
-	public final static String ISSUE_TYPE = "File with 100+ consecutive duplicate tokens";
+
 	public final static int THRESHOLD = 100;
-	
+	public final static String ISSUE_TYPE = "File with >= " + THRESHOLD + " consecutive duplicate tokens";
+
 	private final static String KEYWORDS = "abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|"
 			+ "double|else|enum|extends|false|finally|final|float|for|goto|if|implements|import|instanceof|interface|int|long|"
 			+ "native|new|null|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|"
@@ -47,11 +46,11 @@ public class FunctionDuplicateTokens extends Measure {
 	private final static String OPERATORS = "=|>|<|!|~|\\?|:|==|<=|>=|!=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||\\^|%|\\$|\\#";
 	private final static String IDENTIFIERS = "[a-zA-Z][a-zA-Z0-9_]*";
 	private final static String LITERALS = "[0-9]+(l|L)?\\.?([0-9]+((f|F)|(d|D)))?|\"^\"*\"";
-	
+
 	private Pattern pattern;
 	private Map<CompilationUnit, List<String>> fileTokensMap;
 	private List<CompilationUnit> markedCUs;
-	
+
 	public FunctionDuplicateTokens(Map<String, Object> settings) {
 		super(settings);
 		this.pattern = Pattern
@@ -59,7 +58,7 @@ public class FunctionDuplicateTokens extends Measure {
 		this.fileTokensMap = new HashMap<>();
 		this.markedCUs = new LinkedList<>();
 	}
-
+	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof CompilationUnit) {
@@ -86,12 +85,12 @@ public class FunctionDuplicateTokens extends Measure {
 		}
 		return null;
 	}
-
+	
 	private Issue mark(CompilationUnit cuWithDuplicates) {
 		this.markedCUs.add(cuWithDuplicates);
 		return new FileIssue(ISSUE_TYPE, cuWithDuplicates, cuWithDuplicates.toString());
 	}
-	
+
 	private boolean isMarked(CompilationUnit cu) {
 		for (CompilationUnit markedCU : this.markedCUs) {
 			if (cu.equals(markedCU)) {
@@ -100,7 +99,7 @@ public class FunctionDuplicateTokens extends Measure {
 		}
 		return false;
 	}
-	
+
 	private List<CompilationUnit> getCusWithDuplicates(CompilationUnit compilationUnit, List<String> tokens) {
 		List<CompilationUnit> cusWithDuplicates = new LinkedList<>();
 		for (CompilationUnit compilationUnit2 : this.fileTokensMap.keySet()) {
@@ -121,4 +120,9 @@ public class FunctionDuplicateTokens extends Measure {
 		return cusWithDuplicates;
 	}
 	
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
+	}
+
 }

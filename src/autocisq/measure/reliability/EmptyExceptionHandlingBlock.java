@@ -21,9 +21,11 @@ import autocisq.models.Issue;
  * empty.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
 public class EmptyExceptionHandlingBlock extends Measure {
+	
+	public final static String ISSUE_TYPE = "Empty exception handling block";
 	
 	public EmptyExceptionHandlingBlock(Map<String, Object> settings) {
 		super(settings);
@@ -54,20 +56,25 @@ public class EmptyExceptionHandlingBlock extends Measure {
 		if (blockStmt.getStmts().isEmpty() && parent instanceof CatchClause) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
 					parent.getBeginColumn(), parent.getEndColumn());
-			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], "Empty Catch Block",
-					parent.toString(), parent));
+			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE, parent.toString(),
+					parent));
 		} else if (blockStmt.getStmts().size() == 1 && parent instanceof CatchClause
 				&& blockStmt.getStmts().get(0).toString().equals("e.printStackTrace();")) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
 					parent.getBeginColumn(), parent.getEndColumn());
-			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], "Auto Generated Catch Block",
-					parent.toString(), parent));
+			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE, parent.toString(),
+					parent));
 		} else if (blockStmt.getStmts().isEmpty() && blockStmt.getParentNode() instanceof TryStmt) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, blockStmt.getBeginLine(),
 					blockStmt.getEndLine(), parent.getBeginColumn(), parent.getEndColumn());
-			issues.add(new FileIssue(blockStmt.getBeginLine(), indexes[0], indexes[1], "Empty Finally Block",
-					blockStmt.toString(), blockStmt));
+			issues.add(new FileIssue(blockStmt.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE, blockStmt.toString(),
+					blockStmt));
 		}
 		return issues;
+	}
+
+	@Override
+	public String getIssueType() {
+		return ISSUE_TYPE;
 	}
 }
