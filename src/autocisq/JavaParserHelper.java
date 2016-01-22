@@ -16,6 +16,7 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.type.Type;
@@ -223,5 +224,23 @@ public abstract class JavaParserHelper {
 			}
 		}
 		throw new NoSuchDescendantFoundException();
+	}
+	
+	/**
+	 * Get the type of a {@link NameExpr}. Works for cases such as System.out
+	 * and Files.
+	 *
+	 * @param nameExpr
+	 *            - the {@link NameExpr} to get the type from
+	 * @return the type of the {@link NameExpr}
+	 */
+	public static String getNameExprType(NameExpr nameExpr) {
+		String nameExprString = nameExpr.getName();
+		if (nameExprString.contains(".")) {
+			String[] parts = nameExpr.getName().split("\\.");
+			return parts[0];
+		} else {
+			return nameExprString;
+		}
 	}
 }

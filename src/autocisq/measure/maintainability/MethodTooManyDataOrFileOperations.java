@@ -19,6 +19,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 
+import autocisq.JavaParserHelper;
 import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -39,7 +40,7 @@ import autocisq.models.Issue;
  * e.g. java.io.File, not java.io.*.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *		
  */
 public class MethodTooManyDataOrFileOperations extends Measure {
 
@@ -185,7 +186,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 	 *         whether or not an issue was found
 	 */
 	private List<Issue> dbOrIoMethodCall(MethodCallExpr methodCallExpr, String fileString, NameExpr nameExpr) {
-		String nameExprType = getNameExprType(nameExpr);
+		String nameExprType = JavaParserHelper.getNameExprType(nameExpr);
 		String type = this.variableTypes.get(nameExprType);
 		if (type != null) {
 			String packageName = typeToPackage(type);
@@ -255,24 +256,6 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Get the type of a {@link NameExpr}. Works for cases such as System.out
-	 * and Files.
-	 *
-	 * @param nameExpr
-	 *            - the {@link NameExpr} to get the type from
-	 * @return the type of the {@link NameExpr}
-	 */
-	private String getNameExprType(NameExpr nameExpr) {
-		String nameExprString = nameExpr.getName();
-		if (nameExprString.contains(".")) {
-			String[] parts = nameExpr.getName().split("\\.");
-			return parts[0];
-		} else {
-			return nameExprString;
-		}
 	}
 
 	/**
