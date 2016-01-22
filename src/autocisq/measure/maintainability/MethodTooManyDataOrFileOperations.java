@@ -7,13 +7,11 @@ import java.util.Map;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 
 import autocisq.JavaParserHelper;
 import autocisq.models.FileIssue;
@@ -38,14 +36,14 @@ import autocisq.models.Issue;
  * 		
  */
 public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
-	
+
 	private final static int THRESHOLD = 7;
-	
+
 	public final static String ISSUE_TYPE = "Method with >= " + THRESHOLD + " data or file operations";
-	
+
 	private List<String> dbOrIoClasses;
 	private int count;
-	
+
 	/**
 	 * Creates a new {@link MethodTooManyDataOrFileOperations} object and tries
 	 * to retrieve a list of classes which contain data or file operations.
@@ -74,7 +72,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 		}
 		reset();
 	}
-	
+
 	/**
 	 * Filters out {@link MethodCallExpr} objects to check if they are called
 	 * upon classes which contain data or file operations. Calls
@@ -89,7 +87,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 		super.analyzeNode(node, fileString, compilationUnits);
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr methodCallExpr = (MethodCallExpr) node;
-			
+
 			Expression expression = methodCallExpr.getScope();
 			if (expression instanceof FieldAccessExpr) {
 				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) expression;
@@ -102,12 +100,10 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Stores imports from {@link CompilationUnit}, parameters from
-	 * {@link ConstructorDeclaration} and {@link MethodDeclaration}, and
-	 * variables from {@link FieldDeclaration} and
-	 * {@link VariableDeclarationExpr}.
+	 * Calls {@link TypeDependentMeasure#storeVariables(Node)} and resets count
+	 * if node is {@link ConstructorDeclaration} or {@link MethodDeclaration}
 	 *
 	 * @param node
 	 *            - the node to store variables from.
@@ -115,13 +111,11 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 	@Override
 	protected void storeVariables(Node node) {
 		super.storeVariables(node);
-		if (node instanceof ConstructorDeclaration) {
-			resetCount();
-		} else if (node instanceof MethodDeclaration) {
+		if (node instanceof ConstructorDeclaration || node instanceof MethodDeclaration) {
 			resetCount();
 		}
 	}
-
+	
 	/**
 	 * Returns a list of issues with 0 or 1 {@link FileIssue}, depending on
 	 * whether or not the {@link NameExpr} is found in the db_or_io_classes
@@ -152,7 +146,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Decides whether or not a class contains data or file operations.
 	 *
@@ -168,7 +162,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Resets import and variable maps and calls
 	 * {@link MethodTooManyDataOrFileOperations#resetCount()}.
@@ -178,7 +172,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 		super.reset();
 		resetCount();
 	}
-
+	
 	/**
 	 * Resets the count of {@link MethodCallExpr} which contain data or file
 	 * operations in a {@link CompilationUnit}.
@@ -186,7 +180,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 	private void resetCount() {
 		this.count = 0;
 	}
-
+	
 	@Override
 	public String getIssueType() {
 		return ISSUE_TYPE;
