@@ -1,18 +1,14 @@
 package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
@@ -20,7 +16,6 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 
 import autocisq.JavaParserHelper;
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -40,19 +35,17 @@ import autocisq.models.Issue;
  * e.g. java.io.File, not java.io.*.
  *
  * @author Lars A. V. Cabrera
- *		
+ * 		
  */
-public class MethodTooManyDataOrFileOperations extends Measure {
-
+public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
+	
 	private final static int THRESHOLD = 7;
-
+	
 	public final static String ISSUE_TYPE = "Method with >= " + THRESHOLD + " data or file operations";
-
+	
 	private List<String> dbOrIoClasses;
-	private Map<String, String> typeImports;
-	private Map<String, String> variableTypes;
 	private int count;
-
+	
 	/**
 	 * Creates a new {@link MethodTooManyDataOrFileOperations} object and tries
 	 * to retrieve a list of classes which contain data or file operations.
@@ -81,7 +74,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 		}
 		reset();
 	}
-
+	
 	/**
 	 * Filters out {@link MethodCallExpr} objects to check if they are called
 	 * upon classes which contain data or file operations. Calls
@@ -93,9 +86,10 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 	 */
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
+		super.analyzeNode(node, fileString, compilationUnits);
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr methodCallExpr = (MethodCallExpr) node;
-
+			
 			Expression expression = methodCallExpr.getScope();
 			if (expression instanceof FieldAccessExpr) {
 				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) expression;
@@ -105,12 +99,10 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 				NameExpr nameExpr = (NameExpr) expression;
 				return dbOrIoMethodCall(methodCallExpr, fileString, nameExpr);
 			}
-		} else {
-			storeVariables(node);
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Stores imports from {@link CompilationUnit}, parameters from
 	 * {@link ConstructorDeclaration} and {@link MethodDeclaration}, and
@@ -120,57 +112,16 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 	 * @param node
 	 *            - the node to store variables from.
 	 */
-	private void storeVariables(Node node) {
-		if (node instanceof CompilationUnit) {
-			CompilationUnit compilationUnit = (CompilationUnit) node;
-			reset();
-			addImports(compilationUnit.getImports());
-		} else if (node instanceof ConstructorDeclaration) {
-			ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) node;
-			storeParameters(constructorDeclaration.getParameters());
+	@Override
+	protected void storeVariables(Node node) {
+		super.storeVariables(node);
+		if (node instanceof ConstructorDeclaration) {
 			resetCount();
 		} else if (node instanceof MethodDeclaration) {
-			MethodDeclaration methodDeclaration = (MethodDeclaration) node;
-			storeParameters(methodDeclaration.getParameters());
 			resetCount();
-		} else if (node instanceof FieldDeclaration) {
-			FieldDeclaration fieldDeclaration = (FieldDeclaration) node;
-			storeVariables(fieldDeclaration.getVariables(), fieldDeclaration.getType().toString());
-		} else if (node instanceof VariableDeclarationExpr) {
-			VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) node;
-			storeVariables(variableDeclarationExpr.getVars(), variableDeclarationExpr.getType().toString());
-		}
-	}
-	
-	/**
-	 * Stores import declarations in type - package pairs
-	 *
-	 * @param importDeclarations
-	 */
-	private void addImports(List<ImportDeclaration> importDeclarations) {
-		for (ImportDeclaration importDeclaration : importDeclarations) {
-			String packageString = importDeclaration.getName().toString();
-			String packageType = getPackageType(packageString);
-			this.typeImports.put(packageType, packageString);
-			this.variableTypes.put(packageType, packageType);
 		}
 	}
 
-	/**
-	 * Returns the last joint from a package string, e.g. "File" from
-	 * "java.io.File".
-	 *
-	 * @param packageString
-	 *            - e.g. "java.io.File"
-	 * @return the last joint from the package string, e.g. "File" from
-	 *         "java.io.File"
-	 */
-	private String getPackageType(String packageString) {
-		String[] packageStringParts = packageString.split("\\.");
-		String packageType = packageStringParts[packageStringParts.length - 1];
-		return packageType;
-	}
-	
 	/**
 	 * Returns a list of issues with 0 or 1 {@link FileIssue}, depending on
 	 * whether or not the {@link NameExpr} is found in the db_or_io_classes
@@ -187,7 +138,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 	 */
 	private List<Issue> dbOrIoMethodCall(MethodCallExpr methodCallExpr, String fileString, NameExpr nameExpr) {
 		String nameExprType = JavaParserHelper.getNameExprType(nameExpr);
-		String type = this.variableTypes.get(nameExprType);
+		String type = getVariableTypes().get(nameExprType);
 		if (type != null) {
 			String packageName = typeToPackage(type);
 			if (isDbOrIoClass(packageName)) {
@@ -203,46 +154,6 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 	}
 	
 	/**
-	 * Stores the parameters in both identifier - type and type - type pairs
-	 * (for static calls), e.g. "file" - "File" and "File" - "File".
-	 *
-	 * @param parameters
-	 *            - the parameters to store
-	 */
-	private void storeParameters(List<Parameter> parameters) {
-		for (Parameter parameter : parameters) {
-			this.variableTypes.put(parameter.getId().getName(), parameter.getType().toString());
-			this.variableTypes.put(parameter.getType().toString(), parameter.getType().toString());
-		}
-	}
-
-	/**
-	 * Stores the variables in both identifier - type and type - type pairs (for
-	 * static calls), e.g. "file" - "File" and "File" - "File".
-	 *
-	 * @param variableDeclarators
-	 *            - the variables to store
-	 * @param type
-	 *            - the type of the variables
-	 */
-	private void storeVariables(List<VariableDeclarator> variableDeclarators, String type) {
-		for (VariableDeclarator variableDeclarator : variableDeclarators) {
-			this.variableTypes.put(variableDeclarator.getId().getName(), type);
-			this.variableTypes.put(type.toString(), type);
-		}
-	}
-	
-	/**
-	 * Returns the package of a type, e.g. "File" returns "java.io.File"
-	 *
-	 * @param type
-	 * @return
-	 */
-	private String typeToPackage(String type) {
-		return this.typeImports.get(type);
-	}
-
-	/**
 	 * Decides whether or not a class contains data or file operations.
 	 *
 	 * @param classCanonicalName
@@ -257,17 +168,17 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Resets import and variable maps and calls
 	 * {@link MethodTooManyDataOrFileOperations#resetCount()}.
 	 */
-	private void reset() {
-		this.typeImports = new HashMap<>();
-		this.variableTypes = new HashMap<>();
+	@Override
+	protected void reset() {
+		super.reset();
 		resetCount();
 	}
-	
+
 	/**
 	 * Resets the count of {@link MethodCallExpr} which contain data or file
 	 * operations in a {@link CompilationUnit}.
@@ -275,7 +186,7 @@ public class MethodTooManyDataOrFileOperations extends Measure {
 	private void resetCount() {
 		this.count = 0;
 	}
-	
+
 	@Override
 	public String getIssueType() {
 		return ISSUE_TYPE;
