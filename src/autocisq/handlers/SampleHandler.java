@@ -31,13 +31,13 @@ import autocisq.models.ProjectIssue;
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class SampleHandler extends AbstractHandler {
-
+	
 	/**
 	 * The constructor.
 	 */
 	public SampleHandler() {
 	}
-
+	
 	/**
 	 * the command has been executed, so extract extract the needed information
 	 * from the application context.
@@ -67,7 +67,7 @@ public class SampleHandler extends AbstractHandler {
 		layerMap.put("no.uib.mof077.shortbytes.som.Layer", 3);
 		layerMap.put("no.uib.mof077.shortbytes.som.Neuron", 3);
 		layerMap.put("no.uib.mof077.shortbytes.som.SomMain", 3);
-		
+
 		List<String> dbOrIoClasses = new LinkedList<>();
 		dbOrIoClasses.add("java.io.File");
 		dbOrIoClasses.add("java.nio.file.Files");
@@ -76,7 +76,7 @@ public class SampleHandler extends AbstractHandler {
 		dbOrIoClasses.add("java.sql.PreparedStatement");
 		dbOrIoClasses.add("java.sql.Statement");
 		dbOrIoClasses.add("com.github.javaparser.JavaParser");
-		
+
 		List<String> measures = new LinkedList<>();
 		measures.add("autocisq.measure.maintainability.ClassTooManyChildren");
 		measures.add("autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch");
@@ -91,14 +91,14 @@ public class SampleHandler extends AbstractHandler {
 		measures.add("autocisq.measure.maintainability.MethodTooManyDataOrFileOperations");
 		measures.add("autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass");
 		measures.add("autocisq.measure.maintainability.VariableDeclaredPublic");
+		measures.add("autocisq.measure.maintainability.FunctionCyclomaticComplexity");
 		measures.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");
-		measures.add("autocisq.measure.reliability.FunctionCyclomaticComplexity");
-		
+
 		Map<String, Object> settings = new HashMap<>();
 		settings.put("layer_map", layerMap);
 		settings.put("db_or_io_classes", dbOrIoClasses);
 		settings.put("measures", measures);
-		
+
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
 			List<IFile> iFiles;
@@ -112,9 +112,9 @@ public class SampleHandler extends AbstractHandler {
 					files.add(file);
 					iFileMap.put(file, iFile);
 				}
-				
-				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files, settings);
 
+				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files, settings);
+				
 				for (File file : fileIssuesMap.keySet()) {
 					List<Issue> issues = fileIssuesMap.get(file);
 					IFile iFile = iFileMap.get(file);
@@ -144,7 +144,7 @@ public class SampleHandler extends AbstractHandler {
 		}
 		return null;
 	}
-
+	
 	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex, String message)
 			throws CoreException {
 		IMarker m = file.createMarker("AutoCISQ.javaqualityissue");
@@ -155,7 +155,7 @@ public class SampleHandler extends AbstractHandler {
 		m.setAttribute(IMarker.CHAR_START, startIndex);
 		m.setAttribute(IMarker.CHAR_END, endIndex);
 	}
-
+	
 	private static void markIssue(IProject project, String message) throws CoreException {
 		IMarker m = project.createMarker("AutoCISQ.javaqualityissue");
 		m.setAttribute(IMarker.MESSAGE, message);
