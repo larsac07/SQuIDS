@@ -92,6 +92,8 @@ public class SampleHandler extends AbstractHandler {
 		measures.add("autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass");
 		measures.add("autocisq.measure.maintainability.VariableDeclaredPublic");
 		measures.add("autocisq.measure.maintainability.FunctionCyclomaticComplexity");
+		measures.add("autocisq.measure.maintainability.FunctionUnreachable");
+		measures.add("autocisq.measure.maintainability.ClassInheritanceLevel");
 		measures.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");
 
 		Map<String, Object> settings = new HashMap<>();
