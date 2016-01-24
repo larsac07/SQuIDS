@@ -29,19 +29,19 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link FunctionUnreachable} class represents the CISQ Maintainability
+ * The {@link MethodUnreachable} class represents the CISQ Maintainability
  * measure 5: # of unreachable functions.
  *
  * @author Lars A. V. Cabrera
  * 		
  */
-public class FunctionUnreachable extends TypeDependentMeasure {
+public class MethodUnreachable extends TypeDependentMeasure {
 
 	public final static String ISSUE_TYPE = "Unreachable function";
 
 	private List<String> referencedFunctions;
 
-	public FunctionUnreachable(Map<String, Object> settings) {
+	public MethodUnreachable(Map<String, Object> settings) {
 		super(settings);
 		this.referencedFunctions = new LinkedList<>();
 	}

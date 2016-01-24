@@ -17,7 +17,7 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The FunctionFanOut class represents the CISQ Maintainability Measure 11: # of
+ * The MethodFanOut class represents the CISQ Maintainability Measure 11: # of
  * functions that have a fan-out ≥ 10.
  *
  * The fan-out is calculated by summing up the number of called functions
@@ -33,12 +33,12 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class FunctionFanOut extends Measure {
+public class MethodFanOut extends Measure {
 
 	public final static int THRESHOLD = 10;
 	public final static String ISSUE_TYPE = "Function with fan-out >= " + THRESHOLD;
 	
-	public FunctionFanOut(Map<String, Object> settings) {
+	public MethodFanOut(Map<String, Object> settings) {
 		super(settings);
 	}
 

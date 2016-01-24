@@ -20,7 +20,7 @@ import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
-public class FunctionCyclomaticComplexityTest extends MeasureTest {
+public class MethodCyclomaticComplexityTest extends MeasureTest {
 
 	private ConstructorDeclaration constructorCC10;
 	private MethodDeclaration functionCC9;
@@ -33,7 +33,7 @@ public class FunctionCyclomaticComplexityTest extends MeasureTest {
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new FunctionCyclomaticComplexity(new HashMap<>()));
+		issueFinder.putMeasure(new MethodCyclomaticComplexity(new HashMap<>()));
 
 		File file = new File("res/test/CyclomaticComplexity.java");
 
@@ -79,7 +79,7 @@ public class FunctionCyclomaticComplexityTest extends MeasureTest {
 	
 	private static List<Node> findControlFlowStatements(Node node) {
 		List<Node> controlFlowStatements = new LinkedList<>();
-		if (FunctionCyclomaticComplexity.isControlFlowStmt(node)) {
+		if (MethodCyclomaticComplexity.isControlFlowStmt(node)) {
 			controlFlowStatements.add(node);
 		}
 		for (Node child : node.getChildrenNodes()) {
@@ -90,7 +90,7 @@ public class FunctionCyclomaticComplexityTest extends MeasureTest {
 
 	@Override
 	public String getIssueType() {
-		return FunctionCyclomaticComplexity.ISSUE_TYPE;
+		return MethodCyclomaticComplexity.ISSUE_TYPE;
 	}
 
 }

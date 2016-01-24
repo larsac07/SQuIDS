@@ -20,20 +20,20 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link FunctionCommentedOutInstructions} class represents the CISQ
+ * The {@link MethodCommentedOutInstructions} class represents the CISQ
  * Maintainability measure 14: # of functions with > 2% commented out
  * instructions.
  *
  * @author Lars A. V. Cabrera
  * 		
  */
-public class FunctionCommentedOutInstructions extends Measure {
+public class MethodCommentedOutInstructions extends Measure {
 	
 	public final static double THRESHOLD = 0.02d;
 	public final static String ISSUE_TYPE = "Function with > " + (int) (THRESHOLD * 100)
 			+ "% commented out instructions";
 			
-	public FunctionCommentedOutInstructions(Map<String, Object> settings) {
+	public MethodCommentedOutInstructions(Map<String, Object> settings) {
 		super(settings);
 	}
 

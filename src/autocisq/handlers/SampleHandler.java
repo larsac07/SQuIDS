@@ -82,17 +82,17 @@ public class SampleHandler extends AbstractHandler {
 		measures.add("autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch");
 		measures.add("autocisq.measure.maintainability.FileLOC");
 		measures.add("autocisq.measure.maintainability.FileDuplicateTokens");
-		measures.add("autocisq.measure.maintainability.FunctionCommentedOutInstructions");
-		measures.add("autocisq.measure.maintainability.FunctionFanOut");
-		measures.add("autocisq.measure.maintainability.FunctionParameters");
+		measures.add("autocisq.measure.maintainability.MethodCommentedOutInstructions");
+		measures.add("autocisq.measure.maintainability.MethodFanOut");
+		measures.add("autocisq.measure.maintainability.MethodParameters");
 		measures.add("autocisq.measure.maintainability.HardCodedLiteral");
 		measures.add("autocisq.measure.maintainability.HorizontalLayers");
 		measures.add("autocisq.measure.maintainability.LayerSkippingCall");
 		measures.add("autocisq.measure.maintainability.MethodTooManyDataOrFileOperations");
 		measures.add("autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass");
 		measures.add("autocisq.measure.maintainability.VariableDeclaredPublic");
-		measures.add("autocisq.measure.maintainability.FunctionCyclomaticComplexity");
-		measures.add("autocisq.measure.maintainability.FunctionUnreachable");
+		measures.add("autocisq.measure.maintainability.MethodCyclomaticComplexity");
+		measures.add("autocisq.measure.maintainability.MethodUnreachable");
 		measures.add("autocisq.measure.maintainability.ClassInheritanceLevel");
 		measures.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");
 

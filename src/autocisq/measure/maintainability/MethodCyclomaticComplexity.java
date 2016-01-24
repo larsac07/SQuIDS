@@ -23,7 +23,7 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link FunctionCyclomaticComplexity} class represents the CISQ
+ * The {@link MethodCyclomaticComplexity} class represents the CISQ
  * Maintainability measure 18: # functions with cyclomatic complexity ≥ a
  * language specific threshold.
  *
@@ -34,7 +34,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class FunctionCyclomaticComplexity extends Measure {
+public class MethodCyclomaticComplexity extends Measure {
 	
 	public final static int THRESHOLD = 10;
 	public final static String ISSUE_TYPE = "Function with Cyclomatic Complexity >= " + THRESHOLD;
@@ -43,13 +43,13 @@ public class FunctionCyclomaticComplexity extends Measure {
 	private int count;
 
 	/**
-	 * Creates a new {@link FunctionCyclomaticComplexity} measure and assumes a
+	 * Creates a new {@link MethodCyclomaticComplexity} measure and assumes a
 	 * starting cyclomatic complexity value of 1.
 	 *
 	 * @param settings
 	 *            - not required
 	 */
-	public FunctionCyclomaticComplexity(Map<String, Object> settings) {
+	public MethodCyclomaticComplexity(Map<String, Object> settings) {
 		super(settings);
 		reset(null);
 	}

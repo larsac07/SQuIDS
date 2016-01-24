@@ -15,7 +15,7 @@ import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
-public class FunctionUnreachableTest extends MeasureTest {
+public class MethodUnreachableTest extends MeasureTest {
 	
 	private MethodDeclaration methodPublicReferenced;
 	private MethodDeclaration methodPublicUnreferenced;
@@ -33,7 +33,7 @@ public class FunctionUnreachableTest extends MeasureTest {
 	public void setUp() throws Exception {
 		this.issueFinder = IssueFinder.getInstance();
 		this.issueFinder.getMeasures().clear();
-		this.issueFinder.putMeasure(new FunctionUnreachable(new HashMap<>()));
+		this.issueFinder.putMeasure(new MethodUnreachable(new HashMap<>()));
 		
 		File file = new File("res/test/UnreachableFunction.java");
 		
@@ -97,7 +97,7 @@ public class FunctionUnreachableTest extends MeasureTest {
 	
 	@Override
 	public String getIssueType() {
-		return FunctionUnreachable.ISSUE_TYPE;
+		return MethodUnreachable.ISSUE_TYPE;
 	}
 
 }

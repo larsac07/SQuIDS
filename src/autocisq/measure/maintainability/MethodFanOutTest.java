@@ -15,7 +15,7 @@ import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
-public class FunctionFanOutTest extends MeasureTest {
+public class MethodFanOutTest extends MeasureTest {
 
 	private ConstructorDeclaration constructorFanOut10;
 	private MethodDeclaration functionFanOut12;
@@ -28,7 +28,7 @@ public class FunctionFanOutTest extends MeasureTest {
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new FunctionFanOut(new HashMap<>()));
+		issueFinder.putMeasure(new MethodFanOut(new HashMap<>()));
 
 		File testFile = new File("res/test/Person.java");
 		
@@ -70,6 +70,6 @@ public class FunctionFanOutTest extends MeasureTest {
 
 	@Override
 	public String getIssueType() {
-		return FunctionFanOut.ISSUE_TYPE;
+		return MethodFanOut.ISSUE_TYPE;
 	}
 }

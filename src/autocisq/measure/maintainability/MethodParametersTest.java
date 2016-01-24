@@ -15,7 +15,7 @@ import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
-public class FunctionParametersTest extends MeasureTest {
+public class MethodParametersTest extends MeasureTest {
 
 	private ConstructorDeclaration constructor10Params;
 	private MethodDeclaration function10Params;
@@ -28,7 +28,7 @@ public class FunctionParametersTest extends MeasureTest {
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new FunctionParameters(new HashMap<>()));
+		issueFinder.putMeasure(new MethodParameters(new HashMap<>()));
 
 		File testFile = new File("res/test/Person.java");
 		
@@ -70,7 +70,7 @@ public class FunctionParametersTest extends MeasureTest {
 
 	@Override
 	public String getIssueType() {
-		return FunctionParameters.ISSUE_TYPE;
+		return MethodParameters.ISSUE_TYPE;
 	}
 
 }

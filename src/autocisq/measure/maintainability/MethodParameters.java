@@ -14,12 +14,12 @@ import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
-public class FunctionParameters extends Measure {
+public class MethodParameters extends Measure {
 	
 	public final static int THRESHOLD = 7;
 	public final static String ISSUE_TYPE = "Function passing >= " + THRESHOLD + " parameters";
 
-	public FunctionParameters(Map<String, Object> settings) {
+	public MethodParameters(Map<String, Object> settings) {
 		super(settings);
 	}
 
