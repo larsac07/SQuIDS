@@ -1,70 +1,83 @@
 package autocisq.measure.maintainability;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+
 import autocisq.IssueFinder;
-import autocisq.models.Issue;
-import autocisq.models.ProjectIssue;
+import autocisq.io.IOUtils;
+import autocisq.measure.MeasureTest;
 
-public class HorizontalLayersTest {
+public class HorizontalLayersTest extends MeasureTest {
 
-	private List<File> layerTestFiles;
+	private Map<String, Integer> layerMap7;
+	private Map<String, Integer> layerMap8;
+	private Map<String, Integer> layerMap9;
+	private CompilationUnit testCU;
+	private String fileString;
 	private Map<String, Object> settings;
+	private IssueFinder issueFinder;
 
 	@Before
 	public void setUp() throws Exception {
-		this.layerTestFiles = new LinkedList<>();
-		this.layerTestFiles.add(new File("res/test/layers/GUI.java"));
-		this.layerTestFiles.add(new File("res/test/layers/GUIUtils.java"));
-		this.layerTestFiles.add(new File("res/test/layers/SettingsGUI.java"));
-		this.layerTestFiles.add(new File("res/test/layers/ThemeManager.java"));
-		this.layerTestFiles.add(new File("res/test/layers/TsvToHtml.java"));
-		this.layerTestFiles.add(new File("res/test/layers/Parser.java"));
 		
-		Map<String, Integer> layerMap = new LinkedHashMap<>();
-		layerMap.put("no.uib.lca092.rtms.gui.GUI", 1);
-		layerMap.put("no.uib.lca092.rtms.gui.GUIUtils", 2);
-		layerMap.put("no.uib.lca092.rtms.gui.SettingsGUI", 3);
-		layerMap.put("no.uib.lca092.rtms.gui.ThemeManager", 4);
-		layerMap.put("no.uib.lca092.rtms.TsvToHtml", 5);
-		layerMap.put("no.uib.lca092.rtms.io.Parser", 6);
-		layerMap.put("no.uib.lca092.rtms.gui.ThemeManager2", 7);
-		layerMap.put("no.uib.lca092.rtms.TsvToHtml2", 8);
-		layerMap.put("no.uib.lca092.rtms.io.Parser2", 9);
+		this.issueFinder = IssueFinder.getInstance();
 		
-		List<String> measureStrings = new LinkedList<>();
-		measureStrings.add(HorizontalLayers.class.getCanonicalName());
+		this.layerMap7 = new LinkedHashMap<>();
+		this.layerMap7.put("no.uib.lca092.rtms.gui.GUI", 1);
+		this.layerMap7.put("no.uib.lca092.rtms.gui.GUIUtils", 2);
+		this.layerMap7.put("no.uib.lca092.rtms.gui.SettingsGUI", 3);
+		this.layerMap7.put("no.uib.lca092.rtms.gui.ThemeManager", 4);
+		this.layerMap7.put("no.uib.lca092.rtms.TsvToHtml", 5);
+		this.layerMap7.put("no.uib.lca092.rtms.io.Parser", 6);
+		this.layerMap7.put("no.uib.lca092.rtms.gui.ThemeManager2", 7);
+
+		this.layerMap8 = new LinkedHashMap<>();
+		this.layerMap8.putAll(this.layerMap7);
+		this.layerMap8.put("no.uib.lca092.rtms.TsvToHtml2", 8);
+		
+		this.layerMap9 = new LinkedHashMap<>();
+		this.layerMap9.putAll(this.layerMap8);
+		this.layerMap9.put("no.uib.lca092.rtms.io.Parser2", 9);
 		
 		this.settings = new HashMap<>();
-		this.settings.put("layer_map", layerMap);
-		this.settings.put("measures", measureStrings);
+		
+		File file = new File("res/test/layers/GUI.java");
+		this.testCU = JavaParser.parse(file);
+		this.fileString = IOUtils.fileToString(file);
+	}
+	
+	@Test
+	public void skipProjectWith7Layers() {
+		this.settings.put("layer_map", this.layerMap7);
+		this.issueFinder.putMeasure(new HorizontalLayers(this.settings));
+		skipIssue(this.testCU, this.fileString);
 	}
 
 	@Test
-	public void findProjectWithTooManyHorizontalLayers() {
-		Map<File, List<Issue>> layerIssuesMap = IssueFinder.getInstance().findIssues(this.layerTestFiles,
-				this.settings);
-
-		boolean found = false;
-		search: for (List<Issue> fileIssues : layerIssuesMap.values()) {
-			for (Issue issue : fileIssues) {
-				if (issue.getType().equals(HorizontalLayers.ISSUE_TYPE) && issue instanceof ProjectIssue) {
-					found = true;
-					break search;
-				}
-			}
-		}
-		assertTrue(found);
+	public void skipProjectWith8Layers() {
+		this.settings.put("layer_map", this.layerMap8);
+		this.issueFinder.putMeasure(new HorizontalLayers(this.settings));
+		skipIssue(this.testCU, this.fileString);
+	}
+	
+	@Test
+	public void findProjectWith9Layers() {
+		this.settings.put("layer_map", this.layerMap9);
+		this.issueFinder.putMeasure(new HorizontalLayers(this.settings));
+		findIssue(this.testCU, this.fileString);
+	}
+	
+	@Override
+	public String getIssueType() {
+		return HorizontalLayers.ISSUE_TYPE;
 	}
 
 }

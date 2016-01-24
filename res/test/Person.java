@@ -32,19 +32,19 @@ public class Person {
 		return new Person(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, zipCode, null, null);
 	}
 	
-	public static Person createPerson10Params(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city, String country) {
+	public Person createPerson10Params(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city, String country) {
 		return new Person(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, zipCode, city, country);
 	}
 	
-	public static Person createPerson8Params(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode) {
+	public Person createPerson8Params(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode) {
 		return new Person(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, zipCode, null, null);
 	}
 	
-	public static Person createPerson7Params(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo) {
+	public Person createPerson7Params(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo) {
 		return new Person(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, null, null, null);
 	}
 	
-	public static Person createPerson6Params(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName) {
+	public Person createPerson6Params(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName) {
 		return new Person(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, 0, null, null, null);
 	}
 	
@@ -83,7 +83,7 @@ public class Person {
 		return person.getPerson10Params(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, zipCode, city, country);
 	}
 	
-	public static Person createPersonFanOut12(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city, String country) {
+	public Person createPersonFanOut12(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city, String country) {
 		Person person = new Person();
 		person.firstName = firstName;
 		person.middleNames = middleNames;
@@ -102,7 +102,7 @@ public class Person {
 		return person.getPerson10Params(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, zipCode, city, country);
 	}
 	
-	public static Person createPersonFanOut11(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city) {
+	public Person createPersonFanOut11(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city) {
 		Person person = new Person();
 		person.firstName = firstName;
 		person.middleNames = middleNames;
@@ -120,7 +120,7 @@ public class Person {
 		return person.getPerson10Params(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, zipCode, city, null);
 	}
 	
-	public static Person createPersonFanOut10(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode) {
+	public Person createPersonFanOut10(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode) {
 		Person person = new Person();
 		person.firstName = firstName;
 		person.middleNames = middleNames;
@@ -137,7 +137,7 @@ public class Person {
 		return person.getPerson10Params(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, zipCode, null, null);
 	}
 	
-	public static Person createPersonFanOut9(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo) {
+	public Person createPersonFanOut9(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo) {
 		Person person = new Person();
 		person.firstName = firstName;
 		person.middleNames = middleNames;
@@ -153,7 +153,7 @@ public class Person {
 		return person.getPerson10Params(firstName, middleNames, birthYear, birthMonth, birthDate, streetName, streetNo, null, null, null);
 	}
 	
-	public static createEmptyPerson() {
+	public createEmptyPerson() {
 		return new Person(null, new String[10], 0, 0, 0, null, 0, 0, 0, 0);
 	}
 

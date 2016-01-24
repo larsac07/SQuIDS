@@ -1,11 +1,7 @@
 package autocisq.measure.maintainability;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,11 +11,9 @@ import com.github.javaparser.ast.CompilationUnit;
 
 import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
-import autocisq.models.Issue;
+import autocisq.measure.MeasureTest;
 
-public class FileLOCTest {
-	
-	private List<Issue> issues;
+public class FileLOCTest extends MeasureTest {
 	private CompilationUnit cu1702;
 	private CompilationUnit cu1001;
 	private CompilationUnit cu1000;
@@ -48,34 +42,22 @@ public class FileLOCTest {
 
 	@Test
 	public void skipFileWith1000Lines() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.cu1000, null, this.fileString1000);
-		assertEquals(0, this.issues.size());
+		skipIssue(this.cu1000, this.fileString1000);
 	}
 	
 	@Test
 	public void findFileWith1001Lines() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.cu1001, null, this.fileString1001);
-		assertTrue(this.issues.size() > 0);
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals("More than 1000 Lines of Code")) {
-				found = true;
-			}
-		}
-		assertTrue(found);
+		findIssue(this.cu1001, this.fileString1001);
 	}
 	
 	@Test
 	public void findFileWith1702Lines() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.cu1702, null, this.fileString1702);
-		assertTrue(this.issues.size() > 0);
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals("More than 1000 Lines of Code")) {
-				found = true;
-			}
-		}
-		assertTrue(found);
+		findIssue(this.cu1702, this.fileString1702);
+	}
+	
+	@Override
+	public String getIssueType() {
+		return FileLOC.ISSUE_TYPE;
 	}
 
 }

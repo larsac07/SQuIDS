@@ -1,12 +1,10 @@
 package autocisq.measure.maintainability;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,17 +15,13 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 
 import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
-import autocisq.models.Issue;
+import autocisq.measure.MeasureTest;
 
-public class FunctionCommentedOutInstructionsTest {
+public class FunctionCommentedOutInstructionsTest extends MeasureTest {
 
 	private final static double threshold = FunctionCommentedOutInstructions.THRESHOLD;
-	private List<Issue> issues;
-	private MethodDeclaration functionClean;
-	private MethodDeclaration function36COI;
-	private MethodDeclaration functionOverThreshold;
-	private MethodDeclaration functionAtThreshold;
-	private MethodDeclaration functionUnderThreshold;
+	private MethodDeclaration methodNoCOI;
+	private MethodDeclaration method36COI;
 	private MethodDeclaration methodOverThreshold;
 	private MethodDeclaration methodAtThreshold;
 	private MethodDeclaration methodUnderThreshold;
@@ -43,115 +37,75 @@ public class FunctionCommentedOutInstructionsTest {
 
 		this.fileString = IOUtils.fileToString(testFile);
 
-		CompilationUnit supervisorCU = JavaParser.parse(testFile);
+		CompilationUnit coiCU = JavaParser.parse(testFile);
 
-		this.functionClean = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(3);
-		this.function36COI = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(4);
-		this.functionOverThreshold = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(5);
-		this.functionAtThreshold = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(6);
-		this.functionUnderThreshold = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(7);
-		this.methodOverThreshold = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(10);
-		this.methodAtThreshold = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(11);
-		this.methodUnderThreshold = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(12);
+		this.methodNoCOI = (MethodDeclaration) coiCU.getTypes().get(0).getChildrenNodes().get(3);
+		this.method36COI = (MethodDeclaration) coiCU.getTypes().get(0).getChildrenNodes().get(4);
+		this.methodOverThreshold = (MethodDeclaration) coiCU.getTypes().get(0).getChildrenNodes().get(5);
+		this.methodAtThreshold = (MethodDeclaration) coiCU.getTypes().get(0).getChildrenNodes().get(6);
+		this.methodUnderThreshold = (MethodDeclaration) coiCU.getTypes().get(0).getChildrenNodes().get(7);
 
 	}
 	
 	@Test
 	public void testCountInstructions() {
 		int expected = 36;
-		int actual = FunctionCommentedOutInstructions.countInstructions(this.functionClean);
+		int actual = FunctionCommentedOutInstructions.countInstructions(this.methodNoCOI);
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testCountCommentedOutInstructions() {
 		int expected = 36;
-		int actual = FunctionCommentedOutInstructions.countCommentedOutInstructions(this.function36COI);
+		int actual = FunctionCommentedOutInstructions.countCommentedOutInstructions(this.method36COI);
 		assertEquals(expected, actual);
 	}
 	
 	@Test
 	public void moreThanTwoPercentCommentedOutInstructions() {
-		int instructions = FunctionCommentedOutInstructions.countInstructions(this.functionOverThreshold);
+		int instructions = FunctionCommentedOutInstructions.countInstructions(this.methodOverThreshold);
 		int commOutInstructions = FunctionCommentedOutInstructions
-				.countCommentedOutInstructions(this.functionOverThreshold);
+				.countCommentedOutInstructions(this.methodOverThreshold);
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
 		assertTrue("Expected " + result + " to be > " + threshold, result > threshold);
 	}
 
 	@Test
 	public void twoPercentCommentedOutInstructions() {
-		int instructions = FunctionCommentedOutInstructions.countInstructions(this.functionAtThreshold);
+		int instructions = FunctionCommentedOutInstructions.countInstructions(this.methodAtThreshold);
 		int commOutInstructions = FunctionCommentedOutInstructions
-				.countCommentedOutInstructions(this.functionAtThreshold);
+				.countCommentedOutInstructions(this.methodAtThreshold);
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
 		assertEquals("Expected " + result + " to be == " + threshold, threshold, result, 0.0000001d);
 	}
 
 	@Test
 	public void lessThanTwoPercentCommentedOutInstructions() {
-		int instructions = FunctionCommentedOutInstructions.countInstructions(this.functionUnderThreshold);
+		int instructions = FunctionCommentedOutInstructions.countInstructions(this.methodUnderThreshold);
 		int commOutInstructions = FunctionCommentedOutInstructions
-				.countCommentedOutInstructions(this.functionUnderThreshold);
+				.countCommentedOutInstructions(this.methodUnderThreshold);
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
 		assertTrue("Expected " + result + " to be < " + threshold, result < threshold);
 	}
 	
 	@Test
-	public void findFunctionMoreThanTwoPercent() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.functionOverThreshold, null, this.fileString);
-		findIssue();
-	}
-
-	@Test
-	public void skipFunctionTwoPercent() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.functionAtThreshold, null, this.fileString);
-		skipIssue();
-	}
-	
-	@Test
-	public void skipFunctionLessThanTwoPercent() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.functionUnderThreshold, null, this.fileString);
-		skipIssue();
-	}
-
-	@Test
 	public void findMethodMoreThanTwoPercent() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.methodOverThreshold, null, this.fileString);
-		findIssue();
+		findIssue(this.methodOverThreshold, this.fileString);
 	}
 
 	@Test
 	public void skipMethodTwoPercent() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.methodAtThreshold, null, this.fileString);
-		skipIssue();
+		skipIssue(this.methodAtThreshold, this.fileString);
 	}
 	
 	@Test
 	public void skipMethodLessThanTwoPercent() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.methodUnderThreshold, null, this.fileString);
-		skipIssue();
+		skipIssue(this.methodUnderThreshold, this.fileString);
 	}
 	
-	private void findIssue() {
-		assertTrue(this.issues.size() > 0);
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals("Function with > 2% commented out instructions")) {
-				found = true;
-			}
-		}
-		assertTrue(found);
-	}
-
-	private void skipIssue() {
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals("Function with > 2% commented out instructions")) {
-				found = true;
-			}
-		}
-		assertFalse(found);
+	@Override
+	public String getIssueType() {
+		return FunctionCommentedOutInstructions.ISSUE_TYPE;
 	}
 
 }

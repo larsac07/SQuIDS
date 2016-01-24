@@ -8,6 +8,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
@@ -24,7 +25,7 @@ import autocisq.models.Issue;
  * instructions.
  *
  * @author Lars A. V. Cabrera
- *
+ * 		
  */
 public class FunctionCommentedOutInstructions extends Measure {
 	
@@ -38,22 +39,21 @@ public class FunctionCommentedOutInstructions extends Measure {
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
-		if (node instanceof MethodDeclaration) {
-			MethodDeclaration methodDeclaration = (MethodDeclaration) node;
-			int instructions = FunctionCommentedOutInstructions.countInstructions(methodDeclaration);
-			int commOutInstructions = FunctionCommentedOutInstructions.countCommentedOutInstructions(methodDeclaration);
+		if (node instanceof MethodDeclaration || node instanceof ConstructorDeclaration) {
+			int instructions = countInstructions(node);
+			int commOutInstructions = countCommentedOutInstructions(node);
 			double result = (double) commOutInstructions / (instructions + commOutInstructions);
 			if (result > THRESHOLD) {
 				List<Issue> issues = new ArrayList<>();
-				issues.add(new FileIssue(getIssueType(), node, fileString));
+				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
 				return issues;
 			}
 		}
 		return null;
 	}
 	
-	public static int countCommentedOutInstructions(MethodDeclaration methodDeclaration) {
-		List<Comment> comments = methodDeclaration.getAllContainedComments();
+	public static int countCommentedOutInstructions(Node node) {
+		List<Comment> comments = node.getAllContainedComments();
 		String instructions = "";
 		for (Comment comment : comments) {
 			String uncommented = comment.getContent().trim();
@@ -69,8 +69,8 @@ public class FunctionCommentedOutInstructions extends Measure {
 		}
 	}
 	
-	public static int countInstructions(MethodDeclaration methodDeclaration) {
-		return countNodesOfType(methodDeclaration, Expression.class);
+	public static int countInstructions(Node node) {
+		return countNodesOfType(node, Expression.class);
 	}
 
 	public static int countNodesOfType(Node rootNode, Class<? extends Node> klass) {

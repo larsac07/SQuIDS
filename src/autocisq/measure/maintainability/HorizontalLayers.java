@@ -20,7 +20,7 @@ import autocisq.models.ProjectIssue;
  * of layers (threshold 4 ≤ # Layers ≤ 8).
  *
  * @author Lars A. V. Cabrera
- *		
+ *
  */
 public class HorizontalLayers extends Measure {
 	
@@ -86,7 +86,7 @@ public class HorizontalLayers extends Measure {
 		Collection<Integer> layers = this.layerMap.values();
 		if (layers != null) {
 			Set<Integer> distinctLayers = new HashSet<Integer>(layers);
-			if (distinctLayers.size() > 8) {
+			if (distinctLayers.size() > THRESHOLD) {
 				this.issues.add(new ProjectIssue(getIssueType()));
 			}
 		}

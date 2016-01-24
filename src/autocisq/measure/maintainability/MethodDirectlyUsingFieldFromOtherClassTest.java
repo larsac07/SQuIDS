@@ -1,8 +1,5 @@
 package autocisq.measure.maintainability;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,85 +14,57 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 
 import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
-import autocisq.models.Issue;
+import autocisq.measure.MeasureTest;
 
-public class MethodDirectlyUsingFieldFromOtherClassTest {
-
-	private List<Issue> issues;
+public class MethodDirectlyUsingFieldFromOtherClassTest extends MeasureTest {
+	
 	private List<CompilationUnit> compilationUnits;
 	private MethodDeclaration methodMultipleDirectAccess;
 	private MethodDeclaration methodNoDirectAccess;
 	private MethodDeclaration methodSingleDirectAccess;
-	private MethodDeclaration functionNoDirectAccess;
 	private String fileString;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		IssueFinder issueFinder = IssueFinder.getInstance();
 		issueFinder.getMeasures().clear();
 		issueFinder.putMeasure(new MethodDirectlyUsingFieldFromOtherClass(new HashMap<>()));
-
+		
 		File testFile = new File("res/test/Supervisor.java");
-
+		
 		this.fileString = IOUtils.fileToString(testFile);
-
+		
 		CompilationUnit supervisorCU = JavaParser.parse(testFile);
-
+		
 		this.methodMultipleDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(5);
 		this.methodNoDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(6);
 		this.methodSingleDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(7);
-		this.functionNoDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(9);
-
+		
 		this.compilationUnits = new ArrayList<>();
 		this.compilationUnits.add(supervisorCU);
 		this.compilationUnits.add(JavaParser.parse(new File("res/test/Person.java")));
 		issueFinder.setCompilationUnits(this.compilationUnits);
-
+		
 	}
-	
+
 	@Test
 	public void findMethodMultipleDirectAccess() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.methodMultipleDirectAccess, null, this.fileString);
-		findIssue();
+		findIssue(this.methodMultipleDirectAccess, this.fileString);
 	}
-
+	
 	@Test
 	public void skipMethodNoDirectAccess() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.methodNoDirectAccess, null, this.fileString);
-		skipIssue();
+		skipIssue(this.methodNoDirectAccess, this.fileString);
 	}
-
+	
 	@Test
 	public void findMethodSingleDirectAccess() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.methodSingleDirectAccess, null, this.fileString);
-		findIssue();
+		findIssue(this.methodSingleDirectAccess, this.fileString);
 	}
 
-	@Test
-	public void skipFunctionNoDirectAccess() {
-		this.issues = IssueFinder.getInstance().analyzeNode(this.functionNoDirectAccess, null, this.fileString);
-		skipIssue();
+	@Override
+	public String getIssueType() {
+		return MethodDirectlyUsingFieldFromOtherClass.ISSUE_TYPE;
 	}
 	
-	private void findIssue() {
-		assertTrue(this.issues.size() > 0);
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals(MethodDirectlyUsingFieldFromOtherClass.ISSUE_TYPE)) {
-				found = true;
-			}
-		}
-		assertTrue(found);
-	}
-	
-	private void skipIssue() {
-		boolean found = false;
-		for (Issue issue : this.issues) {
-			if (issue.getType().equals(MethodDirectlyUsingFieldFromOtherClass.ISSUE_TYPE)) {
-				found = true;
-			}
-		}
-		assertFalse(found);
-	}
-
 }

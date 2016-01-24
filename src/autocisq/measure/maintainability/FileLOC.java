@@ -7,7 +7,6 @@ import java.util.Map;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import autocisq.JavaParserHelper;
 import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -22,32 +21,29 @@ import autocisq.models.Issue;
  *
  */
 public class FileLOC extends Measure {
-	
+
 	public final static int THRESHOLD = 1000;
 	public final static String ISSUE_TYPE = "More than " + THRESHOLD + " Lines of Code";
-	
+
 	public FileLOC(Map<String, Object> settings) {
 		super(settings);
 	}
-
+	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof CompilationUnit) {
 			String[] lines = fileString.split("\r?\n|\r");
 			if (lines.length > THRESHOLD) {
-				int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
-						node.getBeginColumn(), node.getEndColumn());
-				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], getIssueType(), node.toString(),
-						node));
+				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
 			}
 		}
 		return issues;
 	}
-	
+
 	@Override
 	public String getIssueType() {
 		return ISSUE_TYPE;
 	}
-	
+
 }

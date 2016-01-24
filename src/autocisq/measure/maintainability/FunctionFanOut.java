@@ -6,13 +6,12 @@ import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
-import autocisq.JavaParserHelper;
 import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -35,40 +34,32 @@ import autocisq.models.Issue;
  *
  */
 public class FunctionFanOut extends Measure {
-	
+
 	public final static int THRESHOLD = 10;
 	public final static String ISSUE_TYPE = "Function with fan-out >= " + THRESHOLD;
-
+	
 	public FunctionFanOut(Map<String, Object> settings) {
 		super(settings);
 	}
 
-	private String fileString = "";
-	
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
-		List<Issue> issues = new ArrayList<>();
-		if (node instanceof MethodDeclaration) {
-			MethodDeclaration methodDeclaration = (MethodDeclaration) node;
-			boolean isFunction = ModifierSet.isStatic(methodDeclaration.getModifiers());
-			if (isFunction) {
-				int fanOut = calculateFanOut(node);
-				if (fanOut >= THRESHOLD) {
-					int[] indexes = JavaParserHelper.columnsToIndexes(this.fileString, node.getBeginLine(),
-							node.getEndLine(), node.getBeginColumn(), node.getEndColumn());
-					issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], getIssueType(),
-							node.toString(), node));
-				}
+		if (node instanceof MethodDeclaration || node instanceof ConstructorDeclaration) {
+			int fanOut = calculateFanOut(node);
+			if (fanOut >= THRESHOLD) {
+				List<Issue> issues = new ArrayList<>();
+				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+				return issues;
 			}
 		}
-		return issues;
+		return null;
 	}
-
+	
 	private int calculateFanOut(Node node) {
 		List<Issue> issues = new ArrayList<>();
 		return calculateFanOut(node, issues);
 	}
-
+	
 	private int calculateFanOut(Node node, List<Issue> issues) {
 		int fanOut = 0;
 		if (node instanceof AssignExpr) {
@@ -79,16 +70,16 @@ public class FunctionFanOut extends Measure {
 		} else if (node instanceof MethodCallExpr) {
 			fanOut++;
 		}
-		
+
 		for (Node child : node.getChildrenNodes()) {
 			fanOut += calculateFanOut(child, issues);
 		}
 		return fanOut;
 	}
-	
+
 	@Override
 	public String getIssueType() {
 		return ISSUE_TYPE;
 	}
-	
+
 }

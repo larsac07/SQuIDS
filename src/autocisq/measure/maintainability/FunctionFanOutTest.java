@@ -18,8 +18,6 @@ import autocisq.measure.MeasureTest;
 public class FunctionFanOutTest extends MeasureTest {
 
 	private ConstructorDeclaration constructorFanOut10;
-	private MethodDeclaration methodFanOut12;
-	private MethodDeclaration methodFanOut10;
 	private MethodDeclaration functionFanOut12;
 	private MethodDeclaration functionFanOut11;
 	private MethodDeclaration functionFanOut10;
@@ -39,8 +37,6 @@ public class FunctionFanOutTest extends MeasureTest {
 		CompilationUnit personCU = JavaParser.parse(testFile);
 		
 		this.constructorFanOut10 = (ConstructorDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(10);
-		this.methodFanOut12 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(17);
-		this.methodFanOut10 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(18);
 		this.functionFanOut12 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(19);
 		this.functionFanOut11 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(20);
 		this.functionFanOut10 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(21);
@@ -48,37 +44,27 @@ public class FunctionFanOutTest extends MeasureTest {
 	}
 
 	@Test
-	public void skipConstructorWithFanOut10() {
-		skipIssue(this.constructorFanOut10, this.fileString);
+	public void findConstructorWithFanOut10() {
+		findIssue(this.constructorFanOut10, this.fileString);
 	}
 	
 	@Test
-	public void skipMethodWithFanOut12() {
-		skipIssue(this.methodFanOut12, this.fileString);
-	}
-	
-	@Test
-	public void skipMethodWithFanOut10() {
-		skipIssue(this.methodFanOut10, this.fileString);
-	}
-	
-	@Test
-	public void findFunctionWithFanOut12() {
+	public void findMethodWithFanOut12() {
 		findIssue(this.functionFanOut12, this.fileString);
 	}
 
 	@Test
-	public void findFunctionWithFanOut11() {
+	public void findMethodWithFanOut11() {
 		findIssue(this.functionFanOut11, this.fileString);
 	}
 
 	@Test
-	public void findFunctionWithFanOut10() {
+	public void findMethodWithFanOut10() {
 		findIssue(this.functionFanOut10, this.fileString);
 	}
 
 	@Test
-	public void skipFunctionWithFanOut9() {
+	public void skipMethodWithFanOut9() {
 		skipIssue(this.functionFanOut9, this.fileString);
 	}
 

@@ -20,14 +20,14 @@ import autocisq.models.Issue;
  * of layer-skipping calls.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
 public class LayerSkippingCall extends Measure {
-	
-	public final static String ISSUE_TYPE = "Layer-Skipping Call";
 
-	private Map<String, Integer> layerMap;
+	public final static String ISSUE_TYPE = "Layer-Skipping Call";
 	
+	private Map<String, Integer> layerMap;
+
 	@SuppressWarnings("unchecked")
 	public LayerSkippingCall(Map<String, Object> settings) {
 		super(settings);
@@ -45,7 +45,7 @@ public class LayerSkippingCall extends Measure {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new LinkedList<>();
@@ -62,21 +62,18 @@ public class LayerSkippingCall extends Measure {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					String methodClass = methodCompilationUnit.getPackage().getName() + "."
 							+ methodCompilationUnit.getTypes().get(0).getName();
 					String methodCallClass = methodCallCompilationUnit.getPackage().getName() + "."
 							+ methodCallCompilationUnit.getTypes().get(0).getName();
-							
+
 					Integer methodLayer = this.layerMap.get(methodClass);
 					Integer methodCallLayer = this.layerMap.get(methodCallClass);
-					
+
 					if (methodLayer != null) {
 						if (Math.abs(methodLayer - methodCallLayer) > 1) {
-							int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(),
-									node.getEndLine(), node.getBeginColumn(), node.getEndColumn());
-							issues.add(new FileIssue(methodCall.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE,
-									methodCall.toString(), methodCall));
+							issues.add(new FileIssue(ISSUE_TYPE, methodCall, fileString));
 						}
 					}
 				}
@@ -84,7 +81,7 @@ public class LayerSkippingCall extends Measure {
 		}
 		return issues;
 	}
-
+	
 	@Override
 	public String getIssueType() {
 		return ISSUE_TYPE;
