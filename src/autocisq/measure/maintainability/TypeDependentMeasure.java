@@ -25,6 +25,7 @@ public abstract class TypeDependentMeasure extends Measure {
 
 	public TypeDependentMeasure(Map<String, Object> settings) {
 		super(settings);
+		reset();
 	}
 	
 	@Override
