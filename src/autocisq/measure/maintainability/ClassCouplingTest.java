@@ -1,7 +1,5 @@
 package autocisq.measure.maintainability;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +10,9 @@ import org.junit.Test;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 
 import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
@@ -21,6 +22,12 @@ public class ClassCouplingTest extends MeasureTest {
 
 	private String fileString;
 	private CompilationUnit testCU;
+	private FieldAccessExpr instanceVariableAccess;
+	private FieldAccessExpr staticAccess;
+	private FieldAccessExpr finalAccess;
+	private FieldAccessExpr staticFinalAccess;
+	private MethodCallExpr methodCall;
+
 	private List<CompilationUnit> coupling6;
 	private List<CompilationUnit> coupling7;
 	private List<CompilationUnit> coupling8;
@@ -56,6 +63,17 @@ public class ClassCouplingTest extends MeasureTest {
 		CompilationUnit class9CU = JavaParser.parse(class9);
 
 		this.testCU = class1CU;
+		MethodDeclaration testMethod = (MethodDeclaration) class9CU.getTypes().get(0).getChildrenNodes().get(0);
+
+		this.instanceVariableAccess = (FieldAccessExpr) testMethod.getBody().getChildrenNodes().get(1)
+				.getChildrenNodes().get(0).getChildrenNodes().get(1);
+		this.staticAccess = (FieldAccessExpr) testMethod.getBody().getChildrenNodes().get(2).getChildrenNodes().get(0)
+				.getChildrenNodes().get(1);
+		this.finalAccess = (FieldAccessExpr) testMethod.getBody().getChildrenNodes().get(3).getChildrenNodes().get(0)
+				.getChildrenNodes().get(1);
+		this.staticFinalAccess = (FieldAccessExpr) testMethod.getBody().getChildrenNodes().get(4).getChildrenNodes()
+				.get(0).getChildrenNodes().get(1);
+		this.methodCall = (MethodCallExpr) testMethod.getBody().getChildrenNodes().get(5).getChildrenNodes().get(0);
 
 		this.coupling6 = new ArrayList<>();
 		this.coupling6.add(class1CU);
@@ -77,17 +95,22 @@ public class ClassCouplingTest extends MeasureTest {
 
 	@Test
 	public void skipStaticAndOrFinalFields() {
-		fail("Not implemented yet");
+		dryRun(this.coupling7);
+		skipIssue(this.staticAccess, this.fileString);
+		skipIssue(this.finalAccess, this.fileString);
+		skipIssue(this.staticFinalAccess, this.fileString);
 	}
 
 	@Test
 	public void findInstanceVariableCoupling() {
-		fail("Not implemented yet");
+		dryRun(this.coupling7);
+		findIssue(this.instanceVariableAccess, this.fileString);
 	}
 
 	@Test
 	public void findMethodCoupling() {
-		fail("Not implemented yet");
+		dryRun(this.coupling7);
+		findIssue(this.methodCall, this.fileString);
 	}
 
 	@Test

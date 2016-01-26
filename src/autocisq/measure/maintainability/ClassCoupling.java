@@ -11,6 +11,8 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
@@ -61,37 +63,62 @@ public class ClassCoupling extends TypeDependentMeasure {
 		super.analyzeNode(node, fileString, compilationUnits);
 		if (node instanceof MethodCallExpr || node instanceof FieldAccessExpr) {
 			String scope;
+			String fieldName = null;
 			if (node instanceof MethodCallExpr) {
 				MethodCallExpr methodCall = (MethodCallExpr) node;
 				scope = methodCall.getScope().toString();
 			} else {
-				FieldAccessExpr fieldAccess = (FieldAccessExpr) node;
-				scope = fieldAccess.getScope().toString();
+				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) node;
+				scope = fieldAccessExpr.getScope().toString();
+				fieldName = fieldAccessExpr.getField();
 			}
 			String type = variableToType(scope);
 
-			if (type != null) {
-				try {
-					ClassOrInterfaceDeclaration containingClass = (ClassOrInterfaceDeclaration) JavaParserHelper
-							.findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
-					if (classNotCounted(containingClass.getName())) {
-						ClassOrInterfaceDeclaration classToBlame = JavaParserHelper
-								.findClassOrInterfaceDeclaration(type, compilationUnits);
-						if (classToBlame != null) {
-							int count = addCoupling(type);
-							return checkCoupling(count, classToBlame, fileString);
-						}
-					}
-				} catch (NoSuchAncestorFoundException e) {
-					return null;
-				}
-			}
+			return analyzeAccess(node, fileString, compilationUnits, fieldName, type);
 		} else if (node instanceof ClassOrInterfaceDeclaration) {
 			ClassOrInterfaceDeclaration classToBlame = (ClassOrInterfaceDeclaration) node;
 			int count = getCoupling(classToBlame.getName());
 			return checkCoupling(count, classToBlame, fileString);
 		}
 		return null;
+	}
+
+	private List<Issue> analyzeAccess(Node node, String fileString, List<CompilationUnit> compilationUnits,
+			String fieldName, String type) {
+		if (type != null) {
+			try {
+				ClassOrInterfaceDeclaration containingClass = (ClassOrInterfaceDeclaration) JavaParserHelper
+						.findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
+				ClassOrInterfaceDeclaration classToBlame = JavaParserHelper.findClassOrInterfaceDeclaration(type,
+						compilationUnits);
+				if (isStaticOrFinalFieldAccess(fieldName, classToBlame)) {
+					return null;
+				}
+				if (classNotCounted(containingClass.getName())) {
+					if (classToBlame != null) {
+						int count = addCoupling(type);
+						return checkCoupling(count, classToBlame, fileString);
+					}
+				}
+			} catch (NoSuchAncestorFoundException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
+	private boolean isStaticOrFinalFieldAccess(String fieldName, ClassOrInterfaceDeclaration classToBlame) {
+		if (fieldName != null) {
+			FieldDeclaration fieldOfOrigin = JavaParserHelper.findFieldDeclarationTopDown(fieldName, classToBlame);
+			if (fieldOfOrigin != null) {
+				boolean isStatic = ModifierSet.isStatic(fieldOfOrigin.getModifiers());
+				boolean isFinal = ModifierSet.isFinal(fieldOfOrigin.getModifiers());
+				if (isStatic || isFinal) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private boolean classNotCounted(String name) {

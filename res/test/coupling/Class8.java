@@ -1,7 +1,7 @@
 
 public class Class8 {
 	
-	public method() {
+	public void method() {
 		Class1 class1 = new Class1();
 		System.out.println(class1.field1);
 		System.out.println(Class1.field2);
