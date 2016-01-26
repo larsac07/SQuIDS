@@ -14,7 +14,7 @@ public abstract class MeasureTest {
 
 	protected List<Issue> issues;
 
-	public void findIssue(Node nodeToAnalyze, String fileString) {
+	public void findIssue(String message, Node nodeToAnalyze, String fileString) {
 		this.issues = IssueFinder.getInstance().analyzeNode(nodeToAnalyze, null, fileString);
 		assertTrue(this.issues.size() > 0);
 		boolean found = false;
@@ -23,10 +23,14 @@ public abstract class MeasureTest {
 				found = true;
 			}
 		}
-		assertTrue(found);
+		assertTrue(message, found);
 	}
 
-	public void skipIssue(Node nodeToAnalyze, String fileString) {
+	public void findIssue(Node nodeToAnalyze, String fileString) {
+		findIssue(null, nodeToAnalyze, fileString);
+	}
+
+	public void skipIssue(String message, Node nodeToAnalyze, String fileString) {
 		this.issues = IssueFinder.getInstance().analyzeNode(nodeToAnalyze, null, fileString);
 		boolean found = false;
 		for (Issue issue : this.issues) {
@@ -34,8 +38,12 @@ public abstract class MeasureTest {
 				found = true;
 			}
 		}
-		assertFalse(found);
+		assertFalse(message, found);
 	}
-	
+
+	public void skipIssue(Node nodeToAnalyze, String fileString) {
+		skipIssue(null, nodeToAnalyze, fileString);
+	}
+
 	public abstract String getIssueType();
 }
