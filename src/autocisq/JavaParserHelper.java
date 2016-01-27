@@ -254,17 +254,21 @@ public abstract class JavaParserHelper {
 	 *         the provided node
 	 * @throws NoSuchDescendantFoundException
 	 */
-	public static List<Node> findNodeDescendantsOfType(Node node, Class<? extends Node> klass, List<Node> nodes)
+	public static List<Node> findNodeDescendantsOfType(Node node, Class<? extends Node> klass)
+			throws NoSuchDescendantFoundException {
+		return findNodeDescendantsOfType(node, klass, null);
+	}
+
+	private static List<Node> findNodeDescendantsOfType(Node node, Class<? extends Node> klass, List<Node> nodes)
 			throws NoSuchDescendantFoundException {
 		if (nodes == null) {
 			nodes = new LinkedList<>();
 		}
 		if (node.getClass().isAssignableFrom(klass)) {
 			nodes.add(node);
-		} else {
-			for (Node child : node.getChildrenNodes()) {
-				findNodeDescendantsOfType(child, klass, nodes);
-			}
+		}
+		for (Node child : node.getChildrenNodes()) {
+			findNodeDescendantsOfType(child, klass, nodes);
 		}
 		if (nodes.isEmpty()) {
 			throw new NoSuchDescendantFoundException();
