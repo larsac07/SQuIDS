@@ -240,6 +240,40 @@ public abstract class JavaParserHelper {
 	}
 
 	/**
+	 * Generates a list of {@link Node} elements which are descendants of the
+	 * provided node and are assignable from (instanceof) the specified class.
+	 *
+	 * @param node
+	 *            - the root node to search from
+	 * @param klass
+	 *            - the class filter for the search
+	 * @param nodes
+	 *            - the list of nodes. Initally, this can be null. Used for
+	 *            recursion.
+	 * @return a list of nodes of the specified class which are descendants of
+	 *         the provided node
+	 * @throws NoSuchDescendantFoundException
+	 */
+	public static List<Node> findNodeDescendantsOfType(Node node, Class<? extends Node> klass, List<Node> nodes)
+			throws NoSuchDescendantFoundException {
+		if (nodes == null) {
+			nodes = new LinkedList<>();
+		}
+		if (node.getClass().isAssignableFrom(klass)) {
+			nodes.add(node);
+		} else {
+			for (Node child : node.getChildrenNodes()) {
+				findNodeDescendantsOfType(child, klass, nodes);
+			}
+		}
+		if (nodes.isEmpty()) {
+			throw new NoSuchDescendantFoundException();
+		} else {
+			return nodes;
+		}
+	}
+
+	/**
 	 * Get the type of a {@link NameExpr}. Works for cases such as System.out
 	 * and Files.
 	 *
