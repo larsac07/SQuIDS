@@ -256,4 +256,22 @@ public abstract class JavaParserHelper {
 			return nameExprString;
 		}
 	}
+
+	/**
+	 * Returns the complete file string (toString() value) of the
+	 * {@link CompilationUnit} ancestor of a node.
+	 *
+	 * @param node
+	 *            - the node to get the complete file string for
+	 * @return the toString() value of the {@link CompilationUnit} ancestor of a
+	 *         node
+	 */
+	public static String getNodeFileString(Node node) {
+		try {
+			CompilationUnit cu = findNodeCompilationUnit(node);
+			return cu.toString();
+		} catch (NoSuchAncestorFoundException e) {
+			return null;
+		}
+	}
 }
