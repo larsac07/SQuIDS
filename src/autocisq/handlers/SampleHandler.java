@@ -96,6 +96,7 @@ public class SampleHandler extends AbstractHandler {
 		measures.add("autocisq.measure.maintainability.ClassInheritanceLevel");
 		measures.add("autocisq.measure.maintainability.ClassCoupling");
 		measures.add("autocisq.measure.maintainability.CyclicCallBetweenPackages");
+		measures.add("autocisq.measure.maintainability.IndexModifiedWithinLoop");
 		measures.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");
 
 		Map<String, Object> settings = new HashMap<>();

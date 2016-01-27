@@ -73,15 +73,19 @@ public abstract class JavaParserHelper {
 	 * @return the closest ancestor found of the specified class
 	 * @throws NoSuchAncestorFoundException
 	 */
-	public static Node findNodeAncestorOfType(Node node, Class<? extends Node> ancestorClass)
+	@SafeVarargs
+	public static Node findNodeAncestorOfType(Node node, Class<? extends Node>... ancestorClasses)
 			throws NoSuchAncestorFoundException {
 		if (node == null) {
 			throw new NoSuchAncestorFoundException();
-		} else if (node.getClass().equals(ancestorClass)) {
-			return node;
 		} else {
-			return findNodeAncestorOfType(node.getParentNode(), ancestorClass);
+			for (Class<? extends Node> ancestorClass : ancestorClasses) {
+				if (node.getClass().equals(ancestorClass)) {
+					return node;
+				}
+			}
 		}
+		return findNodeAncestorOfType(node.getParentNode(), ancestorClasses);
 	}
 
 	public static List<FieldDeclaration> findTypeFields(TypeDeclaration typeDeclaration) {
@@ -254,21 +258,25 @@ public abstract class JavaParserHelper {
 	 *         the provided node
 	 * @throws NoSuchDescendantFoundException
 	 */
-	public static List<Node> findNodeDescendantsOfType(Node node, Class<? extends Node> klass)
+	@SafeVarargs
+	public static List<Node> findNodeDescendantsOfType(Node node, Class<? extends Node>... classes)
 			throws NoSuchDescendantFoundException {
-		return findNodeDescendantsOfType(node, klass, null);
+		return findNodeDescendantsOfType(node, null, classes);
 	}
 
-	private static List<Node> findNodeDescendantsOfType(Node node, Class<? extends Node> klass, List<Node> nodes)
+	@SafeVarargs
+	private static List<Node> findNodeDescendantsOfType(Node node, List<Node> nodes, Class<? extends Node>... classes)
 			throws NoSuchDescendantFoundException {
 		if (nodes == null) {
 			nodes = new LinkedList<>();
 		}
-		if (node.getClass().isAssignableFrom(klass)) {
-			nodes.add(node);
+		for (Class<? extends Node> klass : classes) {
+			if (node.getClass().isAssignableFrom(klass)) {
+				nodes.add(node);
+			}
 		}
 		for (Node child : node.getChildrenNodes()) {
-			findNodeDescendantsOfType(child, klass, nodes);
+			findNodeDescendantsOfType(child, nodes, classes);
 		}
 		if (nodes.isEmpty()) {
 			throw new NoSuchDescendantFoundException();

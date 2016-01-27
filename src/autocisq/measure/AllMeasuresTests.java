@@ -13,6 +13,7 @@ import autocisq.measure.maintainability.FileDuplicateTokensTest;
 import autocisq.measure.maintainability.FileLOCTest;
 import autocisq.measure.maintainability.HardCodedLiteralTest;
 import autocisq.measure.maintainability.HorizontalLayersTest;
+import autocisq.measure.maintainability.IndexModifiedWithinLoopTest;
 import autocisq.measure.maintainability.LayerSkippingCallTest;
 import autocisq.measure.maintainability.MethodCommentedOutInstructionsTest;
 import autocisq.measure.maintainability.MethodCyclomaticComplexityTest;
@@ -31,7 +32,7 @@ import autocisq.measure.reliability.EmptyExceptionHandlingBlockTest;
 		ContinueOrBreakOutsideSwitchTest.class, HardCodedLiteralTest.class, ClassTooManyChildrenTest.class,
 		MethodTooManyDataOrFileOperationsTest.class, FileDuplicateTokensTest.class,
 		MethodCyclomaticComplexityTest.class, MethodUnreachableTest.class, ClassInheritanceLevelTest.class,
-		ClassCouplingTest.class, CyclicCallBetweenPackagesTest.class })
+		ClassCouplingTest.class, CyclicCallBetweenPackagesTest.class, IndexModifiedWithinLoopTest.class })
 
 public class AllMeasuresTests {
 
