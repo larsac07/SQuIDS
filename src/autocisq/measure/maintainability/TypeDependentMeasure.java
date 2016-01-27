@@ -27,7 +27,7 @@ public abstract class TypeDependentMeasure extends Measure {
 		super(settings);
 		reset();
 	}
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		storeVariables(node);
@@ -80,7 +80,7 @@ public abstract class TypeDependentMeasure extends Measure {
 			this.variableTypes.put(packageType, packageType);
 		}
 	}
-	
+
 	/**
 	 * Returns the last joint from a package string, e.g. "File" from
 	 * "java.io.File".
@@ -95,7 +95,7 @@ public abstract class TypeDependentMeasure extends Measure {
 		String packageType = packageStringParts[packageStringParts.length - 1];
 		return packageType;
 	}
-	
+
 	/**
 	 * Stores the parameters in both identifier - type and type - type pairs
 	 * (for static calls), e.g. "file" - "File" and "File" - "File".
@@ -125,16 +125,34 @@ public abstract class TypeDependentMeasure extends Measure {
 			this.variableTypes.put(type.toString(), type);
 		}
 	}
-	
+
 	/**
-	 * Returns the package of a type, e.g. "File" returns "java.io.File".
+	 * Returns the import string of a type, e.g. "File" returns "java.io.File".
+	 *
+	 * @param type
+	 *            - the type to find the package for
+	 * @return the import string of the type
+	 */
+	protected String typeToImport(String type) {
+		return this.typeImports.get(type);
+	}
+
+	/**
+	 * Returns the package of a type, e.g. "File" returns "java.io".
 	 *
 	 * @param type
 	 *            - the type to find the package for
 	 * @return the package string of the type
 	 */
 	protected String typeToPackage(String type) {
-		return this.typeImports.get(type);
+		String importString = typeToImport(type);
+		if (importString != null) {
+			int typeIndex = importString.lastIndexOf(".");
+			String packageString = importString.substring(0, typeIndex);
+			return packageString;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -147,7 +165,7 @@ public abstract class TypeDependentMeasure extends Measure {
 	protected String variableToType(String variableName) {
 		return this.variableTypes.get(variableName);
 	}
-	
+
 	/**
 	 * Resets import and variable maps.
 	 */

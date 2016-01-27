@@ -134,7 +134,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 		String nameExprType = JavaParserHelper.getNameExprType(nameExpr);
 		String type = getVariableTypes().get(nameExprType);
 		if (type != null) {
-			String packageName = typeToPackage(type);
+			String packageName = typeToImport(type);
 			if (isDbOrIoClass(packageName)) {
 				this.count++;
 				if (this.count >= THRESHOLD) {
