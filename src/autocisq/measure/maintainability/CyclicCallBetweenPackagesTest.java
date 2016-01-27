@@ -20,6 +20,9 @@ public class CyclicCallBetweenPackagesTest extends MeasureTest {
 	private MethodCallExpr cyclicCall2;
 	private MethodCallExpr samePackageCall1;
 	private MethodCallExpr samePackageCall2;
+	private CompilationUnit class1CU;
+	private CompilationUnit class2CU;
+	private CompilationUnit class3CU;
 	private String fileStringClass1;
 	private String fileStringClass2;
 	private String fileStringClass3;
@@ -39,33 +42,38 @@ public class CyclicCallBetweenPackagesTest extends MeasureTest {
 		this.fileStringClass2 = IOUtils.fileToString(class2);
 		this.fileStringClass3 = IOUtils.fileToString(class3);
 
-		CompilationUnit class1CU = JavaParser.parse(class1);
-		CompilationUnit class2CU = JavaParser.parse(class2);
-		CompilationUnit class3CU = JavaParser.parse(class3);
+		this.class1CU = JavaParser.parse(class1);
+		this.class2CU = JavaParser.parse(class2);
+		this.class3CU = JavaParser.parse(class3);
 
-		this.cyclicCall1 = (MethodCallExpr) class1CU.getTypes().get(0).getChildrenNodes().get(0).getChildrenNodes()
+		this.cyclicCall1 = (MethodCallExpr) this.class1CU.getTypes().get(0).getChildrenNodes().get(0).getChildrenNodes()
 				.get(1).getChildrenNodes().get(1).getChildrenNodes().get(0);
-		this.cyclicCall2 = (MethodCallExpr) class2CU.getTypes().get(0).getChildrenNodes().get(0).getChildrenNodes()
+		this.cyclicCall2 = (MethodCallExpr) this.class2CU.getTypes().get(0).getChildrenNodes().get(0).getChildrenNodes()
 				.get(1).getChildrenNodes().get(1).getChildrenNodes().get(0);
-		this.samePackageCall1 = (MethodCallExpr) class1CU.getTypes().get(0).getChildrenNodes().get(0).getChildrenNodes()
-				.get(1).getChildrenNodes().get(3).getChildrenNodes().get(0);
-		this.samePackageCall2 = (MethodCallExpr) class3CU.getTypes().get(0).getChildrenNodes().get(0).getChildrenNodes()
-				.get(1).getChildrenNodes().get(1).getChildrenNodes().get(0);
+		this.samePackageCall1 = (MethodCallExpr) this.class1CU.getTypes().get(0).getChildrenNodes().get(0)
+				.getChildrenNodes().get(1).getChildrenNodes().get(3).getChildrenNodes().get(0);
+		this.samePackageCall2 = (MethodCallExpr) this.class3CU.getTypes().get(0).getChildrenNodes().get(0)
+				.getChildrenNodes().get(1).getChildrenNodes().get(1).getChildrenNodes().get(0);
 
-		dryRun(class1CU, class2CU, class3CU);
 	}
 
 	@Test
 	public void findCyclicCallDifferentPackage() {
+		analyzeClasses(this.class2CU, this.class1CU);
+		findIssue(this.cyclicCall1, this.fileStringClass1);
+		analyzeClasses(this.class1CU, this.class2CU);
 		findIssue(this.cyclicCall2, this.fileStringClass2);
 	}
 
 	@Test
 	public void skipCyclicCallSamePackage() {
+		analyzeClasses(this.class3CU, this.class1CU);
+		skipIssue(this.samePackageCall1, this.fileStringClass1);
+		analyzeClasses(this.class1CU, this.class3CU);
 		skipIssue(this.samePackageCall2, this.fileStringClass3);
 	}
 
-	private void dryRun(CompilationUnit... compilationUnits) {
+	private void analyzeClasses(CompilationUnit... compilationUnits) {
 		for (CompilationUnit cu : compilationUnits) {
 			this.issueFinder.analyzeNode(cu, null, cu.toString());
 		}

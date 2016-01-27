@@ -31,13 +31,13 @@ import autocisq.models.ProjectIssue;
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class SampleHandler extends AbstractHandler {
-	
+
 	/**
 	 * The constructor.
 	 */
 	public SampleHandler() {
 	}
-	
+
 	/**
 	 * the command has been executed, so extract extract the needed information
 	 * from the application context.
@@ -94,6 +94,8 @@ public class SampleHandler extends AbstractHandler {
 		measures.add("autocisq.measure.maintainability.MethodCyclomaticComplexity");
 		measures.add("autocisq.measure.maintainability.MethodUnreachable");
 		measures.add("autocisq.measure.maintainability.ClassInheritanceLevel");
+		measures.add("autocisq.measure.maintainability.ClassCoupling");
+		measures.add("autocisq.measure.maintainability.CyclicCallBetweenPackages");
 		measures.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");
 
 		Map<String, Object> settings = new HashMap<>();
@@ -116,7 +118,7 @@ public class SampleHandler extends AbstractHandler {
 				}
 
 				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files, settings);
-				
+
 				for (File file : fileIssuesMap.keySet()) {
 					List<Issue> issues = fileIssuesMap.get(file);
 					IFile iFile = iFileMap.get(file);
@@ -146,7 +148,7 @@ public class SampleHandler extends AbstractHandler {
 		}
 		return null;
 	}
-	
+
 	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex, String message)
 			throws CoreException {
 		IMarker m = file.createMarker("AutoCISQ.javaqualityissue");
@@ -157,7 +159,7 @@ public class SampleHandler extends AbstractHandler {
 		m.setAttribute(IMarker.CHAR_START, startIndex);
 		m.setAttribute(IMarker.CHAR_END, endIndex);
 	}
-	
+
 	private static void markIssue(IProject project, String message) throws CoreException {
 		IMarker m = project.createMarker("AutoCISQ.javaqualityissue");
 		m.setAttribute(IMarker.MESSAGE, message);
