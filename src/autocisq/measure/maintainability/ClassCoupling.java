@@ -13,6 +13,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
@@ -62,19 +63,20 @@ public class ClassCoupling extends TypeDependentMeasure {
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		super.analyzeNode(node, fileString, compilationUnits);
 		if (node instanceof MethodCallExpr || node instanceof FieldAccessExpr) {
-			String scope;
+			Expression scope;
 			String fieldName = null;
 			if (node instanceof MethodCallExpr) {
 				MethodCallExpr methodCall = (MethodCallExpr) node;
-				scope = methodCall.getScope().toString();
+				scope = methodCall.getScope();
 			} else {
 				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) node;
-				scope = fieldAccessExpr.getScope().toString();
+				scope = fieldAccessExpr.getScope();
 				fieldName = fieldAccessExpr.getField();
 			}
-			String type = variableToType(scope);
-
-			return analyzeAccess(node, fileString, compilationUnits, fieldName, type);
+			if (scope != null) {
+				String type = variableToType(scope.toString());
+				return analyzeAccess(node, fileString, compilationUnits, fieldName, type);
+			}
 		} else if (node instanceof ClassOrInterfaceDeclaration) {
 			ClassOrInterfaceDeclaration classToBlame = (ClassOrInterfaceDeclaration) node;
 			int count = getCoupling(classToBlame.getName());
@@ -108,7 +110,7 @@ public class ClassCoupling extends TypeDependentMeasure {
 	}
 
 	private boolean isStaticOrFinalFieldAccess(String fieldName, ClassOrInterfaceDeclaration classToBlame) {
-		if (fieldName != null) {
+		if (fieldName != null && classToBlame != null) {
 			FieldDeclaration fieldOfOrigin = JavaParserHelper.findFieldDeclarationTopDown(fieldName, classToBlame);
 			if (fieldOfOrigin != null) {
 				boolean isStatic = ModifierSet.isStatic(fieldOfOrigin.getModifiers());

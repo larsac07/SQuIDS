@@ -8,6 +8,7 @@ import java.util.Map;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
@@ -47,27 +48,30 @@ public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		super.analyzeNode(node, fileString, compilationUnits);
 		if (node instanceof MethodCallExpr || node instanceof FieldAccessExpr) {
-			String type;
+			Expression scope;
 			if (node instanceof MethodCallExpr) {
 				MethodCallExpr methodCall = (MethodCallExpr) node;
-				type = variableToType(methodCall.getScope().toString());
+				scope = methodCall.getScope();
 			} else {
-				FieldAccessExpr fieldAccess = (FieldAccessExpr) node;
-				type = variableToType(fieldAccess.getScope().toString());
+				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) node;
+				scope = fieldAccessExpr.getScope();
 			}
-			String toPackage = typeToPackage(type);
-			if (toPackage != null) {
-				String fromPackage = getNodePackage(node).getName().toString();
-				this.callMap.put(node, new PackageCall(fromPackage, toPackage));
-				for (Node packageSkippingCall : this.callMap.keySet()) {
-					PackageCall packageCall = this.callMap.get(packageSkippingCall);
-					if (packageCall.getFromPackage().equals(toPackage)
-							&& packageCall.getToPackage().equals(fromPackage)) {
-						List<Issue> issues = new LinkedList<>();
-						issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
-						issues.add(new FileIssue(ISSUE_TYPE, packageSkippingCall,
-								JavaParserHelper.getNodeFileString(packageSkippingCall)));
-						return issues;
+			if (scope != null) {
+				String type = variableToType(scope.toString());
+				String toPackage = typeToPackage(type);
+				if (toPackage != null) {
+					String fromPackage = getNodePackage(node).getName().toString();
+					this.callMap.put(node, new PackageCall(fromPackage, toPackage));
+					for (Node packageSkippingCall : this.callMap.keySet()) {
+						PackageCall packageCall = this.callMap.get(packageSkippingCall);
+						if (packageCall.getFromPackage().equals(toPackage)
+								&& packageCall.getToPackage().equals(fromPackage)) {
+							List<Issue> issues = new LinkedList<>();
+							issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+							issues.add(new FileIssue(ISSUE_TYPE, packageSkippingCall,
+									JavaParserHelper.getNodeFileString(packageSkippingCall)));
+							return issues;
+						}
 					}
 				}
 			}
