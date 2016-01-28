@@ -30,12 +30,12 @@ import autocisq.models.ProjectIssue;
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
-public class SampleHandler extends AbstractHandler {
+public class Handler extends AbstractHandler {
 
 	/**
 	 * The constructor.
 	 */
-	public SampleHandler() {
+	public Handler() {
 	}
 
 	/**
