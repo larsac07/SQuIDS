@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 
 import autocisq.IssueFinder;
 import autocisq.debug.Logger;
@@ -23,6 +24,7 @@ import autocisq.io.EclipseFiles;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.ProjectIssue;
+import autocisq.properties.Properties;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -30,12 +32,12 @@ import autocisq.models.ProjectIssue;
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
-public class SampleHandler extends AbstractHandler {
+public class Handler extends AbstractHandler {
 
 	/**
 	 * The constructor.
 	 */
-	public SampleHandler() {
+	public Handler() {
 	}
 
 	/**
@@ -44,6 +46,7 @@ public class SampleHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+
 		Map<String, Integer> layerMap = new LinkedHashMap<>();
 		layerMap.put("no.uib.mof077.shortbytes.decisiontree.EntropyManualCalculator", 1);
 		layerMap.put("no.uib.mof077.shortbytes.decisiontree.Node", 2);
@@ -106,6 +109,14 @@ public class SampleHandler extends AbstractHandler {
 
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
+			try {
+				String measuresString = project
+						.getPersistentProperty(new QualifiedName(Properties.KEY_MEASURES, Properties.KEY_MEASURES));
+				System.out.println(measuresString);
+			} catch (CoreException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			List<IFile> iFiles;
 			List<File> files = new LinkedList<>();
 			Map<File, IFile> iFileMap = new HashMap<>();

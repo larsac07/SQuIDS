@@ -15,14 +15,23 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class Properties extends PropertyPage {
 
-	private static final String PATH_TITLE = "Project:";
-	private static final String OWNER_TITLE = "&Owner:";
-	private static final String OWNER_PROPERTY = "OWNER";
-	private static final String DEFAULT_OWNER = "John Doe";
+	private static final String PROJECT_LABEL = "Project:";
+
+	private static final String LABEL_MEASURES = "&Measures:";
+	public static final String KEY_MEASURES = "measures";
+
+	private static final String LABEL_LAYER_MAP = "&Layer map:";
+	public static final String KEY_LAYER_MAP = "layer_map";
+
+	private static final String LABEL_DB_OR_IO_CLASSES = "&Classes with database or io operations:";
+	public static final String KEY_DB_OR_IO_CLASSES = "measures";
 
 	private static final int TEXT_FIELD_WIDTH = 50;
+	private static final int TEXT_FIELD_HEIGHT = 10;
 
-	private Text ownerText;
+	private Text measuresText;
+	private Text layerMapText;
+	private Text dbOrIoClassesText;
 
 	/**
 	 * Constructor for SamplePropertyPage.
@@ -31,12 +40,12 @@ public class Properties extends PropertyPage {
 		super();
 	}
 
-	private void addFirstSection(Composite parent) {
+	private void addHeaderSection(Composite parent) {
 		Composite composite = createDefaultComposite(parent);
 
 		// Label for path field
 		Label pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText(PATH_TITLE);
+		pathLabel.setText(PROJECT_LABEL);
 
 		// Path text field
 		Text pathValueText = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
@@ -51,25 +60,65 @@ public class Properties extends PropertyPage {
 		separator.setLayoutData(gridData);
 	}
 
-	private void addSecondSection(Composite parent) {
+	private void addInputSection(Composite parent) {
 		Composite composite = createDefaultComposite(parent);
 
-		// Label for owner field
-		Label ownerLabel = new Label(composite, SWT.NONE);
-		ownerLabel.setText(OWNER_TITLE);
+		// Measures Label
+		Label measuresLabel = new Label(composite, SWT.NONE);
+		measuresLabel.setText(LABEL_MEASURES);
 
-		// Owner text field
-		this.ownerText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		// Measures textfield
+		this.measuresText = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData gd = new GridData();
 		gd.widthHint = convertWidthInCharsToPixels(TEXT_FIELD_WIDTH);
-		this.ownerText.setLayoutData(gd);
+		gd.heightHint = convertHeightInCharsToPixels(TEXT_FIELD_HEIGHT);
+		this.measuresText.setLayoutData(gd);
 
-		// Populate owner text field
+		// LayerMap Label
+		Label layerMapLabel = new Label(composite, SWT.NONE);
+		layerMapLabel.setText(LABEL_LAYER_MAP);
+
+		// LayerMap textfield
+		this.layerMapText = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		GridData gdlm = new GridData();
+		gdlm.widthHint = convertWidthInCharsToPixels(TEXT_FIELD_WIDTH);
+		gdlm.heightHint = convertHeightInCharsToPixels(TEXT_FIELD_HEIGHT);
+		this.layerMapText.setLayoutData(gdlm);
+
+		// DbOrIoClasses Label
+		Label dbOrIoClassesLabel = new Label(composite, SWT.NONE);
+		dbOrIoClassesLabel.setText(LABEL_DB_OR_IO_CLASSES);
+
+		// DbOrIoClasses textfield
+		this.dbOrIoClassesText = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		GridData gddb = new GridData();
+		gddb.widthHint = convertWidthInCharsToPixels(TEXT_FIELD_WIDTH);
+		gddb.heightHint = convertHeightInCharsToPixels(TEXT_FIELD_HEIGHT);
+		this.dbOrIoClassesText.setLayoutData(gddb);
+
+		// Populate fields
 		try {
-			String owner = ((IResource) getElement()).getPersistentProperty(new QualifiedName("", OWNER_PROPERTY));
-			this.ownerText.setText((owner != null) ? owner : DEFAULT_OWNER);
+			String measures = ((IResource) getElement())
+					.getPersistentProperty(new QualifiedName(KEY_MEASURES, KEY_MEASURES));
+			this.measuresText.setText((measures != null) ? measures : "");
 		} catch (CoreException e) {
-			this.ownerText.setText(DEFAULT_OWNER);
+			this.measuresText.setText("");
+		}
+
+		try {
+			String layerMap = ((IResource) getElement())
+					.getPersistentProperty(new QualifiedName(KEY_LAYER_MAP, KEY_LAYER_MAP));
+			this.layerMapText.setText((layerMap != null) ? layerMap : "");
+		} catch (CoreException e) {
+			this.layerMapText.setText("");
+		}
+
+		try {
+			String dbOrIoClasses = ((IResource) getElement())
+					.getPersistentProperty(new QualifiedName(KEY_DB_OR_IO_CLASSES, KEY_DB_OR_IO_CLASSES));
+			this.dbOrIoClassesText.setText((dbOrIoClasses != null) ? dbOrIoClasses : "");
+		} catch (CoreException e) {
+			this.dbOrIoClassesText.setText("");
 		}
 	}
 
@@ -85,9 +134,9 @@ public class Properties extends PropertyPage {
 		data.grabExcessHorizontalSpace = true;
 		composite.setLayoutData(data);
 
-		addFirstSection(composite);
+		addHeaderSection(composite);
 		addSeparator(composite);
-		addSecondSection(composite);
+		addInputSection(composite);
 		return composite;
 	}
 
@@ -108,18 +157,23 @@ public class Properties extends PropertyPage {
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
-		// Populate the owner text field with the default value
-		this.ownerText.setText(DEFAULT_OWNER);
+		this.measuresText.setText("");
+		this.layerMapText.setText("");
+		this.dbOrIoClassesText.setText("");
 	}
 
 	@Override
 	public boolean performOk() {
-		// store the value in the owner text field
+		// store the values
 		try {
-			((IResource) getElement()).setPersistentProperty(new QualifiedName("", OWNER_PROPERTY),
-					this.ownerText.getText());
+			((IResource) getElement()).setPersistentProperty(new QualifiedName(KEY_MEASURES, KEY_MEASURES),
+					this.measuresText.getText());
+			((IResource) getElement()).setPersistentProperty(new QualifiedName(KEY_LAYER_MAP, KEY_LAYER_MAP),
+					this.layerMapText.getText());
+			((IResource) getElement()).setPersistentProperty(
+					new QualifiedName(KEY_DB_OR_IO_CLASSES, KEY_DB_OR_IO_CLASSES), this.dbOrIoClassesText.getText());
 		} catch (CoreException e) {
-			return false;
+			e.printStackTrace();
 		}
 		return true;
 	}
