@@ -2,7 +2,6 @@ package autocisq.handlers;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,77 +45,10 @@ public class Handler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-
-		Map<String, Integer> layerMap = new LinkedHashMap<>();
-		layerMap.put("no.uib.mof077.shortbytes.decisiontree.EntropyManualCalculator", 1);
-		layerMap.put("no.uib.mof077.shortbytes.decisiontree.Node", 2);
-		layerMap.put("no.uib.mof077.shortbytes.decisiontree.Person", 2);
-		layerMap.put("no.uib.mof077.shortbytes.decisiontree.Tree", 1);
-		layerMap.put("no.uib.mof077.shortbytes.genetics.Candidate", 2);
-		layerMap.put("no.uib.mof077.shortbytes.genetics.GeneticAlgorithm", 2);
-		layerMap.put("no.uib.mof077.shortbytes.genetics.Main", 1);
-		layerMap.put("no.uib.mof077.shortbytes.kmeans.Cluster", 2);
-		layerMap.put("no.uib.mof077.shortbytes.kmeans.KMeans", 1);
-		layerMap.put("no.uib.mof077.shortbytes.kmeans.Vector3", 2);
-		layerMap.put("no.uib.mof077.shortbytes.neural.Connection", 2);
-		layerMap.put("no.uib.mof077.shortbytes.neural.Network", 2);
-		layerMap.put("no.uib.mof077.shortbytes.neural.Node", 2);
-		layerMap.put("no.uib.mof077.shortbytes.neural.NodeLayer", 2);
-		layerMap.put("no.uib.mof077.shortbytes.neural.TestNeuralNetwork", 1);
-		layerMap.put("no.uib.mof077.shortbytes.neural.XORHomework", 1);
-		layerMap.put("no.uib.mof077.shortbytes.neural.XORNetwork", 1);
-		layerMap.put("no.uib.mof077.shortbytes.som.HomeworkSOM", 3);
-		layerMap.put("no.uib.mof077.shortbytes.som.KohonenSom", 3);
-		layerMap.put("no.uib.mof077.shortbytes.som.Layer", 3);
-		layerMap.put("no.uib.mof077.shortbytes.som.Neuron", 3);
-		layerMap.put("no.uib.mof077.shortbytes.som.SomMain", 3);
-
-		List<String> dbOrIoClasses = new LinkedList<>();
-		dbOrIoClasses.add("java.io.File");
-		dbOrIoClasses.add("java.nio.file.Files");
-		dbOrIoClasses.add("java.sql.Connection");
-		dbOrIoClasses.add("java.sql.DriverManager");
-		dbOrIoClasses.add("java.sql.PreparedStatement");
-		dbOrIoClasses.add("java.sql.Statement");
-		dbOrIoClasses.add("com.github.javaparser.JavaParser");
-
-		List<String> measures = new LinkedList<>();
-		measures.add("autocisq.measure.maintainability.ClassTooManyChildren");
-		measures.add("autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch");
-		measures.add("autocisq.measure.maintainability.FileLOC");
-		measures.add("autocisq.measure.maintainability.FileDuplicateTokens");
-		measures.add("autocisq.measure.maintainability.MethodCommentedOutInstructions");
-		measures.add("autocisq.measure.maintainability.MethodFanOut");
-		measures.add("autocisq.measure.maintainability.MethodParameters");
-		measures.add("autocisq.measure.maintainability.HardCodedLiteral");
-		measures.add("autocisq.measure.maintainability.HorizontalLayers");
-		measures.add("autocisq.measure.maintainability.LayerSkippingCall");
-		measures.add("autocisq.measure.maintainability.MethodTooManyDataOrFileOperations");
-		measures.add("autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass");
-		measures.add("autocisq.measure.maintainability.VariableDeclaredPublic");
-		measures.add("autocisq.measure.maintainability.MethodCyclomaticComplexity");
-		measures.add("autocisq.measure.maintainability.MethodUnreachable");
-		measures.add("autocisq.measure.maintainability.ClassInheritanceLevel");
-		measures.add("autocisq.measure.maintainability.ClassCoupling");
-		measures.add("autocisq.measure.maintainability.CyclicCallBetweenPackages");
-		measures.add("autocisq.measure.maintainability.IndexModifiedWithinLoop");
-		measures.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");
-
-		Map<String, Object> settings = new HashMap<>();
-		settings.put("layer_map", layerMap);
-		settings.put("db_or_io_classes", dbOrIoClasses);
-		settings.put("measures", measures);
-
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
-			try {
-				String measuresString = project
-						.getPersistentProperty(new QualifiedName(Properties.KEY_MEASURES, Properties.KEY_MEASURES));
-				System.out.println(measuresString);
-			} catch (CoreException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			Map<String, Object> settings = loadSettings(project);
+
 			List<IFile> iFiles;
 			List<File> files = new LinkedList<>();
 			Map<File, IFile> iFileMap = new HashMap<>();
@@ -156,6 +88,47 @@ public class Handler extends AbstractHandler {
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	private Map<String, Object> loadSettings(IProject project) {
+		Map<String, Object> settings = new HashMap<>();
+		Map<QualifiedName, String> projectProps = new HashMap<>();
+		try {
+			projectProps = project.getPersistentProperties();
+		} catch (CoreException e) {
+			return settings;
+		}
+		for (QualifiedName key : projectProps.keySet()) {
+
+			if (key.equals(Properties.KEY_MEASURES) || key.equals(Properties.KEY_DB_OR_IO_CLASSES)) {
+				settings.put(key.getLocalName(), linesToList(projectProps.get(key)));
+			} else if (key.equals(Properties.KEY_LAYER_MAP)) {
+				settings.put(key.getLocalName(), linesToStringIntMap(projectProps.get(key), ","));
+			}
+
+		}
+		return settings;
+	}
+
+	private List<String> linesToList(String string) {
+		System.out.println(string);
+		List<String> list = new LinkedList<>();
+		for (String line : string.split("\r?\n|\r")) {
+			System.out.println(line.trim());
+			list.add(line.trim());
+		}
+		return list;
+	}
+
+	private Map<String, Integer> linesToStringIntMap(String string, String delimiter) {
+		Map<String, Integer> map = new HashMap<>();
+		for (String line : string.split("\r?\n|\r")) {
+			String[] parts = line.split(delimiter);
+			if (parts.length >= 2) {
+				map.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
 			}
 		}
 		return null;
