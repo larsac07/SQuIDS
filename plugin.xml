@@ -18,7 +18,7 @@
          point="org.eclipse.ui.handlers">
       <handler
             commandId="AutoCISQ.commands.sampleCommand"
-            class="autocisq.handlers.SampleHandler">
+            class="autocisq.handlers.Handler">
       </handler>
    </extension>
    <extension
@@ -87,15 +87,18 @@
             contributesToHeader="true"
             symbolicIcon="error"
             	/>
-   </extension>
+   	</extension>
+   	
    <extension
-         point="org.eclipse.ui.preferencePages">
+       	 id="autocisq.properties.Properties"
+         point="org.eclipse.ui.propertyPages">
          <page
-            class="autocisq.PreferencePage"
-            id="autocisq.preferencePage"
-            name="AutoCISQ Settings">
-      </page>
+         	id="autocisq.properties.Properties"
+	     	class="autocisq.properties.Properties"
+	     	objectClass="org.eclipse.core.resources.IProject"
+         	name="AutoCISQ settings"
+         	icon="icons/sample.gif">
+         </page>
    </extension>
-   
 
 </plugin>

@@ -34,7 +34,7 @@ import autocisq.models.Issue;
 import autocisq.models.JavaResource;
 
 public class IssueFinder {
-	
+
 	private static IssueFinder instance;
 
 	private List<JavaResource> javaResources;
@@ -77,7 +77,7 @@ public class IssueFinder {
 		try {
 			@SuppressWarnings("unchecked")
 			List<String> measureStrings = (List<String>) settings.get("measures");
-			if (!measureStrings.isEmpty()) {
+			if (measureStrings != null && !measureStrings.isEmpty()) {
 				for (String measureString : measureStrings) {
 					try {
 						Class<?> clazz = Class.forName(measureString);
@@ -95,7 +95,7 @@ public class IssueFinder {
 						+ " was provided an empty list of measures. Please add a list of measures.");
 			}
 		} catch (NullPointerException | ClassCastException e) {
-			
+
 			System.err.println(this.getClass().getSimpleName()
 					+ " was not provided a list of measures. Please add a list of measures.");
 			e.printStackTrace();
@@ -339,19 +339,19 @@ public class IssueFinder {
 	public Map<String, Measure> getMeasures() {
 		return this.measures;
 	}
-	
+
 	public void putMeasure(Measure measure) {
 		this.measures.put(measure.getClass().getSimpleName(), measure);
 	}
-	
+
 	public Measure getMeasure(String classSimpleName) {
 		return this.measures.get(classSimpleName);
 	}
-	
+
 	public boolean hasMeasure(Measure measure) {
 		return hasMeasure(measure.getClass().getSimpleName());
 	}
-	
+
 	public boolean hasMeasure(String classSimpleName) {
 		return getMeasure(classSimpleName) != null;
 	}
@@ -359,7 +359,7 @@ public class IssueFinder {
 	public List<CompilationUnit> getCompilationUnits() {
 		return this.compilationUnits;
 	}
-	
+
 	public void setCompilationUnits(List<CompilationUnit> compilationUnits) {
 		this.compilationUnits = compilationUnits;
 	}
