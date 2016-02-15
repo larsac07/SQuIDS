@@ -996,5 +996,130 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		printJavadoc(n.getJavaDoc(), arg);
 		printMemberAnnotations(n.getAnnotations(), arg);
 		printModifiers(n.getModifiers());
+
+		printTypeParameters(n.getTypeParameters(), arg);
+		if (!n.getTypeParameters().isEmpty()) {
+			printer.print(" ");
+		}
+		printer.print(n.getName());
+
+		printer.print("(");
+		if (!n.getParameters().isEmpty()) {
+			for (final Iterator<Parameter> i = n.getParameters().iterator(); i.hasNext();) {
+				final Parameter p = i.next();
+				p.accept(this, arg);
+				if (i.hasNext()) {
+					printer.print(", ");
+				}
+			}
+		}
+		printer.print(")");
+
+		if (!isNullOrEmpty(n.getThrows())) {
+			printer.print(" throws ");
+			for (final Iterator<NameExpr> i = n.getThrows().iterator(); i.hasNext();) {
+				final NameExpr name = i.next();
+				name.accept(this, arg);
+				if (i.hasNext()) {
+					printer.print(", ");
+				}
+			}
+		}
+		printer.print(" ");
+		n.getBlock().accept(this, arg);
+	}
+
+	@Override public void visit(final MethodDeclaration n, final Object arg) {
+        printOrphanCommentsBeforeThisChildNode(n);
+
+		printJavaComment(n.getComment(), arg);
+		printJavadoc(n.getJavaDoc(), arg);
+		printMemberAnnotations(n.getAnnotations(), arg);
+		printModifiers(n.getModifiers());
+		if (n.isDefault()) {
+			printer.print("default ");
+		}
+		printTypeParameters(n.getTypeParameters(), arg);
+		if (!isNullOrEmpty(n.getTypeParameters())) {
+			printer.print(" ");
+		}
+
+		n.getType().accept(this, arg);
+		printer.print(" ");
+		printer.print(n.getName());
+
+		printer.print("(");
+		if (!isNullOrEmpty(n.getParameters())) {
+			for (final Iterator<Parameter> i = n.getParameters().iterator(); i.hasNext();) {
+				final Parameter p = i.next();
+				p.accept(this, arg);
+				if (i.hasNext()) {
+					printer.print(", ");
+				}
+			}
+		}
+		printer.print(")");
+
+		for (int i = 0; i < n.getArrayCount(); i++) {
+			printer.print("[]");
+		}
+
+		if (!isNullOrEmpty(n.getThrows())) {
+			printer.print(" throws ");
+			for (final Iterator<ReferenceType> i = n.getThrows().iterator(); i.hasNext();) {
+				final ReferenceType name = i.next();
+				name.accept(this, arg);
+				if (i.hasNext()) {
+					printer.print(", ");
+				}
+			}
+		}
+		if (n.getBody() == null) {
+			printer.print(";");
+		} else {
+			printer.print(" ");
+			n.getBody().accept(this, arg);
+		}
+	}
+
+	@Override public void visit(final Parameter n, final Object arg) {
+		printJavaComment(n.getComment(), arg);
+		printAnnotations(n.getAnnotations(), arg);
+		printModifiers(n.getModifiers());
+		if (n.getType() != null) {
+			n.getType().accept(this, arg);
+		}
+		if (n.isVarArgs()) {
+			printer.print("...");
+		}
+		printer.print(" ");
+		n.getId().accept(this, arg);
+	}
+	
+    @Override public void visit(MultiTypeParameter n, Object arg) {
+        printAnnotations(n.getAnnotations(), arg);
+        printModifiers(n.getModifiers());
+
+        Type type = n.getType();
+        if (type != null) {
+        	type.accept(this, arg);
+        }
+        
+        printer.print(" ");
+        n.getId().accept(this, arg);
+    }
+
+	@Override public void visit(final ExplicitConstructorInvocationStmt n, final Object arg) {
+		printJavaComment(n.getComment(), arg);
+		if (n.isThis()) {
+			printTypeArgs(n.getTypeArgs(), arg);
+			printer.print("this");
+		} else {
+			if (n.getExpr() != null) {
+				n.getExpr().accept(this, arg);
+				printer.print(".");
+			}
+			printTypeArgs(n.getTypeArgs(), arg);
+		}
 	}
 }

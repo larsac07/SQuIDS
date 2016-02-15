@@ -15,7 +15,7 @@ import autocisq.models.Issue;
  * The FileLOC class represents the CISQ Maintainability Measure 15: # files >
  * 1000 LOC.
  *
- * It counts all lines directly from the source file
+ * It counts all lines, except empty lines, directly from the source file.
  *
  * @author Lars A. V. Cabrera
  *
@@ -28,13 +28,20 @@ public class FileLOC extends Measure {
 	public FileLOC(Map<String, Object> settings) {
 		super(settings);
 	}
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof CompilationUnit) {
 			String[] lines = fileString.split("\r?\n|\r");
-			if (lines.length > THRESHOLD) {
+			int length = 0;
+			for (String line : lines) {
+				if (!line.isEmpty()) {
+					length++;
+				}
+			}
+			System.out.println(length);
+			if (length > THRESHOLD) {
 				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
 			}
 		}
