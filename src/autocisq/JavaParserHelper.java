@@ -127,7 +127,7 @@ public abstract class JavaParserHelper {
 		int endIndex = 0;
 		int lineIndex = 1;
 
-		String[] lines = string.split("[\n|\r]");
+		String[] lines = string.split("\r\n|\r|\n");
 		for (String line : lines) {
 
 			// Account for newline characters
@@ -137,14 +137,17 @@ public abstract class JavaParserHelper {
 				break;
 			}
 
+			int tabCorrection = line.replaceFirst("(\t+).*", "$1").length();
+			tabCorrection -= (tabCorrection * 8) + 1;
+
 			if (lineIndex < startLine) {
 				startIndex += lineLength;
 			} else if (lineIndex == startLine) {
-				startIndex += startColumn - (line.split("\t").length * 5);
+				startIndex += startColumn + tabCorrection;
 			}
 
 			if (lineIndex == endLine) {
-				endIndex += endColumn + 1 - (line.split("\t").length * 5);
+				endIndex += endColumn + tabCorrection + 1;
 			} else {
 				endIndex += lineLength;
 			}
