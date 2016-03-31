@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -33,7 +32,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class FileDuplicateTokens extends Measure {
+public class FileDuplicateTokens extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 100;
 	public final static String ISSUE_TYPE = "File with >= " + THRESHOLD + " consecutive duplicate tokens";
@@ -58,7 +57,7 @@ public class FileDuplicateTokens extends Measure {
 		this.fileTokensMap = new HashMap<>();
 		this.markedCUs = new LinkedList<>();
 	}
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof CompilationUnit) {
@@ -85,10 +84,10 @@ public class FileDuplicateTokens extends Measure {
 		}
 		return null;
 	}
-	
+
 	private Issue mark(CompilationUnit cuWithDuplicates) {
 		this.markedCUs.add(cuWithDuplicates);
-		return new FileIssue(ISSUE_TYPE, cuWithDuplicates, cuWithDuplicates.toString());
+		return new FileIssue(this, cuWithDuplicates, cuWithDuplicates.toString());
 	}
 
 	private boolean isMarked(CompilationUnit cu) {
@@ -119,9 +118,9 @@ public class FileDuplicateTokens extends Measure {
 		}
 		return cusWithDuplicates;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

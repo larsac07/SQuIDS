@@ -14,7 +14,6 @@ import com.github.javaparser.ast.type.Type;
 import autocisq.JavaParserHelper;
 import autocisq.NoSuchAncestorFoundException;
 import autocisq.NoSuchVariableException;
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -28,12 +27,12 @@ import autocisq.models.Issue;
  * final).
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
-public class MethodDirectlyUsingFieldFromOtherClass extends Measure {
-	
+public class MethodDirectlyUsingFieldFromOtherClass extends MaintainabilityMeasure {
+
 	public final static String ISSUE_TYPE = "Method directly using field from other class";
-	
+
 	public MethodDirectlyUsingFieldFromOtherClass(Map<String, Object> settings) {
 		super(settings);
 	}
@@ -60,7 +59,7 @@ public class MethodDirectlyUsingFieldFromOtherClass extends Measure {
 								fieldClass);
 						if (fieldDeclaration != null) {
 							if (isVariable(fieldDeclaration)) {
-								issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+								issues.add(new FileIssue(this, node, fileString));
 							}
 						}
 					}
@@ -74,20 +73,20 @@ public class MethodDirectlyUsingFieldFromOtherClass extends Measure {
 
 		return issues;
 	}
-	
+
 	public boolean isVariable(FieldDeclaration fieldDeclaration) {
 		boolean isStatic = ModifierSet.isStatic(fieldDeclaration.getModifiers());
 		boolean isFinal = ModifierSet.isFinal(fieldDeclaration.getModifiers());
 		boolean isVariable = !(isStatic || isFinal);
 		return isVariable;
 	}
-	
+
 	private static String withoutArrayBrackets(String string) {
 		return string.replace("(\\[)|(\\])", "");
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 }

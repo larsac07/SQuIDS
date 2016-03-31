@@ -14,6 +14,7 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
+import autocisq.debug.Logger;
 import autocisq.io.IOUtils;
 import autocisq.measure.Measure;
 import autocisq.models.Issue;
@@ -37,7 +38,6 @@ public class IssueFinder {
 	private IssueFinder() {
 		this.javaResources = new LinkedList<>();
 		this.measures = new LinkedHashMap<>();
-
 	}
 
 	public Map<File, List<Issue>> findIssues(List<File> files, Map<String, Object> settings) {
@@ -47,7 +47,6 @@ public class IssueFinder {
 		createCompilationUnits(files);
 
 		importSettings(settings);
-
 		for (JavaResource javaResource : this.javaResources) {
 			List<Issue> issues = new LinkedList<>();
 
@@ -96,7 +95,6 @@ public class IssueFinder {
 		for (File file : files) {
 			List<String> fileStringLines = IOUtils.fileToStringLines(file);
 			String fileString = String.join(System.lineSeparator(), fileStringLines);
-
 			try {
 				CompilationUnit compilationUnit = JavaParser.parse(file);
 				this.javaResources.add(new JavaResource(compilationUnit, file, fileString, fileStringLines));
@@ -132,9 +130,15 @@ public class IssueFinder {
 		}
 
 		for (Measure measure : this.measures.values()) {
-			List<Issue> measureIssues = measure.analyzeNode(rootNode, fileAsString, this.compilationUnits);
-			if (measureIssues != null) {
-				issues.addAll(measureIssues);
+			try {
+				List<Issue> measureIssues = measure.analyzeNode(rootNode, fileAsString, this.compilationUnits);
+				if (measureIssues != null) {
+					issues.addAll(measureIssues);
+				}
+			} catch (Exception e) {
+				Logger.bug("An error occurred with the " + measure.getClass().getSimpleName()
+						+ " measure. See details below:");
+				e.printStackTrace();
 			}
 		}
 

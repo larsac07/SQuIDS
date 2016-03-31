@@ -1,14 +1,22 @@
 package autocisq.models;
 
+import autocisq.measure.Measure;
+
 public abstract class Issue {
 	private String type;
+	private String qualityCharacteristic;
 
-	public Issue(String type) {
-		this.type = type;
+	public Issue(Measure measure) {
+		this.type = measure.getMeasureElement();
+		this.qualityCharacteristic = measure.getQualityCharacteristic();
 	}
 
-	public String getType() {
+	public String getMeasureElement() {
 		return this.type;
+	}
+
+	public String getQualityCharacteristic() {
+		return this.qualityCharacteristic;
 	}
 
 	public abstract String getID();
@@ -26,7 +34,7 @@ public abstract class Issue {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.type;

@@ -11,7 +11,6 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 
 import autocisq.JavaParserHelper;
 import autocisq.NoSuchAncestorFoundException;
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -22,10 +21,10 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class LayerSkippingCall extends Measure {
+public class LayerSkippingCall extends MaintainabilityMeasure {
 
 	public final static String ISSUE_TYPE = "Layer-Skipping Call";
-	
+
 	private Map<String, Integer> layerMap;
 
 	@SuppressWarnings("unchecked")
@@ -58,32 +57,39 @@ public class LayerSkippingCall extends Measure {
 					CompilationUnit methodCallCompilationUnit = null;
 					try {
 						methodCallCompilationUnit = JavaParserHelper.findNodeCompilationUnit(methodCall);
+
+						String callingPackage = methodCompilationUnit.getPackage().getName().toString();
+						String callingClass = methodCompilationUnit.getTypes().get(0).getName();
+						String methodClass = callingPackage + "." + callingClass;
+
+						String targetPackage = "";
+						if (methodCallCompilationUnit.getPackage() != null) {
+							targetPackage = methodCallCompilationUnit.getPackage().getName().toString();
+						}
+						String targetClass = methodCallCompilationUnit.getTypes().get(0).getName();
+						String targetMethodClass = targetPackage + "." + targetClass;
+
+						Integer methodLayer = this.layerMap.get(methodClass);
+						Integer methodCallLayer = this.layerMap.get(targetMethodClass);
+
+						if (methodLayer != null) {
+							if (Math.abs(methodLayer - methodCallLayer) > 1) {
+								issues.add(new FileIssue(this, methodCall, fileString));
+							}
+						}
 					} catch (NoSuchAncestorFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
-					String methodClass = methodCompilationUnit.getPackage().getName() + "."
-							+ methodCompilationUnit.getTypes().get(0).getName();
-					String methodCallClass = methodCallCompilationUnit.getPackage().getName() + "."
-							+ methodCallCompilationUnit.getTypes().get(0).getName();
-
-					Integer methodLayer = this.layerMap.get(methodClass);
-					Integer methodCallLayer = this.layerMap.get(methodCallClass);
-
-					if (methodLayer != null) {
-						if (Math.abs(methodLayer - methodCallLayer) > 1) {
-							issues.add(new FileIssue(ISSUE_TYPE, methodCall, fileString));
-						}
-					}
 				}
 			}
 		}
 		return issues;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 }

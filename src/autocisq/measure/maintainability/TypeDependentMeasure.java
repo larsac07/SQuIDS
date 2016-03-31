@@ -15,10 +15,9 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 
-import autocisq.measure.Measure;
 import autocisq.models.Issue;
 
-public abstract class TypeDependentMeasure extends Measure {
+public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 
 	private Map<String, String> typeImports;
 	private Map<String, String> variableTypes;
@@ -175,7 +174,7 @@ public abstract class TypeDependentMeasure extends Measure {
 	}
 
 	@Override
-	public abstract String getIssueType();
+	public abstract String getMeasureElement();
 
 	public Map<String, String> getTypeImports() {
 		return this.typeImports;

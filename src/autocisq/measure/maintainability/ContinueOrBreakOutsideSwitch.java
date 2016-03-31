@@ -12,7 +12,6 @@ import com.github.javaparser.ast.stmt.SwitchStmt;
 
 import autocisq.JavaParserHelper;
 import autocisq.NoSuchAncestorFoundException;
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -28,16 +27,16 @@ import autocisq.models.Issue;
  * an ancestor node which is an instance of {@link SwitchStmt}.
  *
  * @author Lars A. V. Cabrera
- *		
+ *
  */
-public class ContinueOrBreakOutsideSwitch extends Measure {
-	
+public class ContinueOrBreakOutsideSwitch extends MaintainabilityMeasure {
+
 	public ContinueOrBreakOutsideSwitch(Map<String, Object> settings) {
 		super(settings);
 	}
-	
+
 	public final static String ISSUE_TYPE = "Continue or Break outside switch";
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof ContinueStmt || node instanceof BreakStmt) {
@@ -45,16 +44,16 @@ public class ContinueOrBreakOutsideSwitch extends Measure {
 				JavaParserHelper.findNodeAncestorOfType(node, SwitchStmt.class);
 			} catch (NoSuchAncestorFoundException e) {
 				List<Issue> issues = new ArrayList<>();
-				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+				issues.add(new FileIssue(this, node, fileString));
 				return issues;
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
-	
+
 }

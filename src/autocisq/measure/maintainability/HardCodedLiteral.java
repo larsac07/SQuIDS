@@ -14,7 +14,6 @@ import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 
 import autocisq.JavaParserHelper;
 import autocisq.NoSuchAncestorFoundException;
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -30,39 +29,43 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class HardCodedLiteral extends Measure {
-	
+public class HardCodedLiteral extends MaintainabilityMeasure {
+
 	public HardCodedLiteral(Map<String, Object> settings) {
 		super(settings);
 	}
-	
+
 	public final static int MIN_INTEGER_LITERAL = -1;
 	public final static int MAX_INTEGER_LITERAL = 2;
 	public final static String ISSUE_TYPE = "Non-valid, hard coded literal";
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof LiteralExpr) {
 			LiteralExpr literalExpr = (LiteralExpr) node;
 			if (literalExpr instanceof IntegerLiteralExpr) {
 				IntegerLiteralExpr intLitExpr = (IntegerLiteralExpr) literalExpr;
-				int value = Integer.parseInt(intLitExpr.getValue());
-				if (isWithinThreshold(value)) {
+				try {
+					int value = Integer.parseInt(intLitExpr.getValue());
+					if (isWithinThreshold(value)) {
+						return null;
+					}
+				} catch (NumberFormatException e) {
 					return null;
 				}
 			}
-			
+
 			boolean isNonStatic = isNonStaticVariable(literalExpr);
-			
+
 			if (isNonStatic) {
 				List<Issue> issues = new ArrayList<>();
-				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+				issues.add(new FileIssue(this, node, fileString));
 				return issues;
 			}
 		}
 		return null;
 	}
-	
+
 	public static boolean isWithinThreshold(int value) {
 		if (value < MIN_INTEGER_LITERAL || value > MAX_INTEGER_LITERAL) {
 			return false;
@@ -70,7 +73,7 @@ public class HardCodedLiteral extends Measure {
 			return true;
 		}
 	}
-	
+
 	private boolean isNonStaticVariable(LiteralExpr literalExpr) {
 		boolean isNonStaticVariable = false;
 		try {
@@ -89,9 +92,9 @@ public class HardCodedLiteral extends Measure {
 		}
 		return isNonStaticVariable;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 }

@@ -1,11 +1,12 @@
 package autocisq.properties;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -21,25 +22,27 @@ public class Properties extends PropertyPage {
 	private static final String PROJECT_LABEL = "Project:";
 
 	private static final String LABEL_MEASURES = "&Measures:";
-	public static final QualifiedName KEY_MEASURES = new QualifiedName("measures", "measures");
+	public static final String KEY_MEASURES = "measures";
 
 	private static final String LABEL_LAYER_MAP = "&Layer map:";
-	public static final QualifiedName KEY_LAYER_MAP = new QualifiedName("layer_map", "layer_map");
+	public static final String KEY_LAYER_MAP = "layer_map";
 
 	private static final String LABEL_DB_OR_IO_CLASSES = "&Classes with database or io operations:";
-	public static final QualifiedName KEY_DB_OR_IO_CLASSES = new QualifiedName("db_or_io_classes", "db_or_io_classes");
+	public static final String KEY_DB_OR_IO_CLASSES = "db_or_io_classes";
+
+	private static final String LABEL_IGNORE_FILTER = "&Files/folders to ignore:";
+	public static final String KEY_IGNORE_FILTER = "ignore_filter";
 
 	private static final int TEXT_AREA_HEIGHT = 5;
 
-	private Text measuresText;
-	private Text layerMapText;
-	private Text dbOrIoClassesText;
+	private Map<String, PropertiesTextField> properties;
 
 	/**
 	 * Constructor for SamplePropertyPage.
 	 */
 	public Properties() {
 		super();
+		this.properties = new LinkedHashMap<>();
 	}
 
 	private void addHeaderSection(Composite parent) {
@@ -65,56 +68,36 @@ public class Properties extends PropertyPage {
 	private void addInputSection(Composite parent) {
 		Composite composite = createDefaultComposite(parent);
 
-		// Measures Label
-		Label measuresLabel = new Label(composite, SWT.NONE);
-		measuresLabel.setText(LABEL_MEASURES);
+		int height = convertHeightInCharsToPixels(TEXT_AREA_HEIGHT);
 
-		// Measures textfield
-		this.measuresText = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.RESIZE);
-		GridData gdm = new GridData(GridData.FILL_HORIZONTAL);
-		gdm.heightHint = convertHeightInCharsToPixels(TEXT_AREA_HEIGHT);
-		this.measuresText.setLayoutData(gdm);
+		// Measures properties
+		PropertiesTextField measures = new PropertiesTextField(composite, LABEL_MEASURES, KEY_MEASURES, height);
 
-		// LayerMap Label
-		Label layerMapLabel = new Label(composite, SWT.NONE);
-		layerMapLabel.setText(LABEL_LAYER_MAP);
+		// LayerMap properties
+		PropertiesTextField layerMap = new PropertiesTextField(composite, LABEL_LAYER_MAP, KEY_LAYER_MAP, height);
 
-		// LayerMap textfield
-		this.layerMapText = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.RESIZE);
-		GridData gdlm = new GridData(GridData.FILL_HORIZONTAL);
-		gdlm.heightHint = convertHeightInCharsToPixels(TEXT_AREA_HEIGHT);
-		this.layerMapText.setLayoutData(gdlm);
+		// DbOrIoClasses properties
+		PropertiesTextField dbOrIoClasses = new PropertiesTextField(composite, LABEL_DB_OR_IO_CLASSES,
+				KEY_DB_OR_IO_CLASSES, height);
 
-		// DbOrIoClasses Label
-		Label dbOrIoClassesLabel = new Label(composite, SWT.NONE);
-		dbOrIoClassesLabel.setText(LABEL_DB_OR_IO_CLASSES);
+		// IgnoreFilter properties
+		PropertiesTextField ignoreFilter = new PropertiesTextField(composite, LABEL_IGNORE_FILTER, KEY_IGNORE_FILTER,
+				height);
 
-		// DbOrIoClasses textfield
-		this.dbOrIoClassesText = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.RESIZE);
-		GridData gddb = new GridData(GridData.FILL_HORIZONTAL);
-		gddb.heightHint = convertHeightInCharsToPixels(TEXT_AREA_HEIGHT);
-		this.dbOrIoClassesText.setLayoutData(gddb);
+		this.properties.put(measures.getId(), measures);
+		this.properties.put(layerMap.getId(), layerMap);
+		this.properties.put(dbOrIoClasses.getId(), dbOrIoClasses);
+		this.properties.put(ignoreFilter.getId(), ignoreFilter);
 
 		// Populate fields
-		try {
-			String measures = ((IResource) getElement()).getPersistentProperty(KEY_MEASURES);
-			this.measuresText.setText((measures != null) ? measures : "");
-		} catch (CoreException e) {
-			this.measuresText.setText("");
-		}
-
-		try {
-			String layerMap = ((IResource) getElement()).getPersistentProperty(KEY_LAYER_MAP);
-			this.layerMapText.setText((layerMap != null) ? layerMap : "");
-		} catch (CoreException e) {
-			this.layerMapText.setText("");
-		}
-
-		try {
-			String dbOrIoClasses = ((IResource) getElement()).getPersistentProperty(KEY_DB_OR_IO_CLASSES);
-			this.dbOrIoClassesText.setText((dbOrIoClasses != null) ? dbOrIoClasses : "");
-		} catch (CoreException e) {
-			this.dbOrIoClassesText.setText("");
+		for (String key : this.properties.keySet()) {
+			PropertiesTextField property = this.properties.get(key);
+			try {
+				String text = ((IResource) getElement()).getPersistentProperty(property.getqName());
+				property.setText(text);
+			} catch (CoreException e) {
+				property.setText("");
+			}
 		}
 	}
 
@@ -197,20 +180,21 @@ public class Properties extends PropertyPage {
 			dbOrIoClasses += dbOrIoClass + nl;
 		}
 
-		this.measuresText.setText(measures);
-		this.layerMapText.setText("");
-		this.dbOrIoClassesText.setText(dbOrIoClasses);
+		this.properties.get(KEY_MEASURES).setText(measures);
+		this.properties.get(KEY_LAYER_MAP).setText("");
+		this.properties.get(KEY_DB_OR_IO_CLASSES).setText(dbOrIoClasses);
 	}
 
 	@Override
 	public boolean performOk() {
 		// store the values
-		try {
-			((IResource) getElement()).setPersistentProperty(KEY_MEASURES, this.measuresText.getText());
-			((IResource) getElement()).setPersistentProperty(KEY_LAYER_MAP, this.layerMapText.getText());
-			((IResource) getElement()).setPersistentProperty(KEY_DB_OR_IO_CLASSES, this.dbOrIoClassesText.getText());
-		} catch (CoreException e) {
-			e.printStackTrace();
+		for (String key : this.properties.keySet()) {
+			try {
+				PropertiesTextField property = this.properties.get(key);
+				((IResource) getElement()).setPersistentProperty(property.getqName(), property.getText());
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
 		}
 		return true;
 	}

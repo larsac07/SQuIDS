@@ -11,7 +11,6 @@ import java.util.Set;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import autocisq.measure.Measure;
 import autocisq.models.Issue;
 import autocisq.models.ProjectIssue;
 
@@ -22,15 +21,15 @@ import autocisq.models.ProjectIssue;
  * @author Lars A. V. Cabrera
  *
  */
-public class HorizontalLayers extends Measure {
-	
+public class HorizontalLayers extends MaintainabilityMeasure {
+
 	public final static int THRESHOLD = 8;
 	public final static String ISSUE_TYPE = "Horizontal Layers > " + THRESHOLD;
-	
+
 	private Map<String, Integer> layerMap;
 	private List<Issue> issues;
 	private boolean returned;
-	
+
 	@SuppressWarnings("unchecked")
 	public HorizontalLayers(Map<String, Object> settings) {
 		super(settings);
@@ -50,7 +49,7 @@ public class HorizontalLayers extends Measure {
 		this.issues = new ArrayList<>();
 		this.returned = false;
 	}
-	
+
 	/**
 	 * This override differs much from the other implementations. The analysis
 	 * is done when analyzing the first node in the project, and returns the
@@ -77,7 +76,7 @@ public class HorizontalLayers extends Measure {
 			return this.issues;
 		}
 	}
-	
+
 	/**
 	 * Analyzes the layer map provided in the constructor. If the number of
 	 * layers is higher than 8, an issue is created and added to the list.
@@ -87,14 +86,14 @@ public class HorizontalLayers extends Measure {
 		if (layers != null) {
 			Set<Integer> distinctLayers = new HashSet<Integer>(layers);
 			if (distinctLayers.size() > THRESHOLD) {
-				this.issues.add(new ProjectIssue(getIssueType()));
+				this.issues.add(new ProjectIssue(this));
 			}
 		}
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
-	
+
 }

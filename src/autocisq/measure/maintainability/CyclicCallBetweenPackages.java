@@ -60,15 +60,19 @@ public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 				String type = variableToType(scope.toString());
 				String toPackage = typeToPackage(type);
 				if (toPackage != null) {
-					String fromPackage = getNodePackage(node).getName().toString();
+					PackageDeclaration nodePackage = getNodePackage(node);
+					String fromPackage = "";
+					if (nodePackage != null) {
+						fromPackage = nodePackage.getName().toString();
+					}
 					this.callMap.put(node, new PackageCall(fromPackage, toPackage));
 					for (Node packageSkippingCall : this.callMap.keySet()) {
 						PackageCall packageCall = this.callMap.get(packageSkippingCall);
 						if (packageCall.getFromPackage().equals(toPackage)
 								&& packageCall.getToPackage().equals(fromPackage)) {
 							List<Issue> issues = new LinkedList<>();
-							issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
-							issues.add(new FileIssue(ISSUE_TYPE, packageSkippingCall,
+							issues.add(new FileIssue(this, node, fileString));
+							issues.add(new FileIssue(this, packageSkippingCall,
 									JavaParserHelper.getNodeFileString(packageSkippingCall)));
 							return issues;
 						}
@@ -99,7 +103,7 @@ public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

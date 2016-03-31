@@ -10,12 +10,11 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
-public class MethodParameters extends Measure {
-	
+public class MethodParameters extends MaintainabilityMeasure {
+
 	public final static int THRESHOLD = 7;
 	public final static String ISSUE_TYPE = "Function passing >= " + THRESHOLD + " parameters";
 
@@ -33,16 +32,16 @@ public class MethodParameters extends Measure {
 			} else {
 				parameters = ((ConstructorDeclaration) node).getParameters();
 			}
-			
+
 			if (parameters.size() >= THRESHOLD) {
-				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+				issues.add(new FileIssue(this, node, fileString));
 			}
 		}
 		return issues;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

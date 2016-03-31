@@ -11,7 +11,6 @@ import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.TryStmt;
 
 import autocisq.JavaParserHelper;
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -23,10 +22,10 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class EmptyExceptionHandlingBlock extends Measure {
-	
+public class EmptyExceptionHandlingBlock extends ReliabilityMeasure {
+
 	public final static String ISSUE_TYPE = "Empty exception handling block";
-	
+
 	public EmptyExceptionHandlingBlock(Map<String, Object> settings) {
 		super(settings);
 	}
@@ -41,14 +40,14 @@ public class EmptyExceptionHandlingBlock extends Measure {
 		}
 		return issues;
 	}
-	
+
 	/**
 	 * Detects empty or generic catch blocks, and adds a marker to it
 	 *
 	 * @param blockStmt
 	 *            - the catch clause to inspect
 	 */
-	public static List<Issue> checkEmptyBlockStmt(BlockStmt blockStmt, String fileAsString, List<Issue> issues) {
+	public List<Issue> checkEmptyBlockStmt(BlockStmt blockStmt, String fileAsString, List<Issue> issues) {
 		if (issues == null) {
 			issues = new LinkedList<>();
 		}
@@ -56,25 +55,23 @@ public class EmptyExceptionHandlingBlock extends Measure {
 		if (blockStmt.getStmts().isEmpty() && parent instanceof CatchClause) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
 					parent.getBeginColumn(), parent.getEndColumn());
-			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE, parent.toString(),
-					parent));
+			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], this, parent.toString(), parent));
 		} else if (blockStmt.getStmts().size() == 1 && parent instanceof CatchClause
 				&& blockStmt.getStmts().get(0).toString().equals("e.printStackTrace();")) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, parent.getBeginLine(), parent.getEndLine(),
 					parent.getBeginColumn(), parent.getEndColumn());
-			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE, parent.toString(),
-					parent));
+			issues.add(new FileIssue(parent.getBeginLine(), indexes[0], indexes[1], this, parent.toString(), parent));
 		} else if (blockStmt.getStmts().isEmpty() && blockStmt.getParentNode() instanceof TryStmt) {
 			int[] indexes = JavaParserHelper.columnsToIndexes(fileAsString, blockStmt.getBeginLine(),
 					blockStmt.getEndLine(), parent.getBeginColumn(), parent.getEndColumn());
-			issues.add(new FileIssue(blockStmt.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE, blockStmt.toString(),
+			issues.add(new FileIssue(blockStmt.getBeginLine(), indexes[0], indexes[1], this, blockStmt.toString(),
 					blockStmt));
 		}
 		return issues;
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 }

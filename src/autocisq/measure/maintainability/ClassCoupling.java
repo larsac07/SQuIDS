@@ -130,7 +130,7 @@ public class ClassCoupling extends TypeDependentMeasure {
 	private List<Issue> checkCoupling(int count, ClassOrInterfaceDeclaration classToBlame, String fileString) {
 		if (count > THRESHOLD) {
 			List<Issue> issues = new LinkedList<>();
-			issues.add(new FileIssue(ISSUE_TYPE, classToBlame, fileString));
+			issues.add(new FileIssue(this, classToBlame, fileString));
 			return issues;
 		}
 		return null;
@@ -158,7 +158,7 @@ public class ClassCoupling extends TypeDependentMeasure {
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

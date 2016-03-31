@@ -11,7 +11,6 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -30,15 +29,15 @@ import autocisq.models.Issue;
  * {@link #analyzeNode(Node, String, List, Map)} are ignored.
  *
  * @author Lars A. V. Cabrera
- *		
+ *
  */
-public class ClassTooManyChildren extends Measure {
-	
+public class ClassTooManyChildren extends MaintainabilityMeasure {
+
 	public final static String ISSUE_TYPE = "Class with >= 10 children";
 	public final static int THRESHOLD = 10;
-	
+
 	private Map<ClassOrInterfaceType, List<ClassOrInterfaceDeclaration>> classSubClassMap;
-	
+
 	public ClassTooManyChildren(Map<String, Object> settings) {
 		super(settings);
 		this.classSubClassMap = new HashMap<>();
@@ -60,18 +59,18 @@ public class ClassTooManyChildren extends Measure {
 					this.classSubClassMap.put(superClass, subClasses);
 					if (subClasses.size() >= THRESHOLD) {
 						List<Issue> issues = new ArrayList<>();
-						issues.add(new FileIssue(ISSUE_TYPE, getTypeCompilationUnit(superClass, compilationUnits),
-								fileString));
+						issues.add(
+								new FileIssue(this, getTypeCompilationUnit(superClass, compilationUnits), fileString));
 						return issues;
 					}
-					
+
 				}
 			}
 
 		}
 		return null;
 	}
-	
+
 	public static boolean existsInProject(ClassOrInterfaceType classOrInterfaceType,
 			List<CompilationUnit> projectCompilationUnits) {
 		return getTypeCompilationUnit(classOrInterfaceType, projectCompilationUnits) != null;
@@ -88,10 +87,10 @@ public class ClassTooManyChildren extends Measure {
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
-	
+
 }

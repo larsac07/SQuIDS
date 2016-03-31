@@ -10,7 +10,6 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -23,17 +22,17 @@ import autocisq.models.Issue;
  * of ≥ 7.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
-public class ClassInheritanceLevel extends Measure {
+public class ClassInheritanceLevel extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 7;
 	public final static String ISSUE_TYPE = "Class with inheritance level >= " + THRESHOLD;
-	
+
 	public ClassInheritanceLevel(Map<String, Object> settings) {
 		super(settings);
 	}
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof ClassOrInterfaceDeclaration) {
@@ -42,7 +41,7 @@ public class ClassInheritanceLevel extends Measure {
 				int inheritanceLevel = calcInheritanceLvl(classDecl, compilationUnits, 0);
 				if (inheritanceLevel >= THRESHOLD) {
 					List<Issue> issues = new LinkedList<>();
-					issues.add(new FileIssue(ISSUE_TYPE, classDecl, fileString));
+					issues.add(new FileIssue(this, classDecl, fileString));
 					return issues;
 				}
 			}
@@ -80,9 +79,9 @@ public class ClassInheritanceLevel extends Measure {
 		}
 		return count;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

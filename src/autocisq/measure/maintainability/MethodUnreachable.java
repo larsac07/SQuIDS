@@ -33,7 +33,7 @@ import autocisq.models.Issue;
  * measure 5: # of unreachable functions.
  *
  * @author Lars A. V. Cabrera
- * 		
+ * 
  */
 public class MethodUnreachable extends TypeDependentMeasure {
 
@@ -45,7 +45,7 @@ public class MethodUnreachable extends TypeDependentMeasure {
 		super(settings);
 		this.referencedFunctions = new LinkedList<>();
 	}
-	
+
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		storeReferences(node, fileString, compilationUnits);
@@ -66,7 +66,7 @@ public class MethodUnreachable extends TypeDependentMeasure {
 
 				if (!isReferenced && (isPrivate || classIsPrivate)) {
 					List<Issue> issues = new LinkedList<>();
-					issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+					issues.add(new FileIssue(this, node, fileString));
 					return issues;
 				}
 			} catch (NoSuchAncestorFoundException e) {
@@ -77,7 +77,7 @@ public class MethodUnreachable extends TypeDependentMeasure {
 		return null;
 
 	}
-	
+
 	private void storeReferences(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		super.analyzeNode(node, fileString, compilationUnits);
 		if (node instanceof MethodCallExpr) {
@@ -112,7 +112,7 @@ public class MethodUnreachable extends TypeDependentMeasure {
 			storeReferences(child, fileString, compilationUnits);
 		}
 	}
-	
+
 	private List<String> expressionsToTypes(List<Expression> args) {
 		List<String> types = new ArrayList<>();
 		for (Expression arg : args) {
@@ -137,7 +137,7 @@ public class MethodUnreachable extends TypeDependentMeasure {
 		}
 		return types;
 	}
-	
+
 	/**
 	 * Adds a method to the list of referenced functions. Concatenates class
 	 * name, method name and parameter types, e.g.
@@ -153,7 +153,7 @@ public class MethodUnreachable extends TypeDependentMeasure {
 	private void addReference(String className, String functionName, List<String> types) {
 		this.referencedFunctions.add(concatClassAndFunction(className, functionName, types));
 	}
-	
+
 	/**
 	 * Checks if a method is referenced.
 	 *
@@ -174,7 +174,7 @@ public class MethodUnreachable extends TypeDependentMeasure {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Concatenates class name, function name and parameter types, e.g.
 	 * Class.function(String,int,boolean).
@@ -201,9 +201,9 @@ public class MethodUnreachable extends TypeDependentMeasure {
 		classAndFunction += ")";
 		return classAndFunction;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

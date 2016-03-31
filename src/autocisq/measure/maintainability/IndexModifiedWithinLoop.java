@@ -87,7 +87,7 @@ public class IndexModifiedWithinLoop extends TypeDependentMeasure {
 			if (variable != null) {
 				if (this.indexVariables.contains(variable)) {
 					List<Issue> issues = new LinkedList<>();
-					issues.add(new FileIssue(ISSUE_TYPE, expr, this.fileString));
+					issues.add(new FileIssue(this, expr, this.fileString));
 					return issues;
 				}
 			}
@@ -191,7 +191,7 @@ public class IndexModifiedWithinLoop extends TypeDependentMeasure {
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

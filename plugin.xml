@@ -5,60 +5,101 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="Sample Category"
+            name="AutoCISQ"
             id="AutoCISQ.commands.category">
       </category>
       <command
-            name="Sample Command"
+            name="Analyze selected projects"
             categoryId="AutoCISQ.commands.category"
-            id="AutoCISQ.commands.sampleCommand">
+            id="AutoCISQ.commands.analyzeSelectedProjects">
+      </command>
+      <command
+            name="Analyze all projects"
+            categoryId="AutoCISQ.commands.category"
+            id="AutoCISQ.commands.analyzeAllProjects">
       </command>
    </extension>
+   
+   
+   
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            commandId="AutoCISQ.commands.sampleCommand"
+            commandId="AutoCISQ.commands.analyzeSelectedProjects"
+            class="autocisq.handlers.Handler">
+      </handler>
+      <handler
+            commandId="AutoCISQ.commands.analyzeAllProjects"
             class="autocisq.handlers.Handler">
       </handler>
    </extension>
+   
+   
+   
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="AutoCISQ.commands.sampleCommand"
+            commandId="AutoCISQ.commands.analyzeSelectedProjects"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+6"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
+      <key
+            commandId="AutoCISQ.commands.analyzeAllProjects"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+7"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
    </extension>
+   
+   
+   
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
-               label="Sample Menu"
+               label="AutoCISQ"
                mnemonic="M"
-               id="AutoCISQ.menus.sampleMenu">
+               id="AutoCISQ.menus.commands">
             <command
-                  commandId="AutoCISQ.commands.sampleCommand"
+                  commandId="AutoCISQ.commands.analyzeSelectedProjects"
                   mnemonic="S"
-                  id="AutoCISQ.menus.sampleCommand">
+                  id="AutoCISQ.menus.analyzeSelectedProjects">
+            </command>
+            <command
+                  commandId="AutoCISQ.commands.analyzeAllProjects"
+                  mnemonic="A"
+                  id="AutoCISQ.menus.analyzeAllProjects">
             </command>
          </menu>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
-               id="AutoCISQ.toolbars.sampleToolbar">
+               id="AutoCISQ.toolbars.analyzeToolbar">
             <command
-                  commandId="AutoCISQ.commands.sampleCommand"
+                  commandId="AutoCISQ.commands.analyzeSelectedProjects"
                   icon="icons/sample.gif"
-                  tooltip="Say hello world"
-                  id="AutoCISQ.toolbars.sampleCommand">
+                  tooltip="Analyze selected projects"
+                  id="AutoCISQ.toolbars.analyzeSelectedProjects">
+            </command>
+            <command
+                  commandId="AutoCISQ.commands.analyzeAllProjects"
+                  icon="icons/sample.gif"
+                  tooltip="Analyze all projects"
+                  id="AutoCISQ.toolbars.analyzeAllProjects">
             </command>
          </toolbar>
       </menuContribution>
    </extension>
+   
+   
+   
    <extension id="javaqualitymarker" point="org.eclipse.core.resources.markers"/>
+   
+   
+   
    <extension
          id="javaqualityissue"
          name="Java Quality Issue"
@@ -67,6 +108,9 @@
       <super type="AutoCISQ.javaqualitymarker"/>
       <persistent value="true"/>
    </extension>
+   
+   
+   
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
       <type
@@ -75,6 +119,8 @@
             super="org.eclipse.ui.workbench.texteditor.error"
             markerSeverity="2"/>
    </extension>
+
+
 
    <extension id="javaqualityissueannotationspecification" name="Java Quality Issue Annotation Specification"
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
@@ -88,6 +134,8 @@
             symbolicIcon="error"
             	/>
    	</extension>
+   	
+   	
    	
    <extension
        	 id="autocisq.properties.Properties"

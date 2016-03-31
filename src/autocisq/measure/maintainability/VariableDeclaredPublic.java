@@ -10,7 +10,6 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
 
 import autocisq.JavaParserHelper;
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -25,10 +24,10 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class VariableDeclaredPublic extends Measure {
-	
+public class VariableDeclaredPublic extends MaintainabilityMeasure {
+
 	public final static String ISSUE_TYPE = "Variable declared public";
-	
+
 	public VariableDeclaredPublic(Map<String, Object> settings) {
 		super(settings);
 	}
@@ -45,8 +44,7 @@ public class VariableDeclaredPublic extends Measure {
 			if (isVariable && isPublic) {
 				int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
 						node.getBeginColumn(), node.getEndColumn());
-				issues.add(
-						new FileIssue(node.getBeginLine(), indexes[0], indexes[1], ISSUE_TYPE, node.toString(), node));
+				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], this, node.toString(), node));
 			}
 
 		}
@@ -55,8 +53,8 @@ public class VariableDeclaredPublic extends Measure {
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
-	
+
 }

@@ -12,7 +12,6 @@ import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -33,11 +32,11 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class MethodFanOut extends Measure {
+public class MethodFanOut extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 10;
 	public final static String ISSUE_TYPE = "Function with fan-out >= " + THRESHOLD;
-	
+
 	public MethodFanOut(Map<String, Object> settings) {
 		super(settings);
 	}
@@ -48,18 +47,18 @@ public class MethodFanOut extends Measure {
 			int fanOut = calculateFanOut(node);
 			if (fanOut >= THRESHOLD) {
 				List<Issue> issues = new ArrayList<>();
-				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+				issues.add(new FileIssue(this, node, fileString));
 				return issues;
 			}
 		}
 		return null;
 	}
-	
+
 	private int calculateFanOut(Node node) {
 		List<Issue> issues = new ArrayList<>();
 		return calculateFanOut(node, issues);
 	}
-	
+
 	private int calculateFanOut(Node node, List<Issue> issues) {
 		int fanOut = 0;
 		if (node instanceof AssignExpr) {
@@ -78,7 +77,7 @@ public class MethodFanOut extends Measure {
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

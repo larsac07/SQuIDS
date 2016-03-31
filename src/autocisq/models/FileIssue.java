@@ -3,6 +3,7 @@ package autocisq.models;
 import com.github.javaparser.ast.Node;
 
 import autocisq.JavaParserHelper;
+import autocisq.measure.Measure;
 
 public class FileIssue extends Issue {
 
@@ -12,17 +13,17 @@ public class FileIssue extends Issue {
 	private String problemArea;
 	private Node node;
 
-	public FileIssue(int beginLine, int startIndex, int endIndex, String type, String problemArea, Node node) {
-		super(type);
+	public FileIssue(int beginLine, int startIndex, int endIndex, Measure measure, String problemArea, Node node) {
+		super(measure);
 		this.beginLine = beginLine;
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
 		this.problemArea = problemArea;
 		this.node = node;
 	}
-	
-	public FileIssue(String type, Node node, String fileString) {
-		super(type);
+
+	public FileIssue(Measure measure, Node node, String fileString) {
+		super(measure);
 		int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
 				node.getBeginColumn(), node.getEndColumn());
 		this.beginLine = node.getBeginLine();
@@ -54,7 +55,7 @@ public class FileIssue extends Issue {
 
 	@Override
 	public String getID() {
-		return getType() + this.node.toString() + this.beginLine + this.startIndex + this.endIndex;
+		return getMeasureElement() + this.node.toString() + this.beginLine + this.startIndex + this.endIndex;
 	}
 
 	@Override
@@ -75,7 +76,7 @@ public class FileIssue extends Issue {
 
 	@Override
 	public String toString() {
-		return getType() + " at line " + getBeginLine() + ": " + this.node.toString();
+		return getMeasureElement() + " at line " + getBeginLine() + ": " + this.node.toString();
 	}
 
 }

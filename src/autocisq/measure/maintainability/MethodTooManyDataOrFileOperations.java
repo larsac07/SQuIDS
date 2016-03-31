@@ -33,7 +33,7 @@ import autocisq.models.Issue;
  * e.g. java.io.File, not java.io.*.
  *
  * @author Lars A. V. Cabrera
- * 		
+ * 
  */
 public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 
@@ -115,7 +115,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 			resetCount();
 		}
 	}
-	
+
 	/**
 	 * Returns a list of issues with 0 or 1 {@link FileIssue}, depending on
 	 * whether or not the {@link NameExpr} is found in the db_or_io_classes
@@ -139,7 +139,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 				this.count++;
 				if (this.count >= THRESHOLD) {
 					List<Issue> issues = new ArrayList<>();
-					issues.add(new FileIssue(ISSUE_TYPE, methodCallExpr, fileString));
+					issues.add(new FileIssue(this, methodCallExpr, fileString));
 					return issues;
 				}
 			}
@@ -172,7 +172,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 		super.reset();
 		resetCount();
 	}
-	
+
 	/**
 	 * Resets the count of {@link MethodCallExpr} which contain data or file
 	 * operations in a {@link CompilationUnit}.
@@ -180,9 +180,9 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 	private void resetCount() {
 		this.count = 0;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 }

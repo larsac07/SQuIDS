@@ -19,7 +19,7 @@ public abstract class MeasureTest {
 		assertTrue(this.issues.size() > 0);
 		boolean found = false;
 		for (Issue issue : this.issues) {
-			if (issue.getType().equals(getIssueType())) {
+			if (issue.getMeasureElement().equals(getIssueType())) {
 				found = true;
 			}
 		}
@@ -34,7 +34,7 @@ public abstract class MeasureTest {
 		this.issues = IssueFinder.getInstance().analyzeNode(nodeToAnalyze, null, fileString);
 		boolean found = false;
 		for (Issue issue : this.issues) {
-			if (issue.getType().equals(getIssueType())) {
+			if (issue.getMeasureElement().equals(getIssueType())) {
 				found = true;
 			}
 		}

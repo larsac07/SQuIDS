@@ -20,7 +20,6 @@ import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.SwitchEntryStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -36,7 +35,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class MethodCyclomaticComplexity extends Measure {
+public class MethodCyclomaticComplexity extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 10;
 	public final static String ISSUE_TYPE = "Function with Cyclomatic Complexity >= " + THRESHOLD;
@@ -77,7 +76,7 @@ public class MethodCyclomaticComplexity extends Measure {
 		if (this.count >= THRESHOLD && !this.blamedNodes.contains(this.nodeToBlame)) {
 			this.blamedNodes.add(this.nodeToBlame);
 			List<Issue> issues = new LinkedList<>();
-			issues.add(new FileIssue(ISSUE_TYPE, this.nodeToBlame, fileString));
+			issues.add(new FileIssue(this, this.nodeToBlame, fileString));
 			return issues;
 		} else {
 			return null;
@@ -85,7 +84,7 @@ public class MethodCyclomaticComplexity extends Measure {
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

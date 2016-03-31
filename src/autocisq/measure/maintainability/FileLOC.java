@@ -7,7 +7,6 @@ import java.util.Map;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -20,7 +19,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class FileLOC extends Measure {
+public class FileLOC extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 1000;
 	public final static String ISSUE_TYPE = "More than " + THRESHOLD + " Lines of Code";
@@ -40,16 +39,15 @@ public class FileLOC extends Measure {
 					length++;
 				}
 			}
-			System.out.println(length);
 			if (length > THRESHOLD) {
-				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+				issues.add(new FileIssue(this, node, fileString));
 			}
 		}
 		return issues;
 	}
 
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 

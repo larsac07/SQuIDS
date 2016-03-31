@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.TokenMgrError;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
@@ -15,7 +16,6 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.Statement;
 
 import autocisq.lexical.TextOrJavaCode;
-import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -25,14 +25,14 @@ import autocisq.models.Issue;
  * instructions.
  *
  * @author Lars A. V. Cabrera
- * 		
+ *
  */
-public class MethodCommentedOutInstructions extends Measure {
-	
+public class MethodCommentedOutInstructions extends MaintainabilityMeasure {
+
 	public final static double THRESHOLD = 0.02d;
 	public final static String ISSUE_TYPE = "Function with > " + (int) (THRESHOLD * 100)
 			+ "% commented out instructions";
-			
+
 	public MethodCommentedOutInstructions(Map<String, Object> settings) {
 		super(settings);
 	}
@@ -45,13 +45,13 @@ public class MethodCommentedOutInstructions extends Measure {
 			double result = (double) commOutInstructions / (instructions + commOutInstructions);
 			if (result > THRESHOLD) {
 				List<Issue> issues = new ArrayList<>();
-				issues.add(new FileIssue(ISSUE_TYPE, node, fileString));
+				issues.add(new FileIssue(this, node, fileString));
 				return issues;
 			}
 		}
 		return null;
 	}
-	
+
 	public static int countCommentedOutInstructions(Node node) {
 		List<Comment> comments = node.getAllContainedComments();
 		String instructions = "";
@@ -64,11 +64,11 @@ public class MethodCommentedOutInstructions extends Measure {
 		try {
 			Statement statement = JavaParser.parseStatement("{" + instructions + "}");
 			return countNodesOfType(statement, Expression.class);
-		} catch (ParseException e) {
+		} catch (ParseException | TokenMgrError e) {
 			return 0;
 		}
 	}
-	
+
 	public static int countInstructions(Node node) {
 		return countNodesOfType(node, Expression.class);
 	}
@@ -85,9 +85,9 @@ public class MethodCommentedOutInstructions extends Measure {
 
 		return count;
 	}
-	
+
 	@Override
-	public String getIssueType() {
+	public String getMeasureElement() {
 		return ISSUE_TYPE;
 	}
 
