@@ -44,7 +44,6 @@ public class Tokenizer {
 		String s = str.trim();
 		this.tokens.clear();
 		while (!s.equals("")) {
-			// System.out.println(s);
 			boolean match = false;
 			for (TokenInfo info : this.tokenInfos) {
 				Matcher m = info.regex.matcher(s);
@@ -57,8 +56,6 @@ public class Tokenizer {
 				}
 			}
 			if (!match) {
-				// throw new ParserException("Unexpected character in input: " +
-				// s);
 				this.tokens.clear();
 				System.out.println("Unexpected character in input: " + s);
 				return;
@@ -70,13 +67,13 @@ public class Tokenizer {
 	public LinkedList<Token> getTokens() {
 		return this.tokens;
 	}
-	
+
 	public String getTokensString() {
 		StringBuilder sb = new StringBuilder();
 		for (Tokenizer.Token tok : this.tokens) {
 			sb.append(tok.token);
 		}
-		
+
 		return sb.toString();
 	}
 }
