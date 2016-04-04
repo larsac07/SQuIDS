@@ -146,9 +146,6 @@ public class Properties extends PropertyPage {
 		measureList.add("autocisq.measure.maintainability.MethodFanOut");
 		measureList.add("autocisq.measure.maintainability.MethodParameters");
 		measureList.add("autocisq.measure.maintainability.HardCodedLiteral");
-		measureList.add("autocisq.measure.maintainability.HorizontalLayers");
-		measureList.add("autocisq.measure.maintainability.LayerSkippingCall");
-		measureList.add("autocisq.measure.maintainability.MethodTooManyDataOrFileOperations");
 		measureList.add("autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass");
 		measureList.add("autocisq.measure.maintainability.VariableDeclaredPublic");
 		measureList.add("autocisq.measure.maintainability.MethodCyclomaticComplexity");
@@ -157,7 +154,6 @@ public class Properties extends PropertyPage {
 		measureList.add("autocisq.measure.maintainability.ClassCoupling");
 		measureList.add("autocisq.measure.maintainability.CyclicCallBetweenPackages");
 		measureList.add("autocisq.measure.maintainability.IndexModifiedWithinLoop");
-		measureList.add("autocisq.measure.reliability.EmptyExceptionHandlingBlock");
 
 		List<String> dbOrIoClassList = new LinkedList<>();
 		dbOrIoClassList.add("java.io.File");
@@ -183,6 +179,7 @@ public class Properties extends PropertyPage {
 		this.properties.get(KEY_MEASURES).setText(measures);
 		this.properties.get(KEY_LAYER_MAP).setText("");
 		this.properties.get(KEY_DB_OR_IO_CLASSES).setText(dbOrIoClasses);
+		this.properties.get(KEY_IGNORE_FILTER).setText("");
 	}
 
 	@Override
