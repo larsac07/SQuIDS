@@ -1,8 +1,6 @@
 package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -23,11 +21,10 @@ import autocisq.models.Issue;
  *
  * A file is considered a {@link CompilationUnit}, and contains 100+ consecutive
  * duplicate tokens iff it has >= 100 consecutive tokens that have an equal list
- * of tokens in the same or another file.
+ * of tokens in the same file.
  *
- * Due to performance efficiency, the duplicated area is not provided in the
- * returned issues, and the exact amounts of duplicate tokens is not provided
- * (i.e. the measure "stops counting" at 100).
+ * Due to performance efficiency, the exact amount of consecutive duplicate
+ * tokens is not provided (i.e. the measure "stops counting" at 100).
  *
  * @author Lars A. V. Cabrera
  *
@@ -41,82 +38,54 @@ public class FileDuplicateTokens extends MaintainabilityMeasure {
 			+ "double|else|enum|extends|false|finally|final|float|for|goto|if|implements|import|instanceof|interface|int|long|"
 			+ "native|new|null|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|"
 			+ "throws|throw|true|transient|try|void|volatile|while|todo|do";
-	private final static String SEPARATORS = ";|,|\\.|\\(|\\)|\\{\\|\\}|\\[|\\]";
-	private final static String OPERATORS = "=|>|<|!|~|\\?|:|==|<=|>=|!=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||\\^|%|\\$|\\#";
+	private final static String SEPARATORS = ";|,|\\.|\\(|\\)|\\{|\\|\\}|\\[|\\]";
+	private final static String OPERATORS = "~|\\?|:|==|=|<=|>=|>|<|!=|!|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||\\^|%|\\$|\\#";
 	private final static String IDENTIFIERS = "[a-zA-Z][a-zA-Z0-9_]*";
 	private final static String LITERALS = "[0-9]+(l|L)?\\.?([0-9]+((f|F)|(d|D)))?|\"^\"*\"";
 
 	private Pattern pattern;
-	private Map<CompilationUnit, List<String>> fileTokensMap;
-	private List<CompilationUnit> markedCUs;
 
 	public FileDuplicateTokens(Map<String, Object> settings) {
 		super(settings);
 		this.pattern = Pattern
 				.compile(KEYWORDS + "|" + SEPARATORS + "|" + OPERATORS + "|" + IDENTIFIERS + "|" + LITERALS);
-		this.fileTokensMap = new HashMap<>();
-		this.markedCUs = new LinkedList<>();
 	}
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof CompilationUnit) {
-			CompilationUnit compilationUnit = (CompilationUnit) node;
 			Matcher matcher = this.pattern.matcher(node.toStringWithoutComments());
 			List<String> tokens = new ArrayList<>();
 			while (matcher.find()) {
 				tokens.add(matcher.group());
 			}
-			if (tokens.size() >= THRESHOLD) {
-				this.fileTokensMap.put(compilationUnit, tokens);
-				List<CompilationUnit> cusWithDuplicates = getCusWithDuplicates(compilationUnit, tokens);
-				if (!cusWithDuplicates.isEmpty()) {
-					List<Issue> issues = new LinkedList<>();
-					issues.add(mark(compilationUnit));
-					for (CompilationUnit cuWithDuplicates : cusWithDuplicates) {
-						if (!isMarked(cuWithDuplicates)) {
-							issues.add(mark(cuWithDuplicates));
-						}
-					}
-					return issues;
-				}
+			// If there are at least two 100-token lists to compare
+			if (tokens.size() >= THRESHOLD * 2) {
+				return findDuplicates(node, tokens);
 			}
 		}
 		return null;
 	}
 
-	private Issue mark(CompilationUnit cuWithDuplicates) {
-		this.markedCUs.add(cuWithDuplicates);
-		return new FileIssue(this, cuWithDuplicates, cuWithDuplicates.toString());
-	}
-
-	private boolean isMarked(CompilationUnit cu) {
-		for (CompilationUnit markedCU : this.markedCUs) {
-			if (cu.equals(markedCU)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private List<CompilationUnit> getCusWithDuplicates(CompilationUnit compilationUnit, List<String> tokens) {
-		List<CompilationUnit> cusWithDuplicates = new LinkedList<>();
-		for (CompilationUnit compilationUnit2 : this.fileTokensMap.keySet()) {
-			List<String> tokens2 = this.fileTokensMap.get(compilationUnit2);
-			if (!compilationUnit.equals(compilationUnit2)) {
-				duplicates: for (int i = 0; i + THRESHOLD < tokens.size(); i++) {
-					List<String> subList = tokens.subList(i, i + THRESHOLD);
-					for (int j = 0; j + THRESHOLD < tokens2.size(); j++) {
-						List<String> subList2 = tokens2.subList(j, j + THRESHOLD);
-						if (subList.equals(subList2)) {
-							cusWithDuplicates.add(compilationUnit2);
-							break duplicates;
-						}
+	/**
+	 * @param node
+	 * @param tokens
+	 */
+	private List<Issue> findDuplicates(Node node, List<String> tokens) {
+		for (int i1 = 0, e1 = i1 + THRESHOLD; i1 < tokens.size(); i1++, e1 = i1 + THRESHOLD) {
+			for (int i2 = e1, e2 = i2 + THRESHOLD; i2 < tokens.size(); i2++, e2++) {
+				if (i1 <= e2 && e1 <= i2 && e1 < tokens.size() && e2 < tokens.size()) {
+					List<String> sublist1 = tokens.subList(i1, e1);
+					List<String> sublist2 = tokens.subList(i2, e2);
+					if (sublist1.equals(sublist2)) {
+						List<Issue> issues = new ArrayList<>();
+						issues.add(new FileIssue(this, node, String.join(" ", tokens)));
+						return issues;
 					}
 				}
 			}
 		}
-		return cusWithDuplicates;
+		return null;
 	}
 
 	@Override

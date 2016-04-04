@@ -57,7 +57,6 @@ public class Tokenizer {
 			}
 			if (!match) {
 				this.tokens.clear();
-				System.out.println("Unexpected character in input: " + s);
 				return;
 			}
 
