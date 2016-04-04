@@ -95,7 +95,7 @@ public class Properties extends PropertyPage {
 			try {
 				String text = ((IResource) getElement()).getPersistentProperty(property.getqName());
 				property.setText(text);
-			} catch (CoreException e) {
+			} catch (CoreException | IllegalArgumentException e) {
 				property.setText("");
 			}
 		}
