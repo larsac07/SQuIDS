@@ -25,10 +25,12 @@ public class IssueFinder {
 	private List<JavaResource> javaResources;
 	private List<CompilationUnit> compilationUnits;
 	private Map<String, Measure> measures;
+	private Map<Measure, Long> measureTimes;
 
 	public IssueFinder() {
 		this.javaResources = new LinkedList<>();
 		this.measures = new LinkedHashMap<>();
+		this.measureTimes = new LinkedHashMap<>();
 	}
 
 	public Map<File, List<Issue>> findIssues(List<File> files, Map<String, Object> settings) {
@@ -53,6 +55,12 @@ public class IssueFinder {
 			analyzeNode(compilationUnit, issues, fileString);
 
 			fileIssuesMap.put(file, issues);
+		}
+
+		Logger.log("Measure times: ");
+		for (Measure measure : this.measureTimes.keySet()) {
+			Long measureTime = this.measureTimes.get(measure);
+			Logger.log("- " + measure.getMeasureElement() + " " + measureTime / 1000 + " milliseconds");
 		}
 
 		return fileIssuesMap;
@@ -124,8 +132,8 @@ public class IssueFinder {
 		if (issues == null) {
 			issues = new LinkedList<>();
 		}
-
 		for (Measure measure : this.measures.values()) {
+			long startTime = System.currentTimeMillis();
 			try {
 				List<Issue> measureIssues = measure.analyzeNode(rootNode, fileAsString, this.compilationUnits);
 				if (measureIssues != null) {
@@ -136,6 +144,9 @@ public class IssueFinder {
 						+ " measure. See details below:");
 				e.printStackTrace();
 			}
+			long stopTime = System.currentTimeMillis();
+			long elapsedTime = stopTime - startTime;
+			addTimeToMeasure(measure, elapsedTime);
 		}
 
 		// Recursive call for each child node
@@ -143,6 +154,15 @@ public class IssueFinder {
 			analyzeNode(node, issues, fileAsString);
 		}
 		return issues;
+	}
+
+	private void addTimeToMeasure(Measure measure, long elapsedTime) {
+		Long totalTime = this.measureTimes.get(measure);
+		if (totalTime == null) {
+			totalTime = 0l;
+		}
+		totalTime += elapsedTime;
+		this.measureTimes.put(measure, totalTime);
 	}
 
 	public List<JavaResource> getJavaResources() {
