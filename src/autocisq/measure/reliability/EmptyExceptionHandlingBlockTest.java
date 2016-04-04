@@ -12,7 +12,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -23,17 +22,16 @@ public class EmptyExceptionHandlingBlockTest extends MeasureTest {
 	private BlockStmt emptyFinallyBlock;
 	private CatchClause nonEmptyCatchClause;
 	private String fileString;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new EmptyExceptionHandlingBlock(new HashMap<>()));
-		
+		this.issueFinder.getMeasures().clear();
+		this.issueFinder.putMeasure(new EmptyExceptionHandlingBlock(new HashMap<>()));
+
 		File testFile = new File("res/test/EntropyManualCalculator.java");
-		
+
 		this.fileString = IOUtils.fileToString(testFile);
-		
+
 		CompilationUnit compilationUnit = JavaParser.parse(testFile);
 		MethodDeclaration methodCalculateEntropy1 = (MethodDeclaration) compilationUnit.getTypes().get(0).getMembers()
 				.get(2);
@@ -49,7 +47,7 @@ public class EmptyExceptionHandlingBlockTest extends MeasureTest {
 		this.nonEmptyCatchClause = (CatchClause) methodCalculateEntropy2.getChildrenNodes().get(3).getChildrenNodes()
 				.get(0).getChildrenNodes().get(1);
 	}
-	
+
 	@Test
 	public void findAutoGenCatchClause() {
 		findIssue(this.autoGenCatchClause, this.fileString);

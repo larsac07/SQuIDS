@@ -14,7 +14,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -32,11 +31,8 @@ public class ClassCouplingTest extends MeasureTest {
 	private List<CompilationUnit> coupling7;
 	private List<CompilationUnit> coupling8;
 
-	private IssueFinder issueFinder;
-
 	@Before
 	public void setUp() throws Exception {
-		this.issueFinder = IssueFinder.getInstance();
 		this.issueFinder.getMeasures().clear();
 		this.issueFinder.putMeasure(new ClassCoupling(new HashMap<>()));
 

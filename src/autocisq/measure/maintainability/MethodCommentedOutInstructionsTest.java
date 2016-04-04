@@ -13,7 +13,6 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -26,12 +25,11 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 	private MethodDeclaration methodAtThreshold;
 	private MethodDeclaration methodUnderThreshold;
 	private String fileString;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new MethodCommentedOutInstructions(new HashMap<>()));
+		this.issueFinder.getMeasures().clear();
+		this.issueFinder.putMeasure(new MethodCommentedOutInstructions(new HashMap<>()));
 
 		File testFile = new File("res/test/CommentedOutInstructions.java");
 
@@ -46,7 +44,7 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 		this.methodUnderThreshold = (MethodDeclaration) coiCU.getTypes().get(0).getChildrenNodes().get(7);
 
 	}
-	
+
 	@Test
 	public void testCountInstructions() {
 		int expected = 36;
@@ -60,7 +58,7 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 		int actual = MethodCommentedOutInstructions.countCommentedOutInstructions(this.method36COI);
 		assertEquals(expected, actual);
 	}
-	
+
 	@Test
 	public void moreThanTwoPercentCommentedOutInstructions() {
 		int instructions = MethodCommentedOutInstructions.countInstructions(this.methodOverThreshold);
@@ -73,8 +71,7 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 	@Test
 	public void twoPercentCommentedOutInstructions() {
 		int instructions = MethodCommentedOutInstructions.countInstructions(this.methodAtThreshold);
-		int commOutInstructions = MethodCommentedOutInstructions
-				.countCommentedOutInstructions(this.methodAtThreshold);
+		int commOutInstructions = MethodCommentedOutInstructions.countCommentedOutInstructions(this.methodAtThreshold);
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
 		assertEquals("Expected " + result + " to be == " + threshold, threshold, result, 0.0000001d);
 	}
@@ -87,7 +84,7 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
 		assertTrue("Expected " + result + " to be < " + threshold, result < threshold);
 	}
-	
+
 	@Test
 	public void findMethodMoreThanTwoPercent() {
 		findIssue(this.methodOverThreshold, this.fileString);
@@ -97,12 +94,12 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 	public void skipMethodTwoPercent() {
 		skipIssue(this.methodAtThreshold, this.fileString);
 	}
-	
+
 	@Test
 	public void skipMethodLessThanTwoPercent() {
 		skipIssue(this.methodUnderThreshold, this.fileString);
 	}
-	
+
 	@Override
 	public String getIssueType() {
 		return MethodCommentedOutInstructions.ISSUE_TYPE;

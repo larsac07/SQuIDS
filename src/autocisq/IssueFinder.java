@@ -22,20 +22,11 @@ import autocisq.models.JavaResource;
 
 public class IssueFinder {
 
-	private static IssueFinder instance;
-
 	private List<JavaResource> javaResources;
 	private List<CompilationUnit> compilationUnits;
 	private Map<String, Measure> measures;
 
-	public static IssueFinder getInstance() {
-		if (instance == null) {
-			instance = new IssueFinder();
-		}
-		return instance;
-	}
-
-	private IssueFinder() {
+	public IssueFinder() {
 		this.javaResources = new LinkedList<>();
 		this.measures = new LinkedHashMap<>();
 	}

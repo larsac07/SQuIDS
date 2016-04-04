@@ -16,7 +16,6 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -28,19 +27,18 @@ public class MethodCyclomaticComplexityTest extends MeasureTest {
 	private MethodDeclaration functionCC11;
 	private MethodDeclaration functionAllCases;
 	private String fileString;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new MethodCyclomaticComplexity(new HashMap<>()));
+		this.issueFinder.getMeasures().clear();
+		this.issueFinder.putMeasure(new MethodCyclomaticComplexity(new HashMap<>()));
 
 		File file = new File("res/test/CyclomaticComplexity.java");
 
 		this.fileString = IOUtils.fileToString(file);
 
 		CompilationUnit cu = JavaParser.parse(file);
-		
+
 		this.constructorCC10 = (ConstructorDeclaration) cu.getTypes().get(0).getMembers().get(0);
 		this.functionCC9 = (MethodDeclaration) cu.getTypes().get(0).getMembers().get(1);
 		this.functionCC10 = (MethodDeclaration) cu.getTypes().get(0).getMembers().get(2);
@@ -58,12 +56,12 @@ public class MethodCyclomaticComplexityTest extends MeasureTest {
 	public void skipFunctionCC9() {
 		skipIssue(this.functionCC9, this.fileString);
 	}
-	
+
 	@Test
 	public void findFunctionCC10() {
 		findIssue(this.functionCC10, this.fileString);
 	}
-	
+
 	@Test
 	public void findFunctionCC11() {
 		findIssue(this.functionCC11, this.fileString);
@@ -76,7 +74,7 @@ public class MethodCyclomaticComplexityTest extends MeasureTest {
 		int actual = controlFlowStatements.size();
 		assertEquals(expected, actual);
 	}
-	
+
 	private static List<Node> findControlFlowStatements(Node node) {
 		List<Node> controlFlowStatements = new LinkedList<>();
 		if (MethodCyclomaticComplexity.isControlFlowStmt(node)) {

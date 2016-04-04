@@ -11,23 +11,19 @@ import org.junit.Test;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
 public class ClassTooManyChildrenTest extends MeasureTest {
-	
+
 	private List<String> fileStrings;
 	private List<CompilationUnit> children9;
 	private List<CompilationUnit> children10;
 	private List<CompilationUnit> children11;
 	private List<CompilationUnit> children9WithOtherClass;
-	
-	private IssueFinder issueFinder;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		this.issueFinder = IssueFinder.getInstance();
 		this.issueFinder.getMeasures().clear();
 		this.issueFinder.putMeasure(new ClassTooManyChildren(new HashMap<>()));
 
@@ -107,7 +103,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 		this.children11 = new ArrayList<>();
 		this.children11.addAll(this.children10);
 		this.children11.add(subClass11CU);
-		
+
 		this.children9WithOtherClass = new ArrayList<>();
 		this.children9WithOtherClass.addAll(this.children9);
 		this.children9WithOtherClass.add(subClassOtherCU);
@@ -127,7 +123,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void skipClassOutsideProject() {
 		this.issueFinder.setCompilationUnits(this.children9WithOtherClass);
@@ -155,7 +151,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void find11Children() {
 		this.issueFinder.setCompilationUnits(this.children11);
@@ -169,7 +165,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 			}
 		}
 	}
-	
+
 	@Override
 	public String getIssueType() {
 		return ClassTooManyChildren.ISSUE_TYPE;

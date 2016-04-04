@@ -13,7 +13,6 @@ import com.github.javaparser.ast.stmt.DoStmt;
 import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -25,11 +24,9 @@ public class IndexModifiedWithinLoopTest extends MeasureTest {
 	private ForStmt modifyingFor;
 	private WhileStmt modifyingWhile;
 	private DoStmt modifyingDoWhile;
-	private IssueFinder issueFinder;
 
 	@Before
 	public void setUp() throws Exception {
-		this.issueFinder = IssueFinder.getInstance();
 		this.issueFinder.getMeasures().clear();
 		this.issueFinder.putMeasure(new IndexModifiedWithinLoop(new HashMap<>()));
 

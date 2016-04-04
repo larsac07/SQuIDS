@@ -99,7 +99,7 @@ public class Handler extends AbstractHandler {
 					files.add(file);
 					iFileMap.put(file, iFile);
 				}
-				Map<File, List<Issue>> fileIssuesMap = IssueFinder.getInstance().findIssues(files, settings);
+				Map<File, List<Issue>> fileIssuesMap = new IssueFinder().findIssues(files, settings);
 				Map<String, Map<String, Integer>> qcj = new LinkedHashMap<>();
 				for (File file : fileIssuesMap.keySet()) {
 					List<Issue> issues = fileIssuesMap.get(file);

@@ -11,7 +11,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -26,16 +25,15 @@ public class MethodFanOutTest extends MeasureTest {
 
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new MethodFanOut(new HashMap<>()));
+		this.issueFinder.getMeasures().clear();
+		this.issueFinder.putMeasure(new MethodFanOut(new HashMap<>()));
 
 		File testFile = new File("res/test/Person.java");
-		
+
 		this.fileString = IOUtils.fileToString(testFile);
-		
+
 		CompilationUnit personCU = JavaParser.parse(testFile);
-		
+
 		this.constructorFanOut10 = (ConstructorDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(10);
 		this.functionFanOut12 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(19);
 		this.functionFanOut11 = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(20);
@@ -47,7 +45,7 @@ public class MethodFanOutTest extends MeasureTest {
 	public void findConstructorWithFanOut10() {
 		findIssue(this.constructorFanOut10, this.fileString);
 	}
-	
+
 	@Test
 	public void findMethodWithFanOut12() {
 		findIssue(this.functionFanOut12, this.fileString);

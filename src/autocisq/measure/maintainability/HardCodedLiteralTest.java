@@ -13,7 +13,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -56,12 +55,11 @@ public class HardCodedLiteralTest extends MeasureTest {
 	private ExpressionStmt assignFieldVariableInteger1;
 	private ExpressionStmt assignFieldVariableInteger2;
 	private String fileString;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new HardCodedLiteral(new HashMap<>()));
+		this.issueFinder.getMeasures().clear();
+		this.issueFinder.putMeasure(new HardCodedLiteral(new HashMap<>()));
 
 		File testFile = new File("res/test/HardCodedLiterals.java");
 
@@ -124,7 +122,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void skipStaticField() {
 		skipIssue(this.fieldStaticInteger, this.fileString);
 	}
-	
+
 	@Test
 	public void skipConstantField() {
 		skipIssue(this.fieldConstantInteger, this.fileString);
@@ -139,7 +137,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void findFieldVariableString() {
 		findIssue(this.fieldVariableString, this.fileString);
 	}
-	
+
 	@Test
 	public void skipFieldVariableIntegerMinus1() {
 		skipIssue(this.fieldVariableIntegerMinus1, this.fileString);
@@ -169,7 +167,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void skipStatic() {
 		skipIssue(this.staticInteger, this.fileString);
 	}
-	
+
 	@Test
 	public void skipConstant() {
 		skipIssue(this.constantInteger, this.fileString);
@@ -184,7 +182,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void findVariableString() {
 		findIssue(this.variableString, this.fileString);
 	}
-	
+
 	@Test
 	public void skipVariableIntegerMinus1() {
 		skipIssue(this.variableIntegerMinus1, this.fileString);
@@ -204,7 +202,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void skipVariableInteger2() {
 		skipIssue(this.variableInteger2, this.fileString);
 	}
-	
+
 	@Test
 	public void skipAssignVariableInteger() {
 		skipIssue(this.assignVariableInteger, this.fileString);
@@ -214,7 +212,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void skipAssignStatic() {
 		skipIssue(this.assignStaticInteger, this.fileString);
 	}
-	
+
 	@Test
 	public void skipAssignConstant() {
 		skipIssue(this.assignConstantInteger, this.fileString);
@@ -229,7 +227,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void skipAssignVariableString() {
 		skipIssue(this.assignVariableString, this.fileString);
 	}
-	
+
 	@Test
 	public void skipAssignVariableIntegerMinus1() {
 		skipIssue(this.assignVariableIntegerMinus1, this.fileString);
@@ -259,7 +257,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void skipAssignStaticField() {
 		skipIssue(this.assignFieldStaticInteger, this.fileString);
 	}
-	
+
 	@Test
 	public void skipAssignConstantField() {
 		skipIssue(this.assignFieldConstantInteger, this.fileString);
@@ -274,7 +272,7 @@ public class HardCodedLiteralTest extends MeasureTest {
 	public void skipAssignFieldVariableString() {
 		skipIssue(this.assignFieldVariableString, this.fileString);
 	}
-	
+
 	@Test
 	public void skipAssignFieldVariableIntegerMinus1() {
 		skipIssue(this.assignFieldVariableIntegerMinus1, this.fileString);

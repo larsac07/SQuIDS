@@ -10,7 +10,6 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -24,10 +23,9 @@ public class VariableDeclaredPublicTest extends MeasureTest {
 
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new VariableDeclaredPublic(new HashMap<>()));
-		
+		this.issueFinder.getMeasures().clear();
+		this.issueFinder.putMeasure(new VariableDeclaredPublic(new HashMap<>()));
+
 		File testFile = new File("res/test/layers/GUI.java");
 		this.fileString = IOUtils.fileToString(testFile);
 

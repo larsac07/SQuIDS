@@ -11,7 +11,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -26,16 +25,15 @@ public class MethodParametersTest extends MeasureTest {
 
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new MethodParameters(new HashMap<>()));
+		this.issueFinder.getMeasures().clear();
+		this.issueFinder.putMeasure(new MethodParameters(new HashMap<>()));
 
 		File testFile = new File("res/test/Person.java");
-		
+
 		this.fileString = IOUtils.fileToString(testFile);
-		
+
 		CompilationUnit personCU = JavaParser.parse(testFile);
-		
+
 		this.constructor10Params = (ConstructorDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(10);
 		this.function10Params = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(13);
 		this.function8Params = (MethodDeclaration) personCU.getTypes().get(0).getChildrenNodes().get(14);
@@ -52,17 +50,17 @@ public class MethodParametersTest extends MeasureTest {
 	public void findMethodWith10Parameters() {
 		findIssue(this.function10Params, this.fileString);
 	}
-	
+
 	@Test
 	public void findMethodWith8Parameters() {
 		findIssue(this.function8Params, this.fileString);
 	}
-	
+
 	@Test
 	public void findMethodWith7Parameters() {
 		findIssue(this.function7Params, this.fileString);
 	}
-	
+
 	@Test
 	public void skipMethodWith6Parameters() {
 		skipIssue(this.function6Params, this.fileString);

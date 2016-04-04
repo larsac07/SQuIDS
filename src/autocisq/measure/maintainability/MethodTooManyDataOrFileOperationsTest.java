@@ -13,7 +13,6 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -28,11 +27,10 @@ public class MethodTooManyDataOrFileOperationsTest extends MeasureTest {
 	private String fileString;
 	private CompilationUnit cabCU;
 	private Map<String, Object> settings;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
+		this.issueFinder.getMeasures().clear();
 		List<String> dbOrIoClasses = new LinkedList<>();
 		dbOrIoClasses.add("java.io.File");
 		dbOrIoClasses.add("java.nio.file.Files");
@@ -43,8 +41,8 @@ public class MethodTooManyDataOrFileOperationsTest extends MeasureTest {
 		dbOrIoClasses.add("com.github.javaparser.JavaParser");
 		this.settings = new HashMap<>();
 		this.settings.put("db_or_io_classes", dbOrIoClasses);
-		issueFinder.putMeasure(new MethodTooManyDataOrFileOperations(this.settings));
-		
+		this.issueFinder.putMeasure(new MethodTooManyDataOrFileOperations(this.settings));
+
 		File testFile = new File("res/test/MethodsWithDataOrFileOperations.java");
 
 		this.fileString = IOUtils.fileToString(testFile);
@@ -66,34 +64,34 @@ public class MethodTooManyDataOrFileOperationsTest extends MeasureTest {
 		this.dbOrIoClasses.add("java.sql.PreparedStatement");
 		this.dbOrIoClasses.add("java.sql.Statement");
 		this.dbOrIoClasses.add("com.github.javaparser.JavaParser");
-		IssueFinder.getInstance().analyzeNode(this.cabCU, null, this.fileString);
+		this.issueFinder.analyzeNode(this.cabCU, null, this.fileString);
 	}
 
 	@Test
 	public void skipMethod6DbOrIoCalls() {
 		skipIssue(this.method6DbOrIoCalls, this.fileString);
 	}
-	
+
 	@Test
 	public void findMethod7DbOrIoCalls() {
 		findIssue(this.method7DbOrIoCalls, this.fileString);
 	}
-	
+
 	@Test
 	public void findMethod8DbOrIoCalls() {
 		findIssue(this.method8DbOrIoCalls, this.fileString);
 	}
-	
+
 	@Test
 	public void findMethodJavaDbOrIoCalls() {
 		findIssue(this.methodJavaDbOrIoCalls, this.fileString);
 	}
-	
+
 	@Test
 	public void findMethodExternalLibraryDbOrIoCalls() {
 		findIssue(this.methodExternalLibraryDbOrIoCalls, this.fileString);
 	}
-	
+
 	@Override
 	public String getIssueType() {
 		return MethodTooManyDataOrFileOperations.ISSUE_TYPE;

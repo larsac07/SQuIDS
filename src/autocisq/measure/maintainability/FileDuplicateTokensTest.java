@@ -9,7 +9,6 @@ import org.junit.Test;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -19,11 +18,9 @@ public class FileDuplicateTokensTest extends MeasureTest {
 	private CompilationUnit fileCU100;
 	private String file99String;
 	private String file100String;
-	private IssueFinder issueFinder;
 
 	@Before
 	public void setUp() throws Exception {
-		this.issueFinder = IssueFinder.getInstance();
 		this.issueFinder.getMeasures().clear();
 		this.issueFinder.putMeasure(new FileDuplicateTokens(new HashMap<>()));
 

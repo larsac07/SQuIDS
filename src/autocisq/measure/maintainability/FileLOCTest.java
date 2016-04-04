@@ -9,7 +9,6 @@ import org.junit.Test;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -23,9 +22,8 @@ public class FileLOCTest extends MeasureTest {
 
 	@Before
 	public void setUp() throws Exception {
-		IssueFinder issueFinder = IssueFinder.getInstance();
-		issueFinder.getMeasures().clear();
-		issueFinder.putMeasure(new FileLOC(new HashMap<>()));
+		this.issueFinder.getMeasures().clear();
+		this.issueFinder.putMeasure(new FileLOC(new HashMap<>()));
 
 		File testFile1517 = new File("res/test/DumpVisitor.java");
 		File testFile1001 = new File("res/test/DumpVisitor1001.java");

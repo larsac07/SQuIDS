@@ -10,7 +10,6 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
-import autocisq.IssueFinder;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
@@ -26,11 +25,9 @@ public class CyclicCallBetweenPackagesTest extends MeasureTest {
 	private String fileStringClass1;
 	private String fileStringClass2;
 	private String fileStringClass3;
-	private IssueFinder issueFinder;
 
 	@Before
 	public void setUp() throws Exception {
-		this.issueFinder = IssueFinder.getInstance();
 		this.issueFinder.getMeasures().clear();
 		this.issueFinder.putMeasure(new CyclicCallBetweenPackages(new HashMap<>()));
 

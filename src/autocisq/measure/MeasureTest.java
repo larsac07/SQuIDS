@@ -13,9 +13,14 @@ import autocisq.models.Issue;
 public abstract class MeasureTest {
 
 	protected List<Issue> issues;
+	protected IssueFinder issueFinder;
+
+	protected MeasureTest() {
+		this.issueFinder = new IssueFinder();
+	}
 
 	public void findIssue(String message, Node nodeToAnalyze, String fileString) {
-		this.issues = IssueFinder.getInstance().analyzeNode(nodeToAnalyze, null, fileString);
+		this.issues = this.issueFinder.analyzeNode(nodeToAnalyze, null, fileString);
 		assertTrue(this.issues.size() > 0);
 		boolean found = false;
 		for (Issue issue : this.issues) {
@@ -31,7 +36,7 @@ public abstract class MeasureTest {
 	}
 
 	public void skipIssue(String message, Node nodeToAnalyze, String fileString) {
-		this.issues = IssueFinder.getInstance().analyzeNode(nodeToAnalyze, null, fileString);
+		this.issues = this.issueFinder.analyzeNode(nodeToAnalyze, null, fileString);
 		boolean found = false;
 		for (Issue issue : this.issues) {
 			if (issue.getMeasureElement().equals(getIssueType())) {
