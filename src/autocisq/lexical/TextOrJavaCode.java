@@ -18,9 +18,10 @@ public class TextOrJavaCode {
 		String keyStr = keyString.replace(" ", "|");
 
 		tokenizer.add(keyStr, 1);
-		tokenizer.add("\\(|\\)|\\{|\\}|\\[|\\]|;|,|\\.|=|>|<|!|~|" + "\\?|:|==|<=|>=|!=|&&|\\|\\||\\+\\+|--|"
-				+ "\\+|-|\\*|/|&|\\||\\^|%|\'|\"|\n|\r|\\$|\\#", 2);// separators,
-																	// operators,etc
+		tokenizer.add(
+				";|,|\\.|\\(|\\)|\\{|\\|\\}|\\[|\\]|~|\\?|:|==|=|<=|>=|>|<|!=|!|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||\\^|%|\\$|\\#",
+				2);// separators,
+		// operators,etc
 		tokenizer.add("[0-9]+", 3); // number
 		tokenizer.add("[a-zA-Z_][a-zA-Z0-9_]*", 4);// identifier
 		tokenizer.add("@", 4);
