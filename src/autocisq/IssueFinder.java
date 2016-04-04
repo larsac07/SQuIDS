@@ -45,9 +45,14 @@ public class IssueFinder {
 		Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
 
 		createCompilationUnits(files);
+		int fileIndex = 0;
+		int fileTot = this.javaResources.size();
 
 		importSettings(settings);
 		for (JavaResource javaResource : this.javaResources) {
+			fileIndex++;
+			Logger.log("Analyzing file " + fileIndex + "/" + fileTot + ": " + javaResource.getFile().getPath());
+
 			List<Issue> issues = new LinkedList<>();
 
 			CompilationUnit compilationUnit = javaResource.getCompilationUnit();

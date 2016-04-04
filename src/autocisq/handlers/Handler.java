@@ -91,7 +91,7 @@ public class Handler extends AbstractHandler {
 		Map<File, IFile> iFileMap = new HashMap<>();
 		try {
 			iFiles = EclipseFiles.getFiles(project, JAVA, ignoreFilters);
-			Logger.log("Analyzing " + iFiles.size() + " java files");
+			Logger.log("Analyzing project " + project.getName() + " with " + iFiles.size() + " java files");
 			if (iFiles != null && !iFiles.isEmpty()) {
 				for (IFile iFile : iFiles) {
 					iFile.deleteMarkers("AutoCISQ.javaqualityissue", true, IResource.DEPTH_INFINITE);
