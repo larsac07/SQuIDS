@@ -34,27 +34,23 @@ public class FileDuplicateTokens extends MaintainabilityMeasure {
 	public final static int THRESHOLD = 100;
 	public final static String ISSUE_TYPE = "File with >= " + THRESHOLD + " consecutive duplicate tokens";
 
-	private final static String KEYWORDS = "abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|"
-			+ "double|else|enum|extends|false|finally|final|float|for|goto|if|implements|import|instanceof|interface|int|long|"
-			+ "native|new|null|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|"
-			+ "throws|throw|true|transient|try|void|volatile|while|todo|do";
 	private final static String SEPARATORS = ";|,|\\.|\\(|\\)|\\{|\\|\\}|\\[|\\]";
 	private final static String OPERATORS = "~|\\?|:|==|=|<=|>=|>|<|!=|!|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||\\^|%|\\$|\\#";
-	private final static String IDENTIFIERS = "[a-zA-Z][a-zA-Z0-9_]*";
+	private final static String IDENTIFIERS = "[a-zA-Z_][a-zA-Z0-9_]*";
 	private final static String LITERALS = "[0-9]+(l|L)?\\.?([0-9]+((f|F)|(d|D)))?|\"^\"*\"";
 
 	private Pattern pattern;
 
 	public FileDuplicateTokens(Map<String, Object> settings) {
 		super(settings);
-		this.pattern = Pattern
-				.compile(KEYWORDS + "|" + SEPARATORS + "|" + OPERATORS + "|" + IDENTIFIERS + "|" + LITERALS);
+		this.pattern = Pattern.compile(SEPARATORS + "|" + OPERATORS + "|" + IDENTIFIERS + "|" + LITERALS);
 	}
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof CompilationUnit) {
 			Matcher matcher = this.pattern.matcher(node.toStringWithoutComments());
+			// ArrayList because of use of index in listPartsEqual
 			List<String> tokens = new ArrayList<>();
 			while (matcher.find()) {
 				tokens.add(matcher.group());
@@ -72,12 +68,11 @@ public class FileDuplicateTokens extends MaintainabilityMeasure {
 	 * @param tokens
 	 */
 	private List<Issue> findDuplicates(Node node, List<String> tokens) {
-		for (int i1 = 0, e1 = i1 + THRESHOLD; i1 < tokens.size(); i1++, e1 = i1 + THRESHOLD) {
-			for (int i2 = e1, e2 = i2 + THRESHOLD; i2 < tokens.size(); i2++, e2++) {
-				if (i1 <= e2 && e1 <= i2 && e1 < tokens.size() && e2 < tokens.size()) {
-					List<String> sublist1 = tokens.subList(i1, e1);
-					List<String> sublist2 = tokens.subList(i2, e2);
-					if (sublist1.equals(sublist2)) {
+		int size = tokens.size();
+		for (int i1 = 0, e1 = i1 + THRESHOLD; i1 < size; i1++, e1 = i1 + THRESHOLD) {
+			for (int i2 = e1, e2 = i2 + THRESHOLD; i2 < size; i2++, e2++) {
+				if (i1 <= e2 && e1 <= i2 && e1 < size && e2 < size) {
+					if (listPartsEqual(tokens, i1, e1, i2, e2)) {
 						List<Issue> issues = new ArrayList<>();
 						issues.add(new FileIssue(this, node, String.join(" ", tokens)));
 						return issues;
@@ -86,6 +81,31 @@ public class FileDuplicateTokens extends MaintainabilityMeasure {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Custom equals-function of list parts, instead of sublisting one list and
+	 * comparing them.
+	 *
+	 * @param list
+	 *            - the list to check
+	 * @param from1
+	 *            - the start index of the first part to check
+	 * @param to1
+	 *            - the end index of the first part to check
+	 * @param from2
+	 *            - the start index of the second part to check
+	 * @param to2
+	 *            - the end index of the second part to check
+	 * @return true if the two parts of the list are equal
+	 */
+	private boolean listPartsEqual(List<String> list, int from1, int to1, int from2, int to2) {
+		for (int x = from1, y = from2; x < to1 && y < to2; x++, y++) {
+			if (!list.get(x).equals(list.get(y))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
