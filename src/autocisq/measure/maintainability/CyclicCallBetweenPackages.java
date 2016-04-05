@@ -1,9 +1,11 @@
 package autocisq.measure.maintainability;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -36,12 +38,14 @@ public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 
 	public final static String ISSUE_TYPE = "Cyclic call between packages";
 
-	// E.g. <method(), "package2.uri">
-	private Map<Node, PackageCall> callMap;
+	// E.g. <"package1", "package2">
+	private Map<String, Set<String>> callMap;
+	private String path;
 
 	public CyclicCallBetweenPackages(Map<String, Object> settings) {
 		super(settings);
 		this.callMap = new HashMap<>();
+		this.path = "";
 	}
 
 	@Override
@@ -65,17 +69,16 @@ public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 					if (nodePackage != null) {
 						fromPackage = nodePackage.getName().toString();
 					}
-					this.callMap.put(node, new PackageCall(fromPackage, toPackage));
-					for (Node packageSkippingCall : this.callMap.keySet()) {
-						PackageCall packageCall = this.callMap.get(packageSkippingCall);
-						if (packageCall.getFromPackage().equals(toPackage)
-								&& packageCall.getToPackage().equals(fromPackage)) {
-							List<Issue> issues = new LinkedList<>();
-							issues.add(new FileIssue(this, node, fileString));
-							issues.add(new FileIssue(this, packageSkippingCall,
-									JavaParserHelper.getNodeFileString(packageSkippingCall)));
-							return issues;
-						}
+					Set<String> packageCalls = this.callMap.get(fromPackage);
+					if (packageCalls == null) {
+						packageCalls = new HashSet<>();
+					}
+					packageCalls.add(toPackage);
+					this.callMap.put(fromPackage, packageCalls);
+					if (cyclicCall(fromPackage, fromPackage, toPackage, fromPackage)) {
+						List<Issue> issues = new LinkedList<>();
+						issues.add(new FileIssue(this, node, fileString));
+						return issues;
 					}
 				}
 			}
@@ -83,6 +86,22 @@ public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 		}
 		return null;
 	};
+
+	private boolean cyclicCall(String originalPackage, String fromPackage, String toPackage, String path) {
+		Set<String> calledPackages = this.callMap.get(toPackage);
+		if (calledPackages != null) {
+			for (String calledPackage : calledPackages) {
+				String newPath = path + " -> " + calledPackage;
+				if (calledPackage.equals(originalPackage)) {
+					this.path = newPath;
+					return true;
+				} else if (cyclicCall(originalPackage, toPackage, calledPackage, newPath)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Returns the {@link PackageDeclaration} of the {@link CompilationUnit}
@@ -105,38 +124,6 @@ public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 	@Override
 	public String getMeasureElement() {
 		return ISSUE_TYPE;
-	}
-
-	/**
-	 * The internal {@link PackageCall} class is a helper class to hold linkages
-	 * between packages. E.g. "somepackage.subpackageA" refers to
-	 * "somepackage.subpackageB".
-	 *
-	 * @author Lars A. V. Cabrera
-	 *
-	 */
-	private class PackageCall {
-
-		private String fromPackage;
-		private String toPackage;
-
-		public PackageCall(String fromPackage, String toPackage) {
-			this.fromPackage = fromPackage;
-			this.toPackage = toPackage;
-		}
-
-		public String getFromPackage() {
-			return this.fromPackage;
-		}
-
-		public String getToPackage() {
-			return this.toPackage;
-		}
-
-		@Override
-		public String toString() {
-			return this.fromPackage + " to " + this.toPackage;
-		}
 	}
 
 }
