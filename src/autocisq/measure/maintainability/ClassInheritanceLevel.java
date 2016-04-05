@@ -65,19 +65,23 @@ public class ClassInheritanceLevel extends MaintainabilityMeasure {
 	 */
 	private int calcInheritanceLvl(ClassOrInterfaceDeclaration classDecl, List<CompilationUnit> compilationUnits,
 			int count) {
-		for (ClassOrInterfaceType superclass : classDecl.getExtends()) {
-			for (CompilationUnit cu : compilationUnits) {
-				for (TypeDeclaration typeDecl : cu.getTypes()) {
-					if (typeDecl instanceof ClassOrInterfaceDeclaration) {
-						ClassOrInterfaceDeclaration superclassDecl = (ClassOrInterfaceDeclaration) typeDecl;
-						if (superclass.getName().equals(superclassDecl.getName())) {
-							return calcInheritanceLvl(superclassDecl, compilationUnits, count + 1);
+		if (count < THRESHOLD) {
+			for (ClassOrInterfaceType superclass : classDecl.getExtends()) {
+				for (CompilationUnit cu : compilationUnits) {
+					for (TypeDeclaration typeDecl : cu.getTypes()) {
+						if (typeDecl instanceof ClassOrInterfaceDeclaration) {
+							ClassOrInterfaceDeclaration superclassDecl = (ClassOrInterfaceDeclaration) typeDecl;
+							if (superclass.getName().equals(superclassDecl.getName())) {
+								return calcInheritanceLvl(superclassDecl, compilationUnits, count + 1);
+							}
 						}
 					}
 				}
 			}
+			return count;
+		} else {
+			return count;
 		}
-		return count;
 	}
 
 	@Override
