@@ -77,7 +77,8 @@ public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 					this.callMap.put(fromPackage, packageCalls);
 					if (cyclicCall(fromPackage, fromPackage, toPackage, fromPackage)) {
 						List<Issue> issues = new LinkedList<>();
-						issues.add(new FileIssue(this, node, fileString));
+						String message = "Found following cyclic path: " + this.path;
+						issues.add(new FileIssue(this, node, fileString, message));
 						return issues;
 					}
 				}
