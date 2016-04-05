@@ -5,10 +5,16 @@ import autocisq.measure.Measure;
 public abstract class Issue {
 	private String type;
 	private String qualityCharacteristic;
+	private String message;
 
 	public Issue(Measure measure) {
+		this(measure, "");
+	}
+
+	public Issue(Measure measure, String message) {
 		this.type = measure.getMeasureElement();
 		this.qualityCharacteristic = measure.getQualityCharacteristic();
+		this.message = message;
 	}
 
 	public String getMeasureElement() {
@@ -17,6 +23,10 @@ public abstract class Issue {
 
 	public String getQualityCharacteristic() {
 		return this.qualityCharacteristic;
+	}
+
+	public String getMessage() {
+		return this.message;
 	}
 
 	public abstract String getID();

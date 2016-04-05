@@ -23,7 +23,11 @@ public class FileIssue extends Issue {
 	}
 
 	public FileIssue(Measure measure, Node node, String fileString) {
-		super(measure);
+		this(measure, node, fileString, "");
+	}
+
+	public FileIssue(Measure measure, Node node, String fileString, String message) {
+		super(measure, message);
 		int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
 				node.getBeginColumn(), node.getEndColumn());
 		this.beginLine = node.getBeginLine();

@@ -5,7 +5,11 @@ import autocisq.measure.Measure;
 public class ProjectIssue extends Issue {
 
 	public ProjectIssue(Measure measure) {
-		super(measure);
+		this(measure, "");
+	}
+
+	public ProjectIssue(Measure measure, String message) {
+		super(measure, message);
 	}
 
 	@Override
