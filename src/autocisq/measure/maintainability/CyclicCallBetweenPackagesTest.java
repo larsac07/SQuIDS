@@ -64,10 +64,6 @@ public class CyclicCallBetweenPackagesTest extends MeasureTest {
 				.getChildrenNodes().get(1).getChildrenNodes().get(3).getChildrenNodes().get(0);
 		this.samePackageCall2 = (MethodCallExpr) this.class3CU.getTypes().get(0).getChildrenNodes().get(0)
 				.getChildrenNodes().get(1).getChildrenNodes().get(1).getChildrenNodes().get(0);
-
-		System.out.println(this.cyclicCallStep1);
-		System.out.println(this.cyclicCallStep2);
-		System.out.println(this.cyclicCallStep3);
 	}
 
 	@Test
