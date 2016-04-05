@@ -69,8 +69,11 @@ public class Tokenizer {
 
 	public String getTokensString() {
 		StringBuilder sb = new StringBuilder();
-		for (Tokenizer.Token tok : this.tokens) {
-			sb.append(tok.token);
+		sb.append("");
+		if (this.tokens.isEmpty()) {
+			for (Tokenizer.Token tok : this.tokens) {
+				sb.append(tok.token);
+			}
 		}
 
 		return sb.toString();
