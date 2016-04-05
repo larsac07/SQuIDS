@@ -1,0 +1,200 @@
+Analyzing project JabRef with 509 java files
+Measure times: 
+- 101 milliseconds: ClassTooManyChildren
+- 220 milliseconds: ContinueOrBreakOutsideSwitch
+- 349 milliseconds: FileLOC
+- 11711 milliseconds: FileDuplicateTokens
+- 751 milliseconds: MethodCommentedOutInstructions
+- 1279 milliseconds: MethodFanOut
+- 48 milliseconds: MethodParameters
+- 4643 milliseconds: HardCodedLiteral
+- 1229 milliseconds: MethodDirectlyUsingFieldFromOtherClass
+- 89 milliseconds: VariableDeclaredPublic
+- 5029 milliseconds: MethodCyclomaticComplexity
+- 8802 milliseconds: MethodUnreachable
+- 55 milliseconds: ClassInheritanceLevel
+- 3122 milliseconds: ClassCoupling
+- 439 milliseconds: CyclicCallBetweenPackages
+- 310 milliseconds: IndexModifiedWithinLoop
+#############
+CISQ Maintainability: 
+ - File with >= 100 consecutive duplicate tokens: 17
+ - Non-valid, hard coded literal: 3869
+ - Unreachable function: 95
+ - Function with fan-out >= 10: 935
+ - Function with Cyclomatic Complexity >= 10: 221
+ - Index modified within loop: 255
+ - Class with >= 10 children: 37
+ - Function with > 2% commented out instructions: 276
+ - More than 1000 Lines of Code: 14
+ - Continue or Break outside switch: 174
+ - Variable declared public: 43
+ - Method directly using field from other class: 252
+ - Function passing >= 7 parameters: 11
+ - Class with coupling > 7: 99
+ - Cyclic call between packages: 767
+QCj(CISQ Maintainability) = 7065
+
+
+
+
+Analyzing project RSSOwl Source with 201 java files
+Measure times: 
+- 45 milliseconds: ClassTooManyChildren
+- 68 milliseconds: ContinueOrBreakOutsideSwitch
+- 134 milliseconds: FileLOC
+- 18800 milliseconds: FileDuplicateTokens
+- 282 milliseconds: MethodCommentedOutInstructions
+- 1812 milliseconds: MethodFanOut
+- 22 milliseconds: MethodParameters
+- 1274 milliseconds: HardCodedLiteral
+- 1771 milliseconds: MethodDirectlyUsingFieldFromOtherClass
+- 24 milliseconds: VariableDeclaredPublic
+- 1730 milliseconds: MethodCyclomaticComplexity
+- 3912 milliseconds: MethodUnreachable
+- 16 milliseconds: ClassInheritanceLevel
+- 314 milliseconds: ClassCoupling
+- 1386 milliseconds: CyclicCallBetweenPackages
+- 71 milliseconds: IndexModifiedWithinLoop
+#############
+CISQ Maintainability: 
+ - Function with fan-out >= 10: 513
+ - Function with Cyclomatic Complexity >= 10: 114
+ - More than 1000 Lines of Code: 7
+ - Non-valid, hard coded literal: 651
+ - Index modified within loop: 20
+ - Method directly using field from other class: 4
+ - Continue or Break outside switch: 53
+ - Unreachable function: 36
+ - Function with > 2% commented out instructions: 5
+ - File with >= 100 consecutive duplicate tokens: 4
+ - Variable declared public: 2
+ - Cyclic call between packages: 1329
+ - Function passing >= 7 parameters: 4
+ - Class with >= 10 children: 29
+ - Class with coupling > 7: 3
+QCj(CISQ Maintainability) = 2774
+
+
+
+
+Analyzing project RemoteSystemsTempFiles with 0 java files
+
+
+
+
+Analyzing project TV-Browser with 653 java files
+Measure times: 
+- 54 milliseconds: ClassTooManyChildren
+- 150 milliseconds: ContinueOrBreakOutsideSwitch
+- 187 milliseconds: FileLOC
+- 8294 milliseconds: FileDuplicateTokens
+- 377 milliseconds: MethodCommentedOutInstructions
+- 750 milliseconds: MethodFanOut
+- 53 milliseconds: MethodParameters
+- 2402 milliseconds: HardCodedLiteral
+- 713 milliseconds: MethodDirectlyUsingFieldFromOtherClass
+- 29 milliseconds: VariableDeclaredPublic
+- 4696 milliseconds: MethodCyclomaticComplexity
+- 18181 milliseconds: MethodUnreachable
+- 35 milliseconds: ClassInheritanceLevel
+- 2111 milliseconds: ClassCoupling
+- 860 milliseconds: CyclicCallBetweenPackages
+- 264 milliseconds: IndexModifiedWithinLoop
+#############
+CISQ Maintainability: 
+ - Function with fan-out >= 10: 960
+ - Non-valid, hard coded literal: 3125
+ - Function with > 2% commented out instructions: 56
+ - File with >= 100 consecutive duplicate tokens: 12
+ - Function with Cyclomatic Complexity >= 10: 178
+ - Class with coupling > 7: 80
+ - Unreachable function: 183
+ - Index modified within loop: 146
+ - Continue or Break outside switch: 107
+ - Cyclic call between packages: 805
+ - Function passing >= 7 parameters: 28
+ - Method directly using field from other class: 21
+ - More than 1000 Lines of Code: 2
+ - Variable declared public: 11
+ - Class with >= 10 children: 7
+ - Class with inheritance level >= 7: 1
+QCj(CISQ Maintainability) = 5722
+
+
+
+
+Analyzing project checkstyle with 562 java files
+Measure times: 
+- 93 milliseconds: ClassTooManyChildren
+- 62 milliseconds: ContinueOrBreakOutsideSwitch
+- 92 milliseconds: FileLOC
+- 5964 milliseconds: FileDuplicateTokens
+- 151 milliseconds: MethodCommentedOutInstructions
+- 192 milliseconds: MethodFanOut
+- 8 milliseconds: MethodParameters
+- 1463 milliseconds: HardCodedLiteral
+- 116 milliseconds: MethodDirectlyUsingFieldFromOtherClass
+- 14 milliseconds: VariableDeclaredPublic
+- 256 milliseconds: MethodCyclomaticComplexity
+- 2935 milliseconds: MethodUnreachable
+- 45 milliseconds: ClassInheritanceLevel
+- 372 milliseconds: ClassCoupling
+- 70 milliseconds: CyclicCallBetweenPackages
+- 138 milliseconds: IndexModifiedWithinLoop
+#############
+CISQ Maintainability: 
+ - Function with fan-out >= 10: 239
+ - Non-valid, hard coded literal: 3151
+ - Unreachable function: 108
+ - Function with Cyclomatic Complexity >= 10: 72
+ - Index modified within loop: 166
+ - Function with > 2% commented out instructions: 14
+ - Continue or Break outside switch: 74
+ - File with >= 100 consecutive duplicate tokens: 13
+ - More than 1000 Lines of Code: 3
+ - Class with coupling > 7: 171
+ - Function passing >= 7 parameters: 3
+ - Class with >= 10 children: 210
+ - Cyclic call between packages: 107
+QCj(CISQ Maintainability) = 4331
+
+
+
+
+Analyzing project log4j with 168 java files
+Measure times: 
+- 6 milliseconds: ClassTooManyChildren
+- 11 milliseconds: ContinueOrBreakOutsideSwitch
+- 40 milliseconds: FileLOC
+- 1819 milliseconds: FileDuplicateTokens
+- 59 milliseconds: MethodCommentedOutInstructions
+- 109 milliseconds: MethodFanOut
+- 11 milliseconds: MethodParameters
+- 943 milliseconds: HardCodedLiteral
+- 71 milliseconds: MethodDirectlyUsingFieldFromOtherClass
+- 9 milliseconds: VariableDeclaredPublic
+- 85 milliseconds: MethodCyclomaticComplexity
+- 635 milliseconds: MethodUnreachable
+- 7 milliseconds: ClassInheritanceLevel
+- 47 milliseconds: ClassCoupling
+- 88 milliseconds: CyclicCallBetweenPackages
+- 26 milliseconds: IndexModifiedWithinLoop
+#############
+CISQ Maintainability: 
+ - Non-valid, hard coded literal: 391
+ - Index modified within loop: 28
+ - Function with fan-out >= 10: 128
+ - Continue or Break outside switch: 20
+ - Function with Cyclomatic Complexity >= 10: 23
+ - Unreachable function: 44
+ - File with >= 100 consecutive duplicate tokens: 2
+ - Function with > 2% commented out instructions: 29
+ - Method directly using field from other class: 37
+ - Cyclic call between packages: 104
+ - Function passing >= 7 parameters: 4
+ - Class with coupling > 7: 21
+ - Variable declared public: 4
+ - More than 1000 Lines of Code: 1
+ - Class with >= 10 children: 2
+QCj(CISQ Maintainability) = 838
