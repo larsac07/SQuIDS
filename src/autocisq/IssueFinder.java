@@ -60,7 +60,7 @@ public class IssueFinder {
 		Logger.log("Measure times: ");
 		for (Measure measure : this.measureTimes.keySet()) {
 			Long measureTime = this.measureTimes.get(measure);
-			Logger.log("- " + measure.getMeasureElement() + " " + measureTime / 1000 + " milliseconds");
+			Logger.log("- " + measureTime + " milliseconds: " + measure.getClass().getSimpleName());
 		}
 
 		return fileIssuesMap;
