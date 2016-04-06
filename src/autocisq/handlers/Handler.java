@@ -20,14 +20,20 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import autocisq.IssueFinder;
 import autocisq.debug.Logger;
 import autocisq.io.EclipseFiles;
+import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.ProjectIssue;
@@ -44,6 +50,7 @@ public class Handler extends AbstractHandler {
 	public final static String COMMAND_SELECTED_PROJECTS = "AutoCISQ.commands.analyzeSelectedProjects";
 	public final static String COMMAND_ALL_PROJECTS = "AutoCISQ.commands.analyzeAllProjects";
 	private final static String JAVA = "java";
+	private final static String JOB_NAME = "Analyze project";
 
 	/**
 	 * The constructor.
@@ -85,58 +92,79 @@ public class Handler extends AbstractHandler {
 
 	private void analyzeSourceFiles(IProject project) {
 		Map<String, Object> settings = loadSettings(project);
-		List<String> ignoreFilters = getFilters(settings);
-		List<IFile> iFiles;
 		List<File> files = new LinkedList<>();
+		analyzeSourceFiles(project, settings, files);
+	}
+
+	/**
+	 * @param project
+	 * @param settings
+	 * @param files
+	 * @param iFileMap
+	 */
+	private void analyzeSourceFiles(IProject project, Map<String, Object> settings, List<File> files) {
 		Map<File, IFile> iFileMap = new HashMap<>();
+		List<IFile> iFiles;
 		try {
+			List<String> ignoreFilters = getFilters(settings);
 			iFiles = EclipseFiles.getFiles(project, JAVA, ignoreFilters);
 			Logger.log("Analyzing project " + project.getName() + " with " + iFiles.size() + " java files");
-			if (iFiles != null && !iFiles.isEmpty()) {
-				for (IFile iFile : iFiles) {
-					iFile.deleteMarkers("AutoCISQ.javaqualityissue", true, IResource.DEPTH_INFINITE);
-					File file = EclipseFiles.iResourceToFile(iFile);
-					files.add(file);
-					iFileMap.put(file, iFile);
-				}
-				Map<File, List<Issue>> fileIssuesMap = new IssueFinder().findIssues(files, settings);
-				Map<String, Map<String, Integer>> qcj = new LinkedHashMap<>();
-				for (File file : fileIssuesMap.keySet()) {
-					List<Issue> issues = fileIssuesMap.get(file);
-					IFile iFile = iFileMap.get(file);
-					// Report issues
-					for (Issue issue : issues) {
-						countQCJ(issue, qcj);
-						try {
-							if (issue instanceof FileIssue) {
-								FileIssue fileIssue = (FileIssue) issue;
-								markIssue(iFile, fileIssue.getBeginLine(), fileIssue.getStartIndex(),
-										fileIssue.getEndIndex(), fileIssue.getMeasureElement());
-							} else if (issue instanceof ProjectIssue) {
-								ProjectIssue projectIssue = (ProjectIssue) issue;
-								markIssue(project, projectIssue.getMeasureElement());
-							}
-						} catch (CoreException e) {
-							Logger.bug("Could not create marker on file " + file);
-							e.printStackTrace();
-						}
-					}
-				}
-				for (String qc : qcj.keySet()) {
-					Map<String, Integer> qcMap = qcj.get(qc);
-					Logger.log("#############\n" + qc + ": ");
-					int violationsTot = 0;
-					for (String measureElement : qcMap.keySet()) {
-						Integer violations = qcMap.get(measureElement);
-						violationsTot += violations;
-						Logger.log(" - " + measureElement + ": " + violations);
-					}
-					Logger.log("QCj(" + qc + ") = " + violationsTot);
-				}
+			if (iFiles == null || iFiles.isEmpty()) {
+				return;
 			}
+			prepareIFiles(iFiles, files, iFileMap);
+			Job job = new Job(JOB_NAME + " " + project.getName()) {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					Map<String, Map<String, Integer>> qcj = new LinkedHashMap<>();
+					IssueFinder issueFinder = new IssueFinder(files, settings);
+					int fileIndex = 1;
+					int filesTot = files.size();
+					monitor.beginTask("Analyzing files", files.size());
+					try {
+						for (File file : files) {
+							if (monitor.isCanceled()) {
+								return Status.CANCEL_STATUS;
+							}
+							String fileAnalysis = "Analyzing file " + fileIndex + "/" + filesTot + ": "
+									+ file.getPath();
+							monitor.subTask(fileAnalysis);
+							Logger.log(fileAnalysis);
+
+							analyzeSourceFile(project, iFileMap, qcj, issueFinder, file);
+
+							monitor.worked(1);
+							fileIndex++;
+						}
+					} finally {
+						monitor.done();
+					}
+					logMeasureTimes(issueFinder);
+					logQCj(qcj);
+
+					return Status.OK_STATUS;
+				}
+			};
+			job.setPriority(Job.LONG);
+			job.schedule();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return;
+		}
+	}
+
+	/**
+	 * @param iFiles
+	 * @param files
+	 * @param iFileMap
+	 * @throws CoreException
+	 */
+	private void prepareIFiles(List<IFile> iFiles, List<File> files, Map<File, IFile> iFileMap) throws CoreException {
+		for (IFile iFile : iFiles) {
+			iFile.deleteMarkers("AutoCISQ.javaqualityissue", true, IResource.DEPTH_INFINITE);
+			File file = EclipseFiles.iResourceToFile(iFile);
+			files.add(file);
+			iFileMap.put(file, iFile);
 		}
 	}
 
@@ -208,6 +236,80 @@ public class Handler extends AbstractHandler {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param project
+	 * @param iFileMap
+	 * @param qcj
+	 * @param issueFinder
+	 * @param file
+	 */
+	private void analyzeSourceFile(IProject project, Map<File, IFile> iFileMap, Map<String, Map<String, Integer>> qcj,
+			IssueFinder issueFinder, File file) {
+		List<Issue> issues = issueFinder.findIssues(file);
+		IFile iFile = iFileMap.get(file);
+		for (Issue issue : issues) {
+			countQCJ(issue, qcj);
+			// Update UI
+			markIssues(project, file, iFile, issue);
+		}
+	}
+
+	/**
+	 * @param project
+	 * @param file
+	 * @param iFile
+	 * @param issue
+	 */
+	private void markIssues(IProject project, File file, IFile iFile, Issue issue) {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (issue instanceof FileIssue) {
+						FileIssue fileIssue = (FileIssue) issue;
+						markIssue(iFile, fileIssue.getBeginLine(), fileIssue.getStartIndex(), fileIssue.getEndIndex(),
+								fileIssue.getMeasureElement());
+					} else if (issue instanceof ProjectIssue) {
+						ProjectIssue projectIssue = (ProjectIssue) issue;
+						markIssue(project, projectIssue.getMeasureElement());
+					}
+				} catch (CoreException e) {
+					Logger.bug("Could not create marker on file " + file);
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * @param issueFinder
+	 */
+	private void logMeasureTimes(IssueFinder issueFinder) {
+		Logger.log("Measure times: ");
+		Map<Measure, Long> measureTimes = issueFinder.getMeasureTimes();
+		for (Measure measure : measureTimes.keySet()) {
+			Long measureTime = measureTimes.get(measure);
+			Logger.log("- " + measureTime + " milliseconds: " + measure.getClass().getSimpleName());
+		}
+	}
+
+	/**
+	 * @param qcj
+	 */
+	private void logQCj(Map<String, Map<String, Integer>> qcj) {
+		for (String qc : qcj.keySet()) {
+			Map<String, Integer> qcMap = qcj.get(qc);
+			Logger.log("#############\n" + qc + ": ");
+			int violationsTot = 0;
+			for (String measureElement : qcMap.keySet()) {
+				Integer violations = qcMap.get(measureElement);
+				violationsTot += violations;
+				Logger.log(" - " + measureElement + ": " + violations);
+			}
+			Logger.log("QCj(" + qc + ") = " + violationsTot);
+		}
 	}
 
 	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex, String message)

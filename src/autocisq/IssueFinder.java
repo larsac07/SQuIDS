@@ -3,7 +3,6 @@ package autocisq;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,52 +17,33 @@ import autocisq.debug.Logger;
 import autocisq.io.IOUtils;
 import autocisq.measure.Measure;
 import autocisq.models.Issue;
-import autocisq.models.JavaResource;
 
 public class IssueFinder {
 
-	private List<JavaResource> javaResources;
 	private List<CompilationUnit> compilationUnits;
 	private Map<String, Measure> measures;
 	private Map<Measure, Long> measureTimes;
 
 	public IssueFinder() {
-		this.javaResources = new LinkedList<>();
 		this.measures = new LinkedHashMap<>();
 		this.measureTimes = new LinkedHashMap<>();
+		this.compilationUnits = new LinkedList<>();
 	}
 
-	public Map<File, List<Issue>> findIssues(List<File> files, Map<String, Object> settings) {
-		this.javaResources = new LinkedList<>();
-		Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
-
+	public IssueFinder(List<File> files, Map<String, Object> settings) {
+		this();
 		createCompilationUnits(files);
-		int fileIndex = 0;
-		int fileTot = this.javaResources.size();
-
 		importSettings(settings);
-		for (JavaResource javaResource : this.javaResources) {
-			fileIndex++;
-			Logger.log("Analyzing file " + fileIndex + "/" + fileTot + ": " + javaResource.getFile().getPath());
+	}
 
-			List<Issue> issues = new LinkedList<>();
+	public List<Issue> findIssues(File file) {
+		CompilationUnit compilationUnit = createCompilationUnit(file);
+		String fileString = IOUtils.fileToString(file);
 
-			CompilationUnit compilationUnit = javaResource.getCompilationUnit();
-			String fileString = javaResource.getFileString();
-			File file = javaResource.getFile();
+		List<Issue> issues = analyzeNode(compilationUnit, null, fileString);
 
-			analyzeNode(compilationUnit, issues, fileString);
+		return issues;
 
-			fileIssuesMap.put(file, issues);
-		}
-
-		Logger.log("Measure times: ");
-		for (Measure measure : this.measureTimes.keySet()) {
-			Long measureTime = this.measureTimes.get(measure);
-			Logger.log("- " + measureTime + " milliseconds: " + measure.getClass().getSimpleName());
-		}
-
-		return fileIssuesMap;
 	}
 
 	private void importSettings(Map<String, Object> settings) {
@@ -97,28 +77,22 @@ public class IssueFinder {
 
 	private void createCompilationUnits(List<File> files) {
 		for (File file : files) {
-			List<String> fileStringLines = IOUtils.fileToStringLines(file);
-			String fileString = String.join(System.lineSeparator(), fileStringLines);
-			try {
-				CompilationUnit compilationUnit = JavaParser.parse(file);
-				this.javaResources.add(new JavaResource(compilationUnit, file, fileString, fileStringLines));
-			} catch (ParseException e) {
-				System.err.println(e.getClass().getName() + ": Could not parse file " + file.getAbsolutePath());
-				e.printStackTrace();
-			} catch (IOException e) {
-				System.err.println(e.getClass().getName() + ": Could not find file " + file.getAbsolutePath());
-				e.printStackTrace();
-			}
+			this.compilationUnits.add(createCompilationUnit(file));
 		}
-		createCompilationUnitList();
 	}
 
-	private void createCompilationUnitList() {
-		List<CompilationUnit> compilationUnits = new ArrayList<>();
-		for (JavaResource javaResource : this.javaResources) {
-			compilationUnits.add(javaResource.getCompilationUnit());
+	private CompilationUnit createCompilationUnit(File file) {
+		try {
+			return JavaParser.parse(file);
+		} catch (ParseException e) {
+			System.err.println(e.getClass().getName() + ": Could not parse file " + file.getAbsolutePath());
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			System.err.println(e.getClass().getName() + ": Could not find file " + file.getAbsolutePath());
+			e.printStackTrace();
+			return null;
 		}
-		this.compilationUnits = compilationUnits;
 	}
 
 	/**
@@ -165,10 +139,6 @@ public class IssueFinder {
 		this.measureTimes.put(measure, totalTime);
 	}
 
-	public List<JavaResource> getJavaResources() {
-		return this.javaResources;
-	}
-
 	public Map<String, Measure> getMeasures() {
 		return this.measures;
 	}
@@ -195,5 +165,9 @@ public class IssueFinder {
 
 	public void setCompilationUnits(List<CompilationUnit> compilationUnits) {
 		this.compilationUnits = compilationUnits;
+	}
+
+	public Map<Measure, Long> getMeasureTimes() {
+		return this.measureTimes;
 	}
 }
