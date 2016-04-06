@@ -73,7 +73,7 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 		int instructions = MethodCommentedOutInstructions.countInstructions(this.methodAtThreshold);
 		int commOutInstructions = MethodCommentedOutInstructions.countCommentedOutInstructions(this.methodAtThreshold);
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
-		assertEquals("Expected " + result + " to be == " + threshold, threshold, result, 0.0000001d);
+		assertEquals(threshold, result, 0.0000001d);
 	}
 
 	@Test
