@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<benchmarkbase findingsmode="0" namemode="original">
+    <project name="Log4j" version="1.2.15">
+        <findings>
+            <finding name="CisqMaintainability15LargeFiles" toolname="Understand" toolversion="695" value="3.0"/>
+            <finding name="CisqMaintainability12HighCoupling" toolname="Understand" toolversion="695" value="83.0"/>
+            <finding name="CisqMaintainability20LongParameterLists" toolname="Understand" toolversion="695" value="4.0"/>
+            <finding name="CisqMaintainability13PackageCycles" toolname="Understand" toolversion="695" value="16.0"/>
+            <finding name="CisqMaintainability03UnsoundNumberOfLayers" toolname="Understand" toolversion="695" value="1.0"/>
+            <finding name="CisqMaintainability17JumpStatements" toolname="Understand" toolversion="695" value="21.0"/>
+            <finding name="CisqMaintainability11HighMethodFanOut" toolname="Understand" toolversion="695" value="101.0"/>
+            <finding name="CisqMaintainability09DirectUsageOfExternalMemberVariables" toolname="Understand" toolversion="695" value="53.0"/>
+            <finding name="CisqMaintainability21HardCodedLiterals" toolname="Understand" toolversion="695" value="1587.0"/>
+            <finding name="CisqMaintainability14UncommentedCode" toolname="Understand" toolversion="695" value="48.0"/>
+            <finding name="CisqMaintainability07ClassesWithManyChildren" toolname="Understand" toolversion="695" value="1.0"/>
+            <finding name="CisqMaintainability18ComplexFunctions" toolname="Understand" toolversion="695" value="13.0"/>
+            <finding name="CisqMaintainability05UnreachableFunctions" toolname="Understand" toolversion="695" value="8.0"/>
+            <finding name="CisqMaintainability02LayerSkippingCalls" toolname="Understand" toolversion="695" value="146.0"/>
+            <finding name="CisqMaintainability10PublicMemberVariables" toolname="Understand" toolversion="695" value="4.0"/>
+            <finding name="CisqMaintainability06DeepInheritance" toolname="Understand" toolversion="695" value="4.0"/>
+            <finding name="CisqMaintainability16IndexesModifiedInLoops" toolname="Understand" toolversion="695" value="2.0"/>
+        </findings>
+        <sizes>
+            <size name="Classes and Interfaces" toolname="SourceMonitor" toolversion="2.6.3" value="257.0"/>
+            <size name="Lines" toolname="SourceMonitor" toolversion="2.6.3" value="32583.0"/>
+            <size name="Lines with Comments" toolname="SourceMonitor" toolversion="2.6.3" value="12745.0"/>
+            <size name="Statements" toolname="SourceMonitor" toolversion="2.6.3" value="11282.0"/>
+            <size name="Method Statements" toolname="SourceMonitor" toolversion="2.6.3" value="7543.0"/>
+            <size name="Method Call Statements" toolname="SourceMonitor" toolversion="2.6.3" value="5569.0"/>
+            <size name="Branch Statements" toolname="SourceMonitor" toolversion="2.6.3" value="1779.0"/>
+            <size name="Class Methods" toolname="SourceMonitor" toolversion="2.6.3" value="1630.0"/>
+            <size name="Maximum Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="69.0"/>
+            <size name="Average Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="2.17"/>
+            <size name="Average Block Depth" toolname="SourceMonitor" toolversion="2.6.3" value="1.98"/>
+        </sizes>
+    </project>
+    <project name="JabRef" version="2.3.1">
+        <findings>
+            <finding name="CisqMaintainability15LargeFiles" toolname="Understand" toolversion="695" value="14.0"/>
+            <finding name="CisqMaintainability12HighCoupling" toolname="Understand" toolversion="695" value="407.0"/>
+            <finding name="CisqMaintainability20LongParameterLists" toolname="Understand" toolversion="695" value="11.0"/>
+            <finding name="CisqMaintainability13PackageCycles" toolname="Understand" toolversion="695" value="70.0"/>
+            <finding name="CisqMaintainability03UnsoundNumberOfLayers" toolname="Understand" toolversion="695" value="1.0"/>
+            <finding name="CisqMaintainability17JumpStatements" toolname="Understand" toolversion="695" value="123.0"/>
+            <finding name="CisqMaintainability11HighMethodFanOut" toolname="Understand" toolversion="695" value="594.0"/>
+            <finding name="CisqMaintainability09DirectUsageOfExternalMemberVariables" toolname="Understand" toolversion="695" value="708.0"/>
+            <finding name="CisqMaintainability21HardCodedLiterals" toolname="Understand" toolversion="695" value="12410.0"/>
+            <finding name="CisqMaintainability14UncommentedCode" toolname="Understand" toolversion="695" value="525.0"/>
+            <finding name="CisqMaintainability07ClassesWithManyChildren" toolname="Understand" toolversion="695" value="7.0"/>
+            <finding name="CisqMaintainability18ComplexFunctions" toolname="Understand" toolversion="695" value="133.0"/>
+            <finding name="CisqMaintainability05UnreachableFunctions" toolname="Understand" toolversion="695" value="8.0"/>
+            <finding name="CisqMaintainability10PublicMemberVariables" toolname="Understand" toolversion="695" value="192.0"/>
+            <finding name="CisqMaintainability06DeepInheritance" toolname="Understand" toolversion="695" value="12.0"/>
+            <finding name="CisqMaintainability19ManyDataFileOperations" toolname="Understand" toolversion="695" value="1.0"/>
+            <finding name="CisqMaintainability16IndexesModifiedInLoops" toolname="Understand" toolversion="695" value="7.0"/>
+        </findings>
+        <sizes>
+            <size name="Classes and Interfaces" toolname="SourceMonitor" toolversion="2.6.3" value="1027.0"/>
+            <size name="Lines" toolname="SourceMonitor" toolversion="2.6.3" value="88225.0"/>
+            <size name="Lines with Comments" toolname="SourceMonitor" toolversion="2.6.3" value="20555.0"/>
+            <size name="Statements" toolname="SourceMonitor" toolversion="2.6.3" value="45500.0"/>
+            <size name="Method Statements" toolname="SourceMonitor" toolversion="2.6.3" value="35246.0"/>
+            <size name="Method Call Statements" toolname="SourceMonitor" toolversion="2.6.3" value="32445.0"/>
+            <size name="Branch Statements" toolname="SourceMonitor" toolversion="2.6.3" value="7669.0"/>
+            <size name="Class Methods" toolname="SourceMonitor" toolversion="2.6.3" value="4006.0"/>
+            <size name="Maximum Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="237.0"/>
+            <size name="Average Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="3.35"/>
+            <size name="Average Block Depth" toolname="SourceMonitor" toolversion="2.6.3" value="2.55"/>
+        </sizes>
+    </project>
+    <project name="TV-Browser" version="2.2.5">
+        <findings>
+            <finding name="CisqMaintainability15LargeFiles" toolname="Understand" toolversion="695" value="4.0"/>
+            <finding name="CisqMaintainability12HighCoupling" toolname="Understand" toolversion="695" value="438.0"/>
+            <finding name="CisqMaintainability20LongParameterLists" toolname="Understand" toolversion="695" value="29.0"/>
+            <finding name="CisqMaintainability13PackageCycles" toolname="Understand" toolversion="695" value="364.0"/>
+            <finding name="CisqMaintainability17JumpStatements" toolname="Understand" toolversion="695" value="89.0"/>
+            <finding name="CisqMaintainability11HighMethodFanOut" toolname="Understand" toolversion="695" value="702.0"/>
+            <finding name="CisqMaintainability09DirectUsageOfExternalMemberVariables" toolname="Understand" toolversion="695" value="65.0"/>
+            <finding name="CisqMaintainability21HardCodedLiterals" toolname="Understand" toolversion="695" value="12957.0"/>
+            <finding name="CisqMaintainability14UncommentedCode" toolname="Understand" toolversion="695" value="59.0"/>
+            <finding name="CisqMaintainability07ClassesWithManyChildren" toolname="Understand" toolversion="695" value="2.0"/>
+            <finding name="CisqMaintainability18ComplexFunctions" toolname="Understand" toolversion="695" value="91.0"/>
+            <finding name="CisqMaintainability05UnreachableFunctions" toolname="Understand" toolversion="695" value="12.0"/>
+            <finding name="CisqMaintainability02LayerSkippingCalls" toolname="Understand" toolversion="695" value="325.0"/>
+            <finding name="CisqMaintainability10PublicMemberVariables" toolname="Understand" toolversion="695" value="35.0"/>
+            <finding name="CisqMaintainability06DeepInheritance" toolname="Understand" toolversion="695" value="2.0"/>
+            <finding name="CisqMaintainability19ManyDataFileOperations" toolname="Understand" toolversion="695" value="2.0"/>
+            <finding name="CisqMaintainability16IndexesModifiedInLoops" toolname="Understand" toolversion="695" value="3.0"/>
+        </findings>
+        <sizes>
+            <size name="Classes and Interfaces" toolname="SourceMonitor" toolversion="2.6.3" value="1410.0"/>
+            <size name="Lines" toolname="SourceMonitor" toolversion="2.6.3" value="121921.0"/>
+            <size name="Lines with Comments" toolname="SourceMonitor" toolversion="2.6.3" value="31865.0"/>
+            <size name="Statements" toolname="SourceMonitor" toolversion="2.6.3" value="55448.0"/>
+            <size name="Method Statements" toolname="SourceMonitor" toolversion="2.6.3" value="39055.0"/>
+            <size name="Method Call Statements" toolname="SourceMonitor" toolversion="2.6.3" value="38190.0"/>
+            <size name="Branch Statements" toolname="SourceMonitor" toolversion="2.6.3" value="6987.0"/>
+            <size name="Class Methods" toolname="SourceMonitor" toolversion="2.6.3" value="6488.0"/>
+            <size name="Maximum Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="91.0"/>
+            <size name="Average Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="2.43"/>
+            <size name="Average Block Depth" toolname="SourceMonitor" toolversion="2.6.3" value="2.13"/>
+        </sizes>
+    </project>
+    <project name="RSSOwl" version="1.2.4">
+        <findings>
+            <finding name="CisqMaintainability15LargeFiles" toolname="Understand" toolversion="695" value="13.0"/>
+            <finding name="CisqMaintainability12HighCoupling" toolname="Understand" toolversion="695" value="186.0"/>
+            <finding name="CisqMaintainability20LongParameterLists" toolname="Understand" toolversion="695" value="4.0"/>
+            <finding name="CisqMaintainability13PackageCycles" toolname="Understand" toolversion="695" value="97.0"/>
+            <finding name="CisqMaintainability03UnsoundNumberOfLayers" toolname="Understand" toolversion="695" value="1.0"/>
+            <finding name="CisqMaintainability17JumpStatements" toolname="Understand" toolversion="695" value="50.0"/>
+            <finding name="CisqMaintainability11HighMethodFanOut" toolname="Understand" toolversion="695" value="348.0"/>
+            <finding name="CisqMaintainability09DirectUsageOfExternalMemberVariables" toolname="Understand" toolversion="695" value="946.0"/>
+            <finding name="CisqMaintainability21HardCodedLiterals" toolname="Understand" toolversion="695" value="34536.0"/>
+            <finding name="CisqMaintainability14UncommentedCode" toolname="Understand" toolversion="695" value="9.0"/>
+            <finding name="CisqMaintainability07ClassesWithManyChildren" toolname="Understand" toolversion="695" value="3.0"/>
+            <finding name="CisqMaintainability18ComplexFunctions" toolname="Understand" toolversion="695" value="71.0"/>
+            <finding name="CisqMaintainability05UnreachableFunctions" toolname="Understand" toolversion="695" value="23.0"/>
+            <finding name="CisqMaintainability10PublicMemberVariables" toolname="Understand" toolversion="695" value="175.0"/>
+            <finding name="CisqMaintainability06DeepInheritance" toolname="Understand" toolversion="695" value="1.0"/>
+            <finding name="CisqMaintainability16IndexesModifiedInLoops" toolname="Understand" toolversion="695" value="1.0"/>
+        </findings>
+        <sizes>
+            <size name="Classes and Interfaces" toolname="SourceMonitor" toolversion="2.6.3" value="721.0"/>
+            <size name="Lines" toolname="SourceMonitor" toolversion="2.6.3" value="82258.0"/>
+            <size name="Lines with Comments" toolname="SourceMonitor" toolversion="2.6.3" value="24986.0"/>
+            <size name="Statements" toolname="SourceMonitor" toolversion="2.6.3" value="42428.0"/>
+            <size name="Method Statements" toolname="SourceMonitor" toolversion="2.6.3" value="35683.0"/>
+            <size name="Method Call Statements" toolname="SourceMonitor" toolversion="2.6.3" value="35498.0"/>
+            <size name="Branch Statements" toolname="SourceMonitor" toolversion="2.6.3" value="4210.0"/>
+            <size name="Class Methods" toolname="SourceMonitor" toolversion="2.6.3" value="2629.0"/>
+            <size name="Maximum Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="98.0"/>
+            <size name="Average Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="3.17"/>
+            <size name="Average Block Depth" toolname="SourceMonitor" toolversion="2.6.3" value="2.1"/>
+        </sizes>
+    </project>
+    <project name="Checkstyle" version="4.4">
+        <findings>
+            <finding name="CisqMaintainability15LargeFiles" toolname="Understand" toolversion="695" value="1.0"/>
+            <finding name="CisqMaintainability12HighCoupling" toolname="Understand" toolversion="695" value="90.0"/>
+            <finding name="CisqMaintainability20LongParameterLists" toolname="Understand" toolversion="695" value="3.0"/>
+            <finding name="CisqMaintainability03UnsoundNumberOfLayers" toolname="Understand" toolversion="695" value="1.0"/>
+            <finding name="CisqMaintainability17JumpStatements" toolname="Understand" toolversion="695" value="47.0"/>
+            <finding name="CisqMaintainability11HighMethodFanOut" toolname="Understand" toolversion="695" value="107.0"/>
+            <finding name="CisqMaintainability09DirectUsageOfExternalMemberVariables" toolname="Understand" toolversion="695" value="5.0"/>
+            <finding name="CisqMaintainability21HardCodedLiterals" toolname="Understand" toolversion="695" value="1029.0"/>
+            <finding name="CisqMaintainability14UncommentedCode" toolname="Understand" toolversion="695" value="18.0"/>
+            <finding name="CisqMaintainability07ClassesWithManyChildren" toolname="Understand" toolversion="695" value="3.0"/>
+            <finding name="CisqMaintainability01LayerSpanningFunctions" toolname="Understand" toolversion="695" value="123.0"/>
+            <finding name="CisqMaintainability18ComplexFunctions" toolname="Understand" toolversion="695" value="20.0"/>
+            <finding name="CisqMaintainability05UnreachableFunctions" toolname="Understand" toolversion="695" value="8.0"/>
+            <finding name="CisqMaintainability02LayerSkippingCalls" toolname="Understand" toolversion="695" value="1038.0"/>
+            <finding name="CisqMaintainability16IndexesModifiedInLoops" toolname="Understand" toolversion="695" value="6.0"/>
+        </findings>
+        <sizes>
+            <size name="Classes and Interfaces" toolname="SourceMonitor" toolversion="2.6.3" value="324.0"/>
+            <size name="Lines" toolname="SourceMonitor" toolversion="2.6.3" value="46233.0"/>
+            <size name="Lines with Comments" toolname="SourceMonitor" toolversion="2.6.3" value="21115.0"/>
+            <size name="Statements" toolname="SourceMonitor" toolversion="2.6.3" value="12531.0"/>
+            <size name="Method Statements" toolname="SourceMonitor" toolversion="2.6.3" value="7997.0"/>
+            <size name="Method Call Statements" toolname="SourceMonitor" toolversion="2.6.3" value="7022.0"/>
+            <size name="Branch Statements" toolname="SourceMonitor" toolversion="2.6.3" value="2202.0"/>
+            <size name="Class Methods" toolname="SourceMonitor" toolversion="2.6.3" value="1902.0"/>
+            <size name="Maximum Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="33.0"/>
+            <size name="Average Complexity" toolname="SourceMonitor" toolversion="2.6.3" value="2.27"/>
+            <size name="Average Block Depth" toolname="SourceMonitor" toolversion="2.6.3" value="1.88"/>
+        </sizes>
+    </project>
+</benchmarkbase>
