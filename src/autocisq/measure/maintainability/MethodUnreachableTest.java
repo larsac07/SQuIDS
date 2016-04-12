@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
@@ -24,6 +25,14 @@ public class MethodUnreachableTest extends MeasureTest {
 	private MethodDeclaration methodInnerClassPublicUnreferenced;
 	private MethodDeclaration methodInnerClassPrivateReferenced;
 	private MethodDeclaration methodInnerClassPrivateUnreferenced;
+	private ConstructorDeclaration constructorPublicReferenced;
+	private ConstructorDeclaration constructorPublicUnreferenced;
+	private ConstructorDeclaration constructorPrivateReferenced;
+	private ConstructorDeclaration constructorPrivateUnreferenced;
+	private ConstructorDeclaration constructorInnerClassPublicReferenced;
+	private ConstructorDeclaration constructorInnerClassPublicUnreferenced;
+	private ConstructorDeclaration constructorInnerClassPrivateReferenced;
+	private ConstructorDeclaration constructorInnerClassPrivateUnreferenced;
 	private CompilationUnit cu;
 	private String fileString;
 
@@ -48,6 +57,14 @@ public class MethodUnreachableTest extends MeasureTest {
 		this.methodInnerClassPublicUnreferenced = (MethodDeclaration) innerClass.getMembers().get(1);
 		this.methodInnerClassPrivateReferenced = (MethodDeclaration) innerClass.getMembers().get(2);
 		this.methodInnerClassPrivateUnreferenced = (MethodDeclaration) innerClass.getMembers().get(3);
+		this.constructorPublicReferenced = (ConstructorDeclaration) outerClass.getMembers().get(5);
+		this.constructorPublicUnreferenced = (ConstructorDeclaration) outerClass.getMembers().get(6);
+		this.constructorPrivateReferenced = (ConstructorDeclaration) outerClass.getMembers().get(7);
+		this.constructorPrivateUnreferenced = (ConstructorDeclaration) outerClass.getMembers().get(8);
+		this.constructorInnerClassPublicReferenced = (ConstructorDeclaration) innerClass.getMembers().get(4);
+		this.constructorInnerClassPublicUnreferenced = (ConstructorDeclaration) innerClass.getMembers().get(5);
+		this.constructorInnerClassPrivateReferenced = (ConstructorDeclaration) innerClass.getMembers().get(6);
+		this.constructorInnerClassPrivateUnreferenced = (ConstructorDeclaration) innerClass.getMembers().get(7);
 
 		this.issueFinder.analyzeNode(this.cu, null, this.fileString);
 	}
@@ -90,6 +107,46 @@ public class MethodUnreachableTest extends MeasureTest {
 	@Test
 	public void findInnerClassPrivateUnreferencedMethod() {
 		findIssue(this.methodInnerClassPrivateUnreferenced, this.fileString);
+	}
+
+	@Test
+	public void skipPublicReferencedConstructor() {
+		skipIssue(this.constructorPublicReferenced, this.fileString);
+	}
+
+	@Test
+	public void skipPublicUnreferencedConstructor() {
+		skipIssue(this.constructorPublicUnreferenced, this.fileString);
+	}
+
+	@Test
+	public void skipPrivateReferencedConstructor() {
+		skipIssue(this.constructorPrivateReferenced, this.fileString);
+	}
+
+	@Test
+	public void findPrivateUnreferencedConstructor() {
+		findIssue(this.constructorPrivateUnreferenced, this.fileString);
+	}
+
+	@Test
+	public void skipInnerClassPublicReferencedConstructor() {
+		skipIssue(this.constructorInnerClassPublicReferenced, this.fileString);
+	}
+
+	@Test
+	public void findInnerClassPublicUnreferencedConstructor() {
+		findIssue(this.constructorInnerClassPublicUnreferenced, this.fileString);
+	}
+
+	@Test
+	public void skipInnerClassPrivateReferencedConstructor() {
+		skipIssue(this.constructorInnerClassPrivateReferenced, this.fileString);
+	}
+
+	@Test
+	public void findInnerClassPrivateUnreferencedConstructor() {
+		findIssue(this.constructorInnerClassPrivateUnreferenced, this.fileString);
 	}
 
 	@Override
