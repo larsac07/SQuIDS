@@ -139,8 +139,8 @@ public class Handler extends AbstractHandler {
 					} finally {
 						monitor.done();
 					}
-					logMeasureTimes(issueFinder);
-					logQCj(qcj);
+					logMeasureTimes(project.getName(), issueFinder);
+					logQCj(project.getName(), qcj);
 
 					return Status.OK_STATUS;
 				}
@@ -286,8 +286,8 @@ public class Handler extends AbstractHandler {
 	/**
 	 * @param issueFinder
 	 */
-	private void logMeasureTimes(IssueFinder issueFinder) {
-		Logger.log("Measure times: ");
+	private void logMeasureTimes(String projectName, IssueFinder issueFinder) {
+		Logger.log(projectName + " measure times: ");
 		Map<Measure, Long> measureTimes = issueFinder.getMeasureTimes();
 		for (Measure measure : measureTimes.keySet()) {
 			Long measureTime = measureTimes.get(measure);
@@ -298,10 +298,10 @@ public class Handler extends AbstractHandler {
 	/**
 	 * @param qcj
 	 */
-	private void logQCj(Map<String, Map<String, Integer>> qcj) {
+	private void logQCj(String projectName, Map<String, Map<String, Integer>> qcj) {
 		for (String qc : qcj.keySet()) {
 			Map<String, Integer> qcMap = qcj.get(qc);
-			Logger.log("#############\n" + qc + ": ");
+			Logger.log("#############\n" + projectName + " " + qc + ": ");
 			int violationsTot = 0;
 			for (String measureElement : qcMap.keySet()) {
 				Integer violations = qcMap.get(measureElement);

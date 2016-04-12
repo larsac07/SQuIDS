@@ -92,7 +92,7 @@ public class CyclicCallBetweenPackagesTest extends MeasureTest {
 	@Test
 	public void findCyclicCallDifferentPackage() {
 		analyzeClasses(this.class2CU, this.class4CU, this.class1CU);
-		findIssue(this.class1CU, this.fileStringClass1);
+		findIssue(this.cyclicCallStep1, this.fileStringClass1);
 		analyzeClasses(this.class1CU, this.class2CU, this.class4CU);
 		findIssue(this.cyclicCallStep2, this.fileStringClass4);
 		analyzeClasses(this.class1CU, this.class4CU, this.class2CU);
