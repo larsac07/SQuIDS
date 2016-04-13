@@ -21,6 +21,8 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 	private List<CompilationUnit> children10;
 	private List<CompilationUnit> children11;
 	private List<CompilationUnit> children9WithOtherClass;
+	private CompilationUnit superClassCU;
+	private String fileStringSuperClass;
 
 	@Before
 	public void setUp() throws Exception {
@@ -41,7 +43,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 		File subClass11 = new File("res/test/inheritance/SubClass11.java");
 		File subClassOther = new File("res/test/inheritance/SubClassOther.java");
 
-		String fileStringSuperClass = IOUtils.fileToString(superClass);
+		this.fileStringSuperClass = IOUtils.fileToString(superClass);
 		String fileStringSubClass1 = IOUtils.fileToString(subClass1);
 		String fileStringSubClass2 = IOUtils.fileToString(subClass2);
 		String fileStringSubClass3 = IOUtils.fileToString(subClass3);
@@ -56,7 +58,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 		String fileStringSubClassOther = IOUtils.fileToString(subClassOther);
 
 		this.fileStrings = new ArrayList<>();
-		this.fileStrings.add(fileStringSuperClass);
+		this.fileStrings.add(this.fileStringSuperClass);
 		this.fileStrings.add(fileStringSubClass1);
 		this.fileStrings.add(fileStringSubClass2);
 		this.fileStrings.add(fileStringSubClass3);
@@ -70,7 +72,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 		this.fileStrings.add(fileStringSubClass11);
 		this.fileStrings.add(fileStringSubClassOther);
 
-		CompilationUnit superClassCU = JavaParser.parse(superClass);
+		this.superClassCU = JavaParser.parse(superClass);
 		CompilationUnit subClass1CU = JavaParser.parse(subClass1);
 		CompilationUnit subClass2CU = JavaParser.parse(subClass2);
 		CompilationUnit subClass3CU = JavaParser.parse(subClass3);
@@ -85,7 +87,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 		CompilationUnit subClassOtherCU = JavaParser.parse(subClassOther);
 
 		this.children9 = new ArrayList<>();
-		this.children9.add(superClassCU);
+		this.children9.add(this.superClassCU);
 		this.children9.add(subClass1CU);
 		this.children9.add(subClass2CU);
 		this.children9.add(subClass3CU);
@@ -113,57 +115,19 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 	@Test
 	public void skip9Children() {
 		this.issueFinder.setCompilationUnits(this.children9);
-		for (int i = 0; i < this.children9.size(); i++) {
-			CompilationUnit cu = this.children9.get(i);
-			String fileString = this.fileStrings.get(i);
-			if (i < this.children9.size() - 1) {
-				this.issueFinder.analyzeNode(cu, null, fileString);
-			} else {
-				skipIssue(cu, fileString);
-			}
-		}
-	}
-
-	@Test
-	public void skipClassOutsideProject() {
-		this.issueFinder.setCompilationUnits(this.children9WithOtherClass);
-		for (int i = 0; i < this.children9WithOtherClass.size(); i++) {
-			CompilationUnit cu = this.children9WithOtherClass.get(i);
-			String fileString = this.fileStrings.get(i);
-			if (i < this.children9WithOtherClass.size() - 1) {
-				this.issueFinder.analyzeNode(cu, null, fileString);
-			} else {
-				skipIssue(cu, fileString);
-			}
-		}
+		skipIssue(this.superClassCU, this.fileStringSuperClass);
 	}
 
 	@Test
 	public void find10Children() {
 		this.issueFinder.setCompilationUnits(this.children10);
-		for (int i = 0; i < this.children10.size(); i++) {
-			CompilationUnit cu = this.children10.get(i);
-			String fileString = this.fileStrings.get(i);
-			if (i < this.children10.size() - 1) {
-				this.issueFinder.analyzeNode(cu, null, fileString);
-			} else {
-				findIssue(cu, fileString);
-			}
-		}
+		findIssue(this.superClassCU, this.fileStringSuperClass);
 	}
 
 	@Test
 	public void find11Children() {
 		this.issueFinder.setCompilationUnits(this.children11);
-		for (int i = 0; i < this.children11.size(); i++) {
-			CompilationUnit cu = this.children11.get(i);
-			String fileString = this.fileStrings.get(i);
-			if (i < this.children11.size() - 1) {
-				this.issueFinder.analyzeNode(cu, null, fileString);
-			} else {
-				findIssue(cu, fileString);
-			}
-		}
+		findIssue(this.superClassCU, this.fileStringSuperClass);
 	}
 
 	@Override

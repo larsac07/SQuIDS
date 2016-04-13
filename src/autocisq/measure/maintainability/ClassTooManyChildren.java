@@ -1,14 +1,15 @@
 package autocisq.measure.maintainability;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import autocisq.models.FileIssue;
@@ -36,56 +37,90 @@ public class ClassTooManyChildren extends MaintainabilityMeasure {
 	public final static String ISSUE_TYPE = "Class with >= 10 children";
 	public final static int THRESHOLD = 10;
 
-	private Map<ClassOrInterfaceType, List<ClassOrInterfaceDeclaration>> classSubClassMap;
+	private final static String MESSAGE = "Found the following subclasses: ";
 
 	public ClassTooManyChildren(Map<String, Object> settings) {
 		super(settings);
-		this.classSubClassMap = new HashMap<>();
 	}
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof ClassOrInterfaceDeclaration) {
 			ClassOrInterfaceDeclaration classDeclaration = (ClassOrInterfaceDeclaration) node;
-			List<ClassOrInterfaceType> superClasses = classDeclaration.getExtends();
-			for (ClassOrInterfaceType superClass : superClasses) {
-				List<ClassOrInterfaceDeclaration> subClasses = this.classSubClassMap.get(superClass);
-				if (subClasses == null) {
-					subClasses = new ArrayList<>();
-				}
-
-				if (existsInProject(superClass, compilationUnits)) {
-					subClasses.add(classDeclaration);
-					this.classSubClassMap.put(superClass, subClasses);
-					if (subClasses.size() >= THRESHOLD) {
-						List<Issue> issues = new ArrayList<>();
-						issues.add(
-								new FileIssue(this, getTypeCompilationUnit(superClass, compilationUnits), fileString));
-						return issues;
-					}
-
-				}
+			List<String> subClasses = getSubClasses(classDeclaration, compilationUnits);
+			if (subClasses.size() >= THRESHOLD) {
+				List<Issue> issues = new LinkedList<>();
+				String message = MESSAGE + subClasses.toString();
+				issues.add(new FileIssue(this, classDeclaration.getNameExpr(), fileString, message));
+				return issues;
 			}
-
 		}
 		return null;
 	}
 
-	public static boolean existsInProject(ClassOrInterfaceType classOrInterfaceType,
+	private List<String> getSubClasses(ClassOrInterfaceDeclaration superClass,
 			List<CompilationUnit> projectCompilationUnits) {
-		return getTypeCompilationUnit(classOrInterfaceType, projectCompilationUnits) != null;
-	}
-
-	public static CompilationUnit getTypeCompilationUnit(ClassOrInterfaceType classOrInterfaceType,
-			List<CompilationUnit> projectCompilationUnits) {
+		List<String> subClasses = new LinkedList<>();
 		for (CompilationUnit cu : projectCompilationUnits) {
-			for (TypeDeclaration typeDeclaration : cu.getTypes()) {
-				if (typeDeclaration.getName().equals(classOrInterfaceType.getName())) {
-					return cu;
+			List<ClassOrInterfaceDeclaration> namedClasses = getNamedClasses(cu);
+			for (ClassOrInterfaceDeclaration subClassCandidate : namedClasses) {
+				List<ClassOrInterfaceType> anonymousClasses = getAnonymousClasses(subClassCandidate, null);
+				List<ClassOrInterfaceType> allClasses = new LinkedList<>();
+				allClasses.addAll(anonymousClasses);
+				allClasses.addAll(subClassCandidate.getExtends());
+				for (ClassOrInterfaceType extendedClass : allClasses) {
+					if (extendedClass.getName().equals(superClass.getName())) {
+						String classID = createClassID(cu, subClassCandidate);
+						subClasses.add(classID);
+					}
 				}
 			}
 		}
-		return null;
+		return subClasses;
+	}
+
+	/**
+	 * @param cu
+	 * @param classOrInterfaceDeclaration
+	 * @return
+	 */
+	private String createClassID(CompilationUnit cu, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
+		PackageDeclaration packageDeclaration = cu.getPackage();
+		String packageName = "";
+		if (packageDeclaration != null) {
+			packageName = packageDeclaration.getName() + ".";
+		}
+		String classID = packageName + classOrInterfaceDeclaration.getName();
+		return classID;
+	}
+
+	private List<ClassOrInterfaceDeclaration> getNamedClasses(CompilationUnit cu) {
+		List<ClassOrInterfaceDeclaration> namedClasses = new LinkedList<>();
+		for (TypeDeclaration typeDeclaration : cu.getTypes()) {
+			if (typeDeclaration instanceof ClassOrInterfaceDeclaration) {
+				ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) typeDeclaration;
+				namedClasses.add(classOrInterfaceDeclaration);
+			}
+		}
+		return namedClasses;
+	}
+
+	private List<ClassOrInterfaceType> getAnonymousClasses(Node rootNode, List<ClassOrInterfaceType> anonymousClasses) {
+		if (anonymousClasses == null) {
+			anonymousClasses = new LinkedList<>();
+		}
+
+		if (rootNode instanceof ObjectCreationExpr) {
+			ObjectCreationExpr objectCreationExpr = (ObjectCreationExpr) rootNode;
+			if (objectCreationExpr.getAnonymousClassBody() != null) {
+				anonymousClasses.add(objectCreationExpr.getType());
+			}
+		}
+
+		for (Node childNode : rootNode.getChildrenNodes()) {
+			getAnonymousClasses(childNode, anonymousClasses);
+		}
+		return anonymousClasses;
 	}
 
 	@Override
