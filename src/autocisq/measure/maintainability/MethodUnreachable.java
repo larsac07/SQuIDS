@@ -26,6 +26,7 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.NullLiteralExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
+import com.github.javaparser.ast.expr.ThisExpr;
 import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 
 import autocisq.JavaParserHelper;
@@ -103,7 +104,7 @@ public class MethodUnreachable extends TypeDependentMeasure {
 				MethodCallExpr methodCallExpr = (MethodCallExpr) node;
 				String variableName = getVariableName(methodCallExpr.getScope());
 				String name = methodCallExpr.getName();
-				List<String> types = expressionsToTypes(methodCallExpr.getArgs());
+				List<String> types = argsToTypes(node, methodCallExpr.getArgs());
 				if (variableName != null) {
 					String type = variableToType(variableName);
 					addReference(type, name, types);
@@ -112,11 +113,11 @@ public class MethodUnreachable extends TypeDependentMeasure {
 				}
 			} else if (node instanceof ObjectCreationExpr) {
 				ObjectCreationExpr objectCreationExpr = (ObjectCreationExpr) node;
-				List<String> types = expressionsToTypes(objectCreationExpr.getArgs());
+				List<String> types = argsToTypes(node, objectCreationExpr.getArgs());
 				addReference(objectCreationExpr.getType().getName(), objectCreationExpr.getType().getName(), types);
 			} else {
 				ExplicitConstructorInvocationStmt explicitConstructorInvocationStmt = (ExplicitConstructorInvocationStmt) node;
-				List<String> types = expressionsToTypes(explicitConstructorInvocationStmt.getArgs());
+				List<String> types = argsToTypes(node, explicitConstructorInvocationStmt.getArgs());
 				addStaticMethodOrConstructorReference(node, null, types);
 			}
 		}
@@ -160,17 +161,24 @@ public class MethodUnreachable extends TypeDependentMeasure {
 		return null;
 	}
 
-	private List<String> expressionsToTypes(List<Expression> args) {
+	private List<String> argsToTypes(Node callingNode, List<Expression> args) {
 		List<String> types = new ArrayList<>();
 		if (args == null) {
 			return types;
 		} else {
 			for (Expression arg : args) {
-				if (arg instanceof NameExpr) {
+				if (arg instanceof ThisExpr) {
+					try {
+						ClassOrInterfaceDeclaration enclosingClass = (ClassOrInterfaceDeclaration) JavaParserHelper
+								.findNodeAncestorOfType(callingNode, ClassOrInterfaceDeclaration.class);
+						types.add(enclosingClass.getName());
+					} catch (NoSuchAncestorFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if (arg instanceof NameExpr) {
 					NameExpr nameExpr = (NameExpr) arg;
 					types.add(variableToType(nameExpr.getName()));
-				} else if (arg instanceof NullLiteralExpr) {
-					types.add("null");
 				} else if (arg instanceof IntegerLiteralExpr) {
 					types.add("int");
 				} else if (arg instanceof LongLiteralExpr) {
@@ -183,6 +191,8 @@ public class MethodUnreachable extends TypeDependentMeasure {
 					types.add("boolean");
 				} else if (arg instanceof StringLiteralExpr) {
 					types.add("String");
+				} else if (arg instanceof NullLiteralExpr) {
+					types.add("null");
 				}
 			}
 			return types;
