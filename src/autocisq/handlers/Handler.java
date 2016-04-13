@@ -270,7 +270,7 @@ public class Handler extends AbstractHandler {
 					if (issue instanceof FileIssue) {
 						FileIssue fileIssue = (FileIssue) issue;
 						markIssue(iFile, fileIssue.getBeginLine(), fileIssue.getStartIndex(), fileIssue.getEndIndex(),
-								fileIssue.getMeasureElement());
+								fileIssue.getMeasureElement() + ": " + fileIssue.getMessage());
 					} else if (issue instanceof ProjectIssue) {
 						ProjectIssue projectIssue = (ProjectIssue) issue;
 						markIssue(project, projectIssue.getMeasureElement());
