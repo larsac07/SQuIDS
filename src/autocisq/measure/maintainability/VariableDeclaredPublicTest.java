@@ -1,7 +1,10 @@
 package autocisq.measure.maintainability;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +15,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
+import autocisq.models.Issue;
 
 public class VariableDeclaredPublicTest extends MeasureTest {
 
@@ -19,6 +23,7 @@ public class VariableDeclaredPublicTest extends MeasureTest {
 	private FieldDeclaration publicStaticVariable;
 	private FieldDeclaration privateVariable;
 	private FieldDeclaration publicVariable;
+	private FieldDeclaration multipleVariablesInSameField;
 	private String fileString;
 
 	@Before
@@ -34,6 +39,7 @@ public class VariableDeclaredPublicTest extends MeasureTest {
 		this.publicStaticVariable = (FieldDeclaration) compilationUnit.getTypes().get(0).getChildrenNodes().get(2);
 		this.privateVariable = (FieldDeclaration) compilationUnit.getTypes().get(0).getChildrenNodes().get(3);
 		this.publicVariable = (FieldDeclaration) compilationUnit.getTypes().get(0).getChildrenNodes().get(7);
+		this.multipleVariablesInSameField = (FieldDeclaration) compilationUnit.getTypes().get(0).getMembers().get(30);
 	}
 
 	@Test
@@ -42,8 +48,8 @@ public class VariableDeclaredPublicTest extends MeasureTest {
 	}
 
 	@Test
-	public void skipPublicStaticVariable() {
-		skipIssue(this.publicStaticVariable, this.fileString);
+	public void findPublicStaticVariable() {
+		findIssue(this.publicStaticVariable, this.fileString);
 	}
 
 	@Test
@@ -54,6 +60,15 @@ public class VariableDeclaredPublicTest extends MeasureTest {
 	@Test
 	public void findPublicVariable() {
 		findIssue(this.publicVariable, this.fileString);
+	}
+
+	@Test
+	public void findMultipleVariablesWithSameFieldDeclaration() {
+		List<Issue> issues = this.issueFinder.analyzeNode(this.multipleVariablesInSameField, null, this.fileString);
+		assertEquals(3, issues.size());
+		for (Issue issue : issues) {
+			assertEquals(getIssueType(), issue.getMeasureElement());
+		}
 	}
 
 	@Override

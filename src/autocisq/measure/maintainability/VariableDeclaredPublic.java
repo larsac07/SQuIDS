@@ -8,8 +8,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
+import com.github.javaparser.ast.body.VariableDeclarator;
 
-import autocisq.JavaParserHelper;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -18,8 +18,8 @@ import autocisq.models.Issue;
  * 10: # of variables declared public.
  *
  * It considers a variable as a public variable only if it is public and a
- * variable (not static and final at the same time). In other words, variables
- * declared as public static final are considered constants.
+ * variable (not final). In other words, variables declared as public static
+ * final or public final are considered constants.
  *
  * @author Lars A. V. Cabrera
  *
@@ -34,22 +34,22 @@ public class VariableDeclaredPublic extends MaintainabilityMeasure {
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
-		List<Issue> issues = new ArrayList<>();
 
 		if (node instanceof FieldDeclaration) {
 			FieldDeclaration field = (FieldDeclaration) node;
 			int modifiers = field.getModifiers();
-			boolean isVariable = !ModifierSet.isStatic(modifiers) && !ModifierSet.isFinal(modifiers);
+			boolean isFinal = ModifierSet.isFinal(modifiers);
 			boolean isPublic = ModifierSet.isPublic(modifiers);
-			if (isVariable && isPublic) {
-				int[] indexes = JavaParserHelper.columnsToIndexes(fileString, node.getBeginLine(), node.getEndLine(),
-						node.getBeginColumn(), node.getEndColumn());
-				issues.add(new FileIssue(node.getBeginLine(), indexes[0], indexes[1], this, node.toString(), node));
+			if (!isFinal && isPublic) {
+				List<Issue> issues = new ArrayList<>();
+				for (VariableDeclarator variable : field.getVariables()) {
+					issues.add(new FileIssue(this, variable, fileString));
+				}
+				return issues;
 			}
 
 		}
-
-		return issues;
+		return null;
 	}
 
 	@Override

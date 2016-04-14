@@ -175,5 +175,10 @@ public class GUI extends JFrame {
 	public int getHeight() {
 		return this.height;
 	}
+	
+	public int
+			someNumber = 5,
+			someOtherNumber = 2,
+			yetAnotherNumber = 25;
 
 }
