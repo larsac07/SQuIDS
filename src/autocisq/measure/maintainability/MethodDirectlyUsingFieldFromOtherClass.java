@@ -6,14 +6,13 @@ import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.type.Type;
 
 import autocisq.JavaParserHelper;
 import autocisq.NoSuchAncestorFoundException;
-import autocisq.NoSuchVariableException;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -23,13 +22,12 @@ import autocisq.models.Issue;
  * other classes.
  *
  * It considers a variable as a field from another class iff its declaration
- * cannot be found locally AND it is not a constant (not declared as static
- * final).
+ * cannot be found locally AND it is not a constant (not declared as final).
  *
  * @author Lars A. V. Cabrera
  *
  */
-public class MethodDirectlyUsingFieldFromOtherClass extends MaintainabilityMeasure {
+public class MethodDirectlyUsingFieldFromOtherClass extends TypeDependentMeasure {
 
 	public final static String ISSUE_TYPE = "Method directly using field from other class";
 
@@ -39,46 +37,44 @@ public class MethodDirectlyUsingFieldFromOtherClass extends MaintainabilityMeasu
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
-		List<Issue> issues = new ArrayList<>();
+		super.analyzeNode(node, fileString, compilationUnits);
 
 		if (node instanceof FieldAccessExpr) {
-			try {
-				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) node;
-				String variableName = fieldAccessExpr.getScope().toString();
-				String fieldName = fieldAccessExpr.getField();
-				List<Type> types = JavaParserHelper.findVariableTypeBottomUp(variableName, node);
+			FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) node;
+			String variableName = fieldAccessExpr.getScope().toString();
+			String fieldName = fieldAccessExpr.getField();
 
-				for (Type variableType : types) {
-
-					String varNoArrayBrackets = withoutArrayBrackets(variableType.toString());
-					CompilationUnit fieldClass = JavaParserHelper.findCompilationUnit(varNoArrayBrackets,
-							compilationUnits);
-					CompilationUnit nodeCompilationUnit = JavaParserHelper.findNodeCompilationUnit(node);
-					if (nodeCompilationUnit != null && fieldClass != null && !fieldClass.equals(nodeCompilationUnit)) {
-						FieldDeclaration fieldDeclaration = JavaParserHelper.findFieldDeclarationTopDown(fieldName,
-								fieldClass);
-						if (fieldDeclaration != null) {
-							if (isVariable(fieldDeclaration)) {
-								issues.add(new FileIssue(this, node, fileString));
+			String type = variableToType(variableName);
+			if (type != null) {
+				String varNoArrayBrackets = withoutArrayBrackets(type);
+				ClassOrInterfaceDeclaration fieldClass = JavaParserHelper
+						.findClassOrInterfaceDeclaration(varNoArrayBrackets, compilationUnits);
+				if (fieldClass != null) {
+					try {
+						ClassOrInterfaceDeclaration nodeClass = JavaParserHelper
+								.findNodeClassOrInterfaceDeclaration(node);
+						if (!fieldClass.equals(nodeClass)) {
+							FieldDeclaration fieldDeclaration = JavaParserHelper.findFieldDeclarationTopDown(fieldName,
+									fieldClass);
+							if (fieldDeclaration != null) {
+								if (isVariable(fieldDeclaration)) {
+									List<Issue> issues = new ArrayList<>();
+									issues.add(new FileIssue(this, node, fileString));
+									return issues;
+								}
 							}
 						}
+					} catch (NoSuchAncestorFoundException e) {
+						return null;
 					}
 				}
-			} catch (NoSuchAncestorFoundException e) {
-				return issues;
-			} catch (NoSuchVariableException e) {
-				return issues;
 			}
 		}
-
-		return issues;
+		return null;
 	}
 
 	public boolean isVariable(FieldDeclaration fieldDeclaration) {
-		boolean isStatic = ModifierSet.isStatic(fieldDeclaration.getModifiers());
-		boolean isFinal = ModifierSet.isFinal(fieldDeclaration.getModifiers());
-		boolean isVariable = !(isStatic || isFinal);
-		return isVariable;
+		return !ModifierSet.isFinal(fieldDeclaration.getModifiers());
 	}
 
 	private static String withoutArrayBrackets(String string) {

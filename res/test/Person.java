@@ -173,4 +173,8 @@ public class Person {
 		this.country = country;
 	}
 	
+	public static int typeID = 1;
+	
+	public final String type = "Some person";
+	
 }

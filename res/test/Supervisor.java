@@ -1,3 +1,4 @@
+import java.util.Runnable;
 
 public class Supervisor {
 	private String name;
@@ -51,5 +52,17 @@ public class Supervisor {
 		person.setZipCode(zipCode);
 		person.country = country;
 		person.setCity(city);
+	}
+	
+	public void nonStaticAccess(Person person) {
+		person.firstName = "John";
+	}
+	
+	public void staticAccess() {
+		Person.typeID = 2;
+	}
+	
+	public void finalAccess(Person person) {
+		System.out.println(person.type);
 	}
 }

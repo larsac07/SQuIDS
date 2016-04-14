@@ -18,9 +18,13 @@ import autocisq.measure.MeasureTest;
 public class MethodDirectlyUsingFieldFromOtherClassTest extends MeasureTest {
 
 	private List<CompilationUnit> compilationUnits;
+	private CompilationUnit cu;
 	private MethodDeclaration methodMultipleDirectAccess;
 	private MethodDeclaration methodNoDirectAccess;
 	private MethodDeclaration methodSingleDirectAccess;
+	private MethodDeclaration methodNonStaticAccess;
+	private MethodDeclaration methodStaticAccess;
+	private MethodDeclaration methodFinalAccess;
 	private String fileString;
 
 	@Before
@@ -32,14 +36,17 @@ public class MethodDirectlyUsingFieldFromOtherClassTest extends MeasureTest {
 
 		this.fileString = IOUtils.fileToString(testFile);
 
-		CompilationUnit supervisorCU = JavaParser.parse(testFile);
+		this.cu = JavaParser.parse(testFile);
 
-		this.methodMultipleDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(5);
-		this.methodNoDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(6);
-		this.methodSingleDirectAccess = (MethodDeclaration) supervisorCU.getTypes().get(0).getChildrenNodes().get(7);
+		this.methodMultipleDirectAccess = (MethodDeclaration) this.cu.getTypes().get(0).getMembers().get(5);
+		this.methodNoDirectAccess = (MethodDeclaration) this.cu.getTypes().get(0).getMembers().get(6);
+		this.methodSingleDirectAccess = (MethodDeclaration) this.cu.getTypes().get(0).getMembers().get(7);
+		this.methodNonStaticAccess = (MethodDeclaration) this.cu.getTypes().get(0).getMembers().get(11);
+		this.methodStaticAccess = (MethodDeclaration) this.cu.getTypes().get(0).getMembers().get(12);
+		this.methodFinalAccess = (MethodDeclaration) this.cu.getTypes().get(0).getMembers().get(13);
 
 		this.compilationUnits = new ArrayList<>();
-		this.compilationUnits.add(supervisorCU);
+		this.compilationUnits.add(this.cu);
 		this.compilationUnits.add(JavaParser.parse(new File("res/test/Person.java")));
 		this.issueFinder.setCompilationUnits(this.compilationUnits);
 
@@ -58,6 +65,21 @@ public class MethodDirectlyUsingFieldFromOtherClassTest extends MeasureTest {
 	@Test
 	public void findMethodSingleDirectAccess() {
 		findIssue(this.methodSingleDirectAccess, this.fileString);
+	}
+
+	@Test
+	public void findNonStaticAccess() {
+		findIssue(this.methodNonStaticAccess, this.fileString);
+	}
+
+	@Test
+	public void findStaticAccess() {
+		findIssue(this.methodStaticAccess, this.fileString);
+	}
+
+	@Test
+	public void skipFinalAccess() {
+		skipIssue(this.methodFinalAccess, this.fileString);
 	}
 
 	@Override
