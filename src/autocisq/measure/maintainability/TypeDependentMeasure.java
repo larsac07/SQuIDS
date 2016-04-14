@@ -12,6 +12,7 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 
@@ -21,6 +22,7 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 
 	private Map<String, String> typeImports;
 	private Map<String, String> variableTypes;
+	private boolean importedCompilationUnits;
 
 	public TypeDependentMeasure(Map<String, Object> settings) {
 		super(settings);
@@ -30,6 +32,10 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		storeVariables(node);
+		if (!this.importedCompilationUnits) {
+			storeVariables(compilationUnits);
+			this.importedCompilationUnits = true;
+		}
 		return null;
 	}
 
@@ -63,6 +69,20 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 		} else if (node instanceof VariableDeclarationExpr) {
 			VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) node;
 			storeVariables(variableDeclarationExpr.getVars(), variableDeclarationExpr.getType().toString());
+		}
+	}
+
+	/**
+	 * Stores all types in each {@link CompilationUnit} in type - type pairs,
+	 * e.g. "File" - "File".
+	 *
+	 * @param compilationUnits
+	 */
+	protected void storeVariables(List<CompilationUnit> compilationUnits) {
+		for (CompilationUnit cu : compilationUnits) {
+			for (TypeDeclaration type : cu.getTypes()) {
+				storeType(type.getName());
+			}
 		}
 	}
 
@@ -120,9 +140,32 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 	 */
 	protected void storeVariables(List<VariableDeclarator> variableDeclarators, String type) {
 		for (VariableDeclarator variableDeclarator : variableDeclarators) {
-			this.variableTypes.put(variableDeclarator.getId().getName(), type);
-			this.variableTypes.put(type.toString(), type);
+			storeVariable(variableDeclarator, type);
 		}
+		storeType(type);
+	}
+
+	/**
+	 * Stores the variable in identifier - type, e.g. "file" - "File".
+	 *
+	 * @param variableDeclarator
+	 *            - the variable to store
+	 * @param type
+	 *            - the type of the variable
+	 */
+	protected void storeVariable(VariableDeclarator variableDeclarator, String type) {
+		this.variableTypes.put(variableDeclarator.getId().getName(), type);
+	}
+
+	/**
+	 * Stores the type in type - type pairs (for static calls), e.g. "File" -
+	 * "File".
+	 *
+	 * @param type
+	 *            - the type
+	 */
+	protected void storeType(String type) {
+		this.variableTypes.put(type, type);
 	}
 
 	/**
@@ -171,6 +214,7 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 	protected void reset() {
 		this.typeImports = new HashMap<>();
 		this.variableTypes = new HashMap<>();
+		this.importedCompilationUnits = false;
 	}
 
 	@Override
