@@ -1,13 +1,17 @@
 package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 
@@ -30,9 +34,11 @@ import autocisq.models.Issue;
 public class MethodDirectlyUsingFieldFromOtherClass extends TypeDependentMeasure {
 
 	public final static String ISSUE_TYPE = "Method directly using field from other class";
+	private Set<String> markedMethods;
 
 	public MethodDirectlyUsingFieldFromOtherClass(Map<String, Object> settings) {
 		super(settings);
+		this.markedMethods = new HashSet<>();
 	}
 
 	@Override
@@ -58,9 +64,14 @@ public class MethodDirectlyUsingFieldFromOtherClass extends TypeDependentMeasure
 									fieldClass);
 							if (fieldDeclaration != null) {
 								if (isVariable(fieldDeclaration)) {
-									List<Issue> issues = new ArrayList<>();
-									issues.add(new FileIssue(this, node, fileString));
-									return issues;
+									MethodDeclaration methodDeclaration = (MethodDeclaration) JavaParserHelper
+											.findNodeAncestorOfType(node, MethodDeclaration.class);
+									if (!isMarked(methodDeclaration)) {
+										markMethod(methodDeclaration);
+										List<Issue> issues = new ArrayList<>();
+										issues.add(new FileIssue(this, methodDeclaration, fileString));
+										return issues;
+									}
 								}
 							}
 						}
@@ -71,6 +82,37 @@ public class MethodDirectlyUsingFieldFromOtherClass extends TypeDependentMeasure
 			}
 		}
 		return null;
+	}
+
+	private boolean isMarked(MethodDeclaration methodDeclaration) {
+		return this.markedMethods.contains(createMethodID(methodDeclaration));
+	}
+
+	private void markMethod(MethodDeclaration methodDeclaration) {
+		this.markedMethods.add(createMethodID(methodDeclaration));
+	}
+
+	/**
+	 * @param methodDeclaration
+	 * @return
+	 * @throws NoSuchAncestorFoundException
+	 */
+	private String createMethodID(MethodDeclaration methodDeclaration) {
+		try {
+			ClassOrInterfaceDeclaration methodClass = JavaParserHelper
+					.findNodeClassOrInterfaceDeclaration(methodDeclaration);
+			CompilationUnit cu = JavaParserHelper.findNodeCompilationUnit(methodClass);
+			PackageDeclaration packageDeclaration = cu.getPackage();
+			String methodID = "";
+			if (packageDeclaration != null) {
+				methodID += packageDeclaration.getName() + ".";
+			}
+			methodID += methodClass.getName() + ".";
+			methodID += methodDeclaration.getName();
+			return methodID;
+		} catch (NoSuchAncestorFoundException e) {
+			return methodDeclaration.getName();
+		}
 	}
 
 	public boolean isVariable(FieldDeclaration fieldDeclaration) {

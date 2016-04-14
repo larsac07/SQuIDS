@@ -1,5 +1,7 @@
 package autocisq.measure.maintainability;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +16,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
+import autocisq.models.Issue;
 
 public class MethodDirectlyUsingFieldFromOtherClassTest extends MeasureTest {
 
@@ -80,6 +83,12 @@ public class MethodDirectlyUsingFieldFromOtherClassTest extends MeasureTest {
 	@Test
 	public void skipFinalAccess() {
 		skipIssue(this.methodFinalAccess, this.fileString);
+	}
+
+	@Test
+	public void markMethodOnlyOnce() {
+		List<Issue> issues = this.issueFinder.analyzeNode(this.methodMultipleDirectAccess, null, this.fileString);
+		assertEquals(1, issues.size());
 	}
 
 	@Override
