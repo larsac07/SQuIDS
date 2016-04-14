@@ -85,7 +85,6 @@ public class Person {
 	
 	public Person createPersonFanOut12(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city, String country) {
 		Person person = new Person();
-		person.firstName = firstName;
 		person.middleNames = middleNames;
 		person.birthYear = birthYear;
 		person.birthMonth = birthMonth;
@@ -104,7 +103,6 @@ public class Person {
 	
 	public Person createPersonFanOut11(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city) {
 		Person person = new Person();
-		person.firstName = firstName;
 		person.middleNames = middleNames;
 		person.birthYear = birthYear;
 		person.birthMonth = birthMonth;
@@ -122,7 +120,6 @@ public class Person {
 	
 	public Person createPersonFanOut10(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode) {
 		Person person = new Person();
-		person.firstName = firstName;
 		person.middleNames = middleNames;
 		person.birthYear = birthYear;
 		person.birthMonth = birthMonth;
@@ -139,7 +136,6 @@ public class Person {
 	
 	public Person createPersonFanOut9(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo) {
 		Person person = new Person();
-		person.firstName = firstName;
 		person.middleNames = middleNames;
 		person.birthYear = birthYear;
 		person.birthMonth = birthMonth;
