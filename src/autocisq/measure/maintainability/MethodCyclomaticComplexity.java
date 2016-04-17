@@ -73,7 +73,11 @@ public class MethodCyclomaticComplexity extends MaintainabilityMeasure {
 		} else if (isControlFlowStmt(node)) {
 			this.count++;
 		}
-		if (this.count >= THRESHOLD && !this.blamedNodes.contains(this.nodeToBlame)) {
+		if (this.nodeToBlame == null) {
+			// Control-flow statements do not belong to a method or function
+			// (e.g. initialization block).
+			return null;
+		} else if (this.count >= THRESHOLD && !this.blamedNodes.contains(this.nodeToBlame)) {
 			this.blamedNodes.add(this.nodeToBlame);
 			List<Issue> issues = new LinkedList<>();
 			issues.add(new FileIssue(this, this.nodeToBlame, fileString));
@@ -88,7 +92,7 @@ public class MethodCyclomaticComplexity extends MaintainabilityMeasure {
 		return ISSUE_TYPE;
 	}
 
-	public static boolean isControlFlowStmt(Node node) {
+	public boolean isControlFlowStmt(Node node) {
 		if (node instanceof IfStmt || node instanceof ConditionalExpr || node instanceof SwitchEntryStmt
 				|| node instanceof CatchClause || node instanceof ForStmt || node instanceof ForeachStmt
 				|| node instanceof WhileStmt || node instanceof DoStmt) {

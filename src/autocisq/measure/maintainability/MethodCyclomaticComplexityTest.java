@@ -77,7 +77,7 @@ public class MethodCyclomaticComplexityTest extends MeasureTest {
 
 	private static List<Node> findControlFlowStatements(Node node) {
 		List<Node> controlFlowStatements = new LinkedList<>();
-		if (MethodCyclomaticComplexity.isControlFlowStmt(node)) {
+		if (new MethodCyclomaticComplexity(new HashMap<>()).isControlFlowStmt(node)) {
 			controlFlowStatements.add(node);
 		}
 		for (Node child : node.getChildrenNodes()) {
