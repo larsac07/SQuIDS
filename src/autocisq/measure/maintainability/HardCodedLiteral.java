@@ -6,11 +6,11 @@ import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.LiteralExpr;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.expr.StringLiteralExpr;
 
 import autocisq.JavaParserHelper;
 import autocisq.NoSuchAncestorFoundException;
@@ -22,14 +22,14 @@ import autocisq.models.Issue;
  * measure 21: # of hard coded literals except (-1, 0, 1, 2, or literals
  * initializing static or constant variables).
  *
- * It considers a hard coded literal as any instance of {@link LiteralExpr} or
- * its subclasses which is assigned to a {@link VariableDeclarationExpr} or
- * {@link FieldDeclaration} which does not have the static modifier.
+ * It considers a hard coded literal as any instance of
+ * {@link StringLiteralExpr} or its subclasses which is assigned to a
+ * {@link VariableDeclarator} which does not have the static or final modifier.
  *
  * @author Lars A. V. Cabrera
  *
  */
-public class HardCodedLiteral extends MaintainabilityMeasure {
+public class HardCodedLiteral extends TypeDependentMeasure {
 
 	public HardCodedLiteral(Map<String, Object> settings) {
 		super(settings);
@@ -41,12 +41,19 @@ public class HardCodedLiteral extends MaintainabilityMeasure {
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
-		if (node instanceof LiteralExpr) {
-			LiteralExpr literalExpr = (LiteralExpr) node;
+		super.analyzeNode(node, fileString, compilationUnits);
+		if (node instanceof StringLiteralExpr) {
+			StringLiteralExpr literalExpr = (StringLiteralExpr) node;
+			// Do not bother with empty strings, e.g. "".
+			if (literalExpr.getValue().isEmpty()) {
+				return null;
+			}
+			// Check if integer
 			if (literalExpr instanceof IntegerLiteralExpr) {
 				IntegerLiteralExpr intLitExpr = (IntegerLiteralExpr) literalExpr;
 				try {
 					int value = Integer.parseInt(intLitExpr.getValue());
+					// If integer is -1, 0, 1 or 2, no issue is reported
 					if (isWithinThreshold(value)) {
 						return null;
 					}
@@ -55,9 +62,10 @@ public class HardCodedLiteral extends MaintainabilityMeasure {
 				}
 			}
 
-			boolean isNonStatic = isNonStaticVariable(literalExpr);
+			boolean isNonStaticAndNonFinal = isNonStaticAndNonFinalVariable(literalExpr);
 
-			if (isNonStatic) {
+			// Only bother with non-static and non-final variables
+			if (isNonStaticAndNonFinal) {
 				List<Issue> issues = new ArrayList<>();
 				issues.add(new FileIssue(this, node, fileString));
 				return issues;
@@ -74,23 +82,23 @@ public class HardCodedLiteral extends MaintainabilityMeasure {
 		}
 	}
 
-	private boolean isNonStaticVariable(LiteralExpr literalExpr) {
-		boolean isNonStaticVariable = false;
+	private boolean isNonStaticAndNonFinalVariable(LiteralExpr literalExpr) {
+		int modifiers = 0;
+		String varName = "";
 		try {
-			VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) JavaParserHelper
-					.findNodeAncestorOfType(literalExpr, VariableDeclarationExpr.class);
-			return !ModifierSet.isStatic(variableDeclarationExpr.getModifiers());
-		} catch (NoSuchAncestorFoundException e) {
-			isNonStaticVariable = false;
-		}
-		try {
-			FieldDeclaration fieldDeclaration = (FieldDeclaration) JavaParserHelper.findNodeAncestorOfType(literalExpr,
-					FieldDeclaration.class);
-			return !ModifierSet.isStatic(fieldDeclaration.getModifiers());
+			VariableDeclarator varDecl = (VariableDeclarator) JavaParserHelper.findNodeAncestorOfType(literalExpr,
+					VariableDeclarator.class);
+			varName = varDecl.getId().getName();
 		} catch (NoSuchAncestorFoundException e1) {
-			isNonStaticVariable = false;
+			return true;
 		}
-		return isNonStaticVariable;
+		Integer modifiersObject = getVariableModifiers(varName);
+		if (modifiersObject != null) {
+			modifiers = modifiersObject;
+		}
+		boolean isStatic = ModifierSet.isStatic(modifiers);
+		boolean isFinal = ModifierSet.isFinal(modifiers);
+		return !(isStatic || isFinal);
 	}
 
 	@Override

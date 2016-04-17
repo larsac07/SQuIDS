@@ -27,6 +27,9 @@ public class HardCodedLiteralTest extends MeasureTest {
 	private FieldDeclaration fieldVariableInteger0;
 	private FieldDeclaration fieldVariableInteger1;
 	private FieldDeclaration fieldVariableInteger2;
+	private FieldDeclaration fieldVariableFalse;
+	private FieldDeclaration fieldVariableTrue;
+	private FieldDeclaration fieldVariableNull;
 	private ExpressionStmt variableInteger;
 	private ExpressionStmt staticInteger;
 	private ExpressionStmt constantInteger;
@@ -38,7 +41,6 @@ public class HardCodedLiteralTest extends MeasureTest {
 	private ExpressionStmt variableInteger2;
 	private ExpressionStmt assignVariableInteger;
 	private ExpressionStmt assignStaticInteger;
-	private ExpressionStmt assignConstantInteger;
 	private ExpressionStmt assignVariableDouble;
 	private ExpressionStmt assignVariableString;
 	private ExpressionStmt assignVariableIntegerMinus1;
@@ -47,7 +49,6 @@ public class HardCodedLiteralTest extends MeasureTest {
 	private ExpressionStmt assignVariableInteger2;
 	private ExpressionStmt assignFieldVariableInteger;
 	private ExpressionStmt assignFieldStaticInteger;
-	private ExpressionStmt assignFieldConstantInteger;
 	private ExpressionStmt assignFieldVariableDouble;
 	private ExpressionStmt assignFieldVariableString;
 	private ExpressionStmt assignFieldVariableIntegerMinus1;
@@ -76,8 +77,11 @@ public class HardCodedLiteralTest extends MeasureTest {
 		this.fieldVariableInteger0 = (FieldDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(6);
 		this.fieldVariableInteger1 = (FieldDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(7);
 		this.fieldVariableInteger2 = (FieldDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(8);
+		this.fieldVariableFalse = (FieldDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(9);
+		this.fieldVariableTrue = (FieldDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(10);
+		this.fieldVariableNull = (FieldDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(11);
 
-		MethodDeclaration methodA = (MethodDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(9);
+		MethodDeclaration methodA = (MethodDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(12);
 		BlockStmt methodABlock = methodA.getBody();
 		this.variableInteger = (ExpressionStmt) methodABlock.getChildrenNodes().get(0);
 		this.staticInteger = (ExpressionStmt) methodABlock.getChildrenNodes().get(1);
@@ -91,26 +95,25 @@ public class HardCodedLiteralTest extends MeasureTest {
 
 		this.assignVariableInteger = (ExpressionStmt) methodABlock.getChildrenNodes().get(9);
 		this.assignStaticInteger = (ExpressionStmt) methodABlock.getChildrenNodes().get(10);
-		this.assignConstantInteger = (ExpressionStmt) methodABlock.getChildrenNodes().get(11);
-		this.assignVariableDouble = (ExpressionStmt) methodABlock.getChildrenNodes().get(12);
-		this.assignVariableString = (ExpressionStmt) methodABlock.getChildrenNodes().get(13);
-		this.assignVariableIntegerMinus1 = (ExpressionStmt) methodABlock.getChildrenNodes().get(14);
+		this.assignVariableDouble = (ExpressionStmt) methodABlock.getChildrenNodes().get(11);
+		this.assignVariableString = (ExpressionStmt) methodABlock.getChildrenNodes().get(12);
+		this.assignVariableIntegerMinus1 = (ExpressionStmt) methodABlock.getChildrenNodes().get(13);
 		this.assignVariableInteger0 = (ExpressionStmt) methodABlock.getChildrenNodes().get(14);
 		this.assignVariableInteger1 = (ExpressionStmt) methodABlock.getChildrenNodes().get(15);
 		this.assignVariableInteger2 = (ExpressionStmt) methodABlock.getChildrenNodes().get(16);
 
-		MethodDeclaration methodB = (MethodDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(10);
+		MethodDeclaration methodB = (MethodDeclaration) hclCU.getTypes().get(0).getChildrenNodes().get(13);
 		BlockStmt methodBBlock = methodB.getBody();
 		this.assignFieldVariableInteger = (ExpressionStmt) methodBBlock.getChildrenNodes().get(0);
 		this.assignFieldStaticInteger = (ExpressionStmt) methodBBlock.getChildrenNodes().get(1);
-		this.assignFieldConstantInteger = (ExpressionStmt) methodBBlock.getChildrenNodes().get(2);
-		this.assignFieldVariableDouble = (ExpressionStmt) methodBBlock.getChildrenNodes().get(3);
-		this.assignFieldVariableString = (ExpressionStmt) methodBBlock.getChildrenNodes().get(4);
-		this.assignFieldVariableIntegerMinus1 = (ExpressionStmt) methodBBlock.getChildrenNodes().get(5);
-		this.assignFieldVariableInteger0 = (ExpressionStmt) methodBBlock.getChildrenNodes().get(6);
-		this.assignFieldVariableInteger1 = (ExpressionStmt) methodBBlock.getChildrenNodes().get(7);
-		this.assignFieldVariableInteger2 = (ExpressionStmt) methodBBlock.getChildrenNodes().get(8);
+		this.assignFieldVariableDouble = (ExpressionStmt) methodBBlock.getChildrenNodes().get(2);
+		this.assignFieldVariableString = (ExpressionStmt) methodBBlock.getChildrenNodes().get(3);
+		this.assignFieldVariableIntegerMinus1 = (ExpressionStmt) methodBBlock.getChildrenNodes().get(4);
+		this.assignFieldVariableInteger0 = (ExpressionStmt) methodBBlock.getChildrenNodes().get(5);
+		this.assignFieldVariableInteger1 = (ExpressionStmt) methodBBlock.getChildrenNodes().get(6);
+		this.assignFieldVariableInteger2 = (ExpressionStmt) methodBBlock.getChildrenNodes().get(7);
 
+		this.issueFinder.analyzeNode(hclCU, null, this.fileString);
 	}
 
 	@Test
@@ -159,6 +162,21 @@ public class HardCodedLiteralTest extends MeasureTest {
 	}
 
 	@Test
+	public void skipFieldVariableFalse() {
+		skipIssue(this.fieldVariableFalse, this.fileString);
+	}
+
+	@Test
+	public void skipFieldVariableTrue() {
+		skipIssue(this.fieldVariableTrue, this.fileString);
+	}
+
+	@Test
+	public void skipFieldVariableNull() {
+		skipIssue(this.fieldVariableNull, this.fileString);
+	}
+
+	@Test
 	public void findVariableInteger() {
 		findIssue(this.variableInteger, this.fileString);
 	}
@@ -204,28 +222,23 @@ public class HardCodedLiteralTest extends MeasureTest {
 	}
 
 	@Test
-	public void skipAssignVariableInteger() {
-		skipIssue(this.assignVariableInteger, this.fileString);
+	public void findAssignVariableInteger() {
+		findIssue(this.assignVariableInteger, this.fileString);
 	}
 
 	@Test
-	public void skipAssignStatic() {
-		skipIssue(this.assignStaticInteger, this.fileString);
+	public void findAssignStatic() {
+		findIssue(this.assignStaticInteger, this.fileString);
 	}
 
 	@Test
-	public void skipAssignConstant() {
-		skipIssue(this.assignConstantInteger, this.fileString);
+	public void findAssignVariableDouble() {
+		findIssue(this.assignVariableDouble, this.fileString);
 	}
 
 	@Test
-	public void skipAssignVariableDouble() {
-		skipIssue(this.assignVariableDouble, this.fileString);
-	}
-
-	@Test
-	public void skipAssignVariableString() {
-		skipIssue(this.assignVariableString, this.fileString);
+	public void findAssignVariableString() {
+		findIssue(this.assignVariableString, this.fileString);
 	}
 
 	@Test
@@ -249,28 +262,23 @@ public class HardCodedLiteralTest extends MeasureTest {
 	}
 
 	@Test
-	public void skipAssignFieldVariableInteger() {
-		skipIssue(this.assignFieldVariableInteger, this.fileString);
+	public void findAssignFieldVariableInteger() {
+		findIssue(this.assignFieldVariableInteger, this.fileString);
 	}
 
 	@Test
-	public void skipAssignStaticField() {
-		skipIssue(this.assignFieldStaticInteger, this.fileString);
+	public void findAssignStaticField() {
+		findIssue(this.assignFieldStaticInteger, this.fileString);
 	}
 
 	@Test
-	public void skipAssignConstantField() {
-		skipIssue(this.assignFieldConstantInteger, this.fileString);
+	public void findAssignFieldVariableDouble() {
+		findIssue(this.assignFieldVariableDouble, this.fileString);
 	}
 
 	@Test
-	public void skipAssignFieldVariableDouble() {
-		skipIssue(this.assignFieldVariableDouble, this.fileString);
-	}
-
-	@Test
-	public void skipAssignFieldVariableString() {
-		skipIssue(this.assignFieldVariableString, this.fileString);
+	public void findAssignFieldVariableString() {
+		findIssue(this.assignFieldVariableString, this.fileString);
 	}
 
 	@Test
