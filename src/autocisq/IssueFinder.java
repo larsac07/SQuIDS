@@ -102,14 +102,14 @@ public class IssueFinder {
 	 * @throws JavaModelException
 	 */
 
-	public List<Issue> analyzeNode(Node rootNode, List<Issue> issues, String fileAsString) {
+	public List<Issue> analyzeNode(Node rootNode, List<Issue> issues, String fileString) {
 		if (issues == null) {
 			issues = new LinkedList<>();
 		}
 		for (Measure measure : this.measures.values()) {
 			long startTime = System.currentTimeMillis();
 			try {
-				List<Issue> measureIssues = measure.analyzeNode(rootNode, fileAsString, this.compilationUnits);
+				List<Issue> measureIssues = measure.analyzeNode(rootNode, fileString, this.compilationUnits);
 				if (measureIssues != null) {
 					issues.addAll(measureIssues);
 				}
@@ -125,7 +125,7 @@ public class IssueFinder {
 
 		// Recursive call for each child node
 		for (Node node : rootNode.getChildrenNodes()) {
-			analyzeNode(node, issues, fileAsString);
+			analyzeNode(node, issues, fileString);
 		}
 		return issues;
 	}
