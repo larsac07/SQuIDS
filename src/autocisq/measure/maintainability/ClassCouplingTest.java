@@ -90,11 +90,21 @@ public class ClassCouplingTest extends MeasureTest {
 	}
 
 	@Test
-	public void skipStaticAndOrFinalFields() {
+	public void findStaticField() {
 		dryRun(this.coupling7);
-		skipIssue(this.staticAccess, this.fileString);
-		skipIssue(this.finalAccess, this.fileString);
-		skipIssue(this.staticFinalAccess, this.fileString);
+		findIssue(this.staticAccess, this.fileString);
+	}
+
+	@Test
+	public void findFinalField() {
+		dryRun(this.coupling7);
+		findIssue(this.finalAccess, this.fileString);
+	}
+
+	@Test
+	public void findFinalStaticField() {
+		dryRun(this.coupling7);
+		findIssue(this.staticFinalAccess, this.fileString);
 	}
 
 	@Test

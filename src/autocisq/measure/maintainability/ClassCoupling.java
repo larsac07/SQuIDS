@@ -11,8 +11,6 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
@@ -93,9 +91,6 @@ public class ClassCoupling extends TypeDependentMeasure {
 						.findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
 				ClassOrInterfaceDeclaration classToBlame = JavaParserHelper.findClassOrInterfaceDeclaration(type,
 						compilationUnits);
-				if (isStaticOrFinalFieldAccess(fieldName, classToBlame)) {
-					return null;
-				}
 				if (classNotCounted(containingClass.getName())) {
 					if (classToBlame != null) {
 						int count = addCoupling(type);
@@ -107,20 +102,6 @@ public class ClassCoupling extends TypeDependentMeasure {
 			}
 		}
 		return null;
-	}
-
-	private boolean isStaticOrFinalFieldAccess(String fieldName, ClassOrInterfaceDeclaration classToBlame) {
-		if (fieldName != null && classToBlame != null) {
-			FieldDeclaration fieldOfOrigin = JavaParserHelper.findFieldDeclarationTopDown(fieldName, classToBlame);
-			if (fieldOfOrigin != null) {
-				boolean isStatic = ModifierSet.isStatic(fieldOfOrigin.getModifiers());
-				boolean isFinal = ModifierSet.isFinal(fieldOfOrigin.getModifiers());
-				if (isStatic || isFinal) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	private boolean classNotCounted(String name) {
