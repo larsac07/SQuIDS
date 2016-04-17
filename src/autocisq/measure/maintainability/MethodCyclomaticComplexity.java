@@ -40,8 +40,8 @@ public class MethodCyclomaticComplexity extends MaintainabilityMeasure {
 	public final static int THRESHOLD = 10;
 	public final static String ISSUE_TYPE = "Function with Cyclomatic Complexity >= " + THRESHOLD;
 
-	private Node nodeToBlame;
-	private Set<Node> blamedNodes;
+	private Node methodOrConstructor;
+	private Set<Node> blamedMethodsAndConstructors;
 	private int count;
 
 	/**
@@ -73,17 +73,29 @@ public class MethodCyclomaticComplexity extends MaintainabilityMeasure {
 		} else if (isControlFlowStmt(node)) {
 			this.count++;
 		}
-		if (this.nodeToBlame == null) {
-			// Control-flow statements do not belong to a method or function
+		if (this.methodOrConstructor == null) {
+			// If node does not belong to a method or constructor
 			// (e.g. initialization block).
 			return null;
-		} else if (this.count >= THRESHOLD && !this.blamedNodes.contains(this.nodeToBlame)) {
-			this.blamedNodes.add(this.nodeToBlame);
+		} else if (this.count >= THRESHOLD && !this.blamedMethodsAndConstructors.contains(this.methodOrConstructor)) {
+			this.blamedMethodsAndConstructors.add(this.methodOrConstructor);
 			List<Issue> issues = new LinkedList<>();
-			issues.add(new FileIssue(this, this.nodeToBlame, fileString));
+			issues.add(new FileIssue(this, getMethodOrConstructorSignature(this.methodOrConstructor), fileString));
 			return issues;
 		} else {
 			return null;
+		}
+	}
+
+	private Node getMethodOrConstructorSignature(Node node) {
+		if (node instanceof ConstructorDeclaration) {
+			return ((ConstructorDeclaration) node).getNameExpr();
+		} else if (node instanceof MethodDeclaration) {
+			return ((MethodDeclaration) node).getNameExpr();
+		} else {
+			// If node is neither a constructor or method, simply return the
+			// node itself
+			return node;
 		}
 	}
 
@@ -108,8 +120,8 @@ public class MethodCyclomaticComplexity extends MaintainabilityMeasure {
 	}
 
 	private void reset(Node nodeToBlame) {
-		this.nodeToBlame = nodeToBlame;
-		this.blamedNodes = new HashSet<>();
+		this.methodOrConstructor = nodeToBlame;
+		this.blamedMethodsAndConstructors = new HashSet<>();
 		this.count = 1;
 	}
 
