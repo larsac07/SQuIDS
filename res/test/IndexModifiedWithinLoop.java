@@ -2,28 +2,26 @@
 public class IndexModifiedWithinLoop {
 	
 	private int indexA;
+	private int[] someArray = new int[10];
 
 	public void method() {
 		for (int i = 0; i < 100; i++) {
-			System.out.println("index=" + i);
+			System.out.println("index=" + (i + 5));
 		}
 		
-		for (this.indexA = 0; this.indexA < 100; this.indexA++) {
-			System.out.println("index=" + this.indexA);
-			indexA++;
-			--indexA;
+		for (int j = 0; j < 100; j++) {
+			System.out.println("item=" + this.someArray[j + 1]);
 		}
 		
 		while (this.indexA > 0 && this.indexA != 5) {
-			indexA -= 2;
-			indexA += 2;
-			indexA = this.indexA - 2;
+			this.indexA += 1;
+			System.out.println("item=" + this.someArray[this.indexA]);
 		}
 		
 		do {
-			this.indexA -= 2;
-			this.indexA += 2;
-			this.indexA = this.indexA - 2;
+			int item = this.someArray[this.indexA];
+			System.out.println("item=" + item);
+			this.indexA += 1;
 		} while (this.indexA > 0);
 		
 	}

@@ -35,7 +35,7 @@ public class IndexModifiedWithinLoopTest extends MeasureTest {
 		this.fileString = IOUtils.fileToString(testFile);
 		this.testCU = JavaParser.parse(testFile);
 
-		MethodDeclaration method = (MethodDeclaration) this.testCU.getTypes().get(0).getChildrenNodes().get(1);
+		MethodDeclaration method = (MethodDeclaration) this.testCU.getTypes().get(0).getMembers().get(2);
 		this.nonModifyingFor = (ForStmt) method.getBody().getStmts().get(0);
 		this.modifyingFor = (ForStmt) method.getBody().getStmts().get(1);
 		this.modifyingWhile = (WhileStmt) method.getBody().getStmts().get(2);
