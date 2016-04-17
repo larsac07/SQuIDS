@@ -22,6 +22,7 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 
 	private Map<String, String> typeImports;
 	private Map<String, String> variableTypes;
+	private Map<String, Integer> variableModifiers;
 	private boolean importedCompilationUnits;
 
 	public TypeDependentMeasure(Map<String, Object> settings) {
@@ -65,9 +66,11 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 			storeParameters(methodDeclaration.getParameters());
 		} else if (node instanceof FieldDeclaration) {
 			FieldDeclaration fieldDeclaration = (FieldDeclaration) node;
+			storeVariableModifiers(fieldDeclaration.getVariables(), fieldDeclaration.getModifiers());
 			storeVariables(fieldDeclaration.getVariables(), fieldDeclaration.getType().toString());
 		} else if (node instanceof VariableDeclarationExpr) {
 			VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) node;
+			storeVariableModifiers(variableDeclarationExpr.getVars(), variableDeclarationExpr.getModifiers());
 			storeVariables(variableDeclarationExpr.getVars(), variableDeclarationExpr.getType().toString());
 		}
 	}
@@ -81,6 +84,7 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 	protected void storeVariables(List<CompilationUnit> compilationUnits) {
 		for (CompilationUnit cu : compilationUnits) {
 			for (TypeDeclaration type : cu.getTypes()) {
+				this.variableModifiers.put(type.getName(), type.getModifiers());
 				storeType(type.getName());
 			}
 		}
@@ -124,6 +128,7 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 	 */
 	protected void storeParameters(List<Parameter> parameters) {
 		for (Parameter parameter : parameters) {
+			this.variableModifiers.put(parameter.getId().getName(), parameter.getModifiers());
 			this.variableTypes.put(parameter.getId().getName(), parameter.getType().toString());
 			this.variableTypes.put(parameter.getType().toString(), parameter.getType().toString());
 		}
@@ -143,6 +148,29 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 			storeVariable(variableDeclarator, type);
 		}
 		storeType(type);
+	}
+
+	/**
+	 * Stores variable modifiers in identifer - modifiers pairs, e.g. "file" -
+	 * 010110.
+	 */
+	private void storeVariableModifiers(List<VariableDeclarator> vars, int modifiers) {
+		for (VariableDeclarator var : vars) {
+			this.variableModifiers.put(var.getId().getName(), modifiers);
+		}
+	}
+
+	/**
+	 * Get the stored variable modifiers. If no modifiers were stored (e.g. the
+	 * variable is an imported class) or the variable cannot be found, null is
+	 * returned.
+	 *
+	 * @param variableName
+	 *            - the name of the variable
+	 * @return the stored variable modifiers, or null if none were found
+	 */
+	protected Integer getVariableModifiers(String variableName) {
+		return this.variableModifiers.get(variableName);
 	}
 
 	/**
@@ -214,6 +242,7 @@ public abstract class TypeDependentMeasure extends MaintainabilityMeasure {
 	protected void reset() {
 		this.typeImports = new HashMap<>();
 		this.variableTypes = new HashMap<>();
+		this.variableModifiers = new HashMap<>();
 		this.importedCompilationUnits = false;
 	}
 
