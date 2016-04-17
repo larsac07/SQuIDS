@@ -32,9 +32,11 @@ public class MethodCommentedOutInstructions extends MaintainabilityMeasure {
 	public final static double THRESHOLD = 0.02d;
 	public final static String ISSUE_TYPE = "Function with > " + (int) (THRESHOLD * 100)
 			+ "% commented out instructions";
+	private TextOrJavaCode textOrJava;
 
 	public MethodCommentedOutInstructions(Map<String, Object> settings) {
 		super(settings);
+		this.textOrJava = new TextOrJavaCode();
 	}
 
 	@Override
@@ -52,12 +54,12 @@ public class MethodCommentedOutInstructions extends MaintainabilityMeasure {
 		return null;
 	}
 
-	public static int countCommentedOutInstructions(Node node) {
+	public int countCommentedOutInstructions(Node node) {
 		List<Comment> comments = node.getAllContainedComments();
 		String instructions = "";
 		for (Comment comment : comments) {
 			String uncommented = comment.getContent().trim();
-			if (TextOrJavaCode.isJava(uncommented)) {
+			if (this.textOrJava.isJava(uncommented)) {
 				instructions += uncommented + System.lineSeparator();
 			}
 		}

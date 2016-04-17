@@ -2,10 +2,10 @@ package autocisq.lexical;
 
 public class TextOrJavaCode {
 
-	private static Tokenizer tokenizer = null;
+	private Tokenizer tokenizer = null;
 
-	public static void initializeTokenizer() {
-		tokenizer = new Tokenizer();
+	private void initializeTokenizer() {
+		this.tokenizer = new Tokenizer();
 
 		// key words
 		String keyString = "abstract assert boolean break byte case catch "
@@ -17,17 +17,17 @@ public class TextOrJavaCode {
 				+ "transient try void volatile while todo";
 		String keyStr = keyString.replace(" ", "|");
 
-		tokenizer.add(keyStr, 1);
-		tokenizer.add(
+		this.tokenizer.add(keyStr, 1);
+		this.tokenizer.add(
 				";|,|\\.|\\(|\\)|\\{|\\|\\}|\\[|\\]|~|\\?|:|==|=|<=|>=|>|<|!=|!|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||\\^|%|\\$|\\#",
 				2);// separators,
 		// operators,etc
-		tokenizer.add("[0-9]+", 3); // number
-		tokenizer.add("[a-zA-Z_][a-zA-Z0-9_]*", 4);// identifier
-		tokenizer.add("@", 4);
+		this.tokenizer.add("[0-9]+", 3); // number
+		this.tokenizer.add("[a-zA-Z_][a-zA-Z0-9_]*", 4);// identifier
+		this.tokenizer.add("@", 4);
 	}
 
-	public static boolean isJava(String string) {
+	public boolean isJava(String string) {
 		String patternString = getPatternString(string);
 
 		if (patternString.matches(".*444.*") || patternString.matches("4+")) {
@@ -37,11 +37,11 @@ public class TextOrJavaCode {
 		}
 	}
 
-	public static String getPatternString(String string) {
-		if (tokenizer == null) {
+	private String getPatternString(String string) {
+		if (this.tokenizer == null) {
 			initializeTokenizer();
 		}
-		tokenizer.tokenize(string);
-		return tokenizer.getTokensString();
+		this.tokenizer.tokenize(string);
+		return this.tokenizer.getTokensString();
 	}
 }

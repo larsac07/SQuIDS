@@ -24,12 +24,14 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 	private MethodDeclaration methodOverThreshold;
 	private MethodDeclaration methodAtThreshold;
 	private MethodDeclaration methodUnderThreshold;
+	private MethodCommentedOutInstructions measure;
 	private String fileString;
 
 	@Before
 	public void setUp() throws Exception {
 		this.issueFinder.getMeasures().clear();
-		this.issueFinder.putMeasure(new MethodCommentedOutInstructions(new HashMap<>()));
+		this.measure = new MethodCommentedOutInstructions(new HashMap<>());
+		this.issueFinder.putMeasure(this.measure);
 
 		File testFile = new File("res/test/CommentedOutInstructions.java");
 
@@ -55,15 +57,14 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 	@Test
 	public void testCountCommentedOutInstructions() {
 		int expected = 36;
-		int actual = MethodCommentedOutInstructions.countCommentedOutInstructions(this.method36COI);
+		int actual = this.measure.countCommentedOutInstructions(this.method36COI);
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void moreThanTwoPercentCommentedOutInstructions() {
 		int instructions = MethodCommentedOutInstructions.countInstructions(this.methodOverThreshold);
-		int commOutInstructions = MethodCommentedOutInstructions
-				.countCommentedOutInstructions(this.methodOverThreshold);
+		int commOutInstructions = this.measure.countCommentedOutInstructions(this.methodOverThreshold);
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
 		assertTrue("Expected " + result + " to be > " + threshold, result > threshold);
 	}
@@ -71,7 +72,7 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 	@Test
 	public void twoPercentCommentedOutInstructions() {
 		int instructions = MethodCommentedOutInstructions.countInstructions(this.methodAtThreshold);
-		int commOutInstructions = MethodCommentedOutInstructions.countCommentedOutInstructions(this.methodAtThreshold);
+		int commOutInstructions = this.measure.countCommentedOutInstructions(this.methodAtThreshold);
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
 		assertEquals(threshold, result, 0.0000001d);
 	}
@@ -79,8 +80,7 @@ public class MethodCommentedOutInstructionsTest extends MeasureTest {
 	@Test
 	public void lessThanTwoPercentCommentedOutInstructions() {
 		int instructions = MethodCommentedOutInstructions.countInstructions(this.methodUnderThreshold);
-		int commOutInstructions = MethodCommentedOutInstructions
-				.countCommentedOutInstructions(this.methodUnderThreshold);
+		int commOutInstructions = this.measure.countCommentedOutInstructions(this.methodUnderThreshold);
 		double result = (double) commOutInstructions / (instructions + commOutInstructions);
 		assertTrue("Expected " + result + " to be < " + threshold, result < threshold);
 	}

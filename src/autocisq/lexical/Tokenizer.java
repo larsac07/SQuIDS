@@ -63,11 +63,7 @@ public class Tokenizer {
 		}
 	}
 
-	public LinkedList<Token> getTokens() {
-		return this.tokens;
-	}
-
-	public String getTokensString() {
+	public synchronized String getTokensString() {
 		StringBuilder sb = new StringBuilder();
 		if (this.tokens != null) {
 			for (Tokenizer.Token tok : this.tokens) {
