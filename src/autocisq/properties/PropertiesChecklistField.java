@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -16,11 +15,11 @@ public class PropertiesChecklistField extends PropertiesField {
 
 	public PropertiesChecklistField(Composite parent, String label, String id, int height, List<String> checkboxes) {
 		super(parent, label, id);
-		this.checklist = new Group(parent, SWT.SHADOW_IN);
+		this.checklist = new Group(parent, SWT.SHADOW_IN | SWT.RESIZE);
 		this.checklist.setLayout(new RowLayout(SWT.VERTICAL));
-		GridData gdm = new GridData(GridData.FILL_HORIZONTAL);
-		gdm.heightHint = height;
-		this.checklist.setLayoutData(gdm);
+		for (String checkbox : checkboxes) {
+			new Button(this.checklist, SWT.CHECK).setText(checkbox);
+		}
 	}
 
 	@Override
