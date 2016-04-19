@@ -177,22 +177,22 @@ public class Properties extends PropertyPage {
 		super.performDefaults();
 
 		List<String> measureList = new LinkedList<>();
-		measureList.add("autocisq.measure.maintainability.ClassChildren");
-		measureList.add("autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch");
-		measureList.add("autocisq.measure.maintainability.FileLOC");
-		measureList.add("autocisq.measure.maintainability.FileDuplicateTokens");
-		measureList.add("autocisq.measure.maintainability.MethodCommentedOutInstructions");
-		measureList.add("autocisq.measure.maintainability.MethodFanOut");
-		measureList.add("autocisq.measure.maintainability.MethodParameters");
-		measureList.add("autocisq.measure.maintainability.HardCodedLiteral");
-		measureList.add("autocisq.measure.maintainability.MethodDirectlyUsingFieldFromOtherClass");
-		measureList.add("autocisq.measure.maintainability.VariableDeclaredPublic");
-		measureList.add("autocisq.measure.maintainability.MethodCyclomaticComplexity");
-		measureList.add("autocisq.measure.maintainability.MethodUnreachable");
-		measureList.add("autocisq.measure.maintainability.ClassInheritanceLevel");
-		measureList.add("autocisq.measure.maintainability.ClassCoupling");
-		measureList.add("autocisq.measure.maintainability.CyclicCallBetweenPackages");
-		measureList.add("autocisq.measure.maintainability.IndexModifiedWithinLoop");
+		measureList.add("autocisq.measure.maintainability.CISQMM07ClassChildren");
+		measureList.add("autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch");
+		measureList.add("autocisq.measure.maintainability.CISQMM15FileLOC");
+		measureList.add("autocisq.measure.maintainability.CISQMM04FileDuplicateTokens");
+		measureList.add("autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructions");
+		measureList.add("autocisq.measure.maintainability.CISQMM11MethodFanOut");
+		measureList.add("autocisq.measure.maintainability.CISQMM20MethodParameters");
+		measureList.add("autocisq.measure.maintainability.CISQMM21HardCodedLiteral");
+		measureList.add("autocisq.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClass");
+		measureList.add("autocisq.measure.maintainability.CISQMM10VariableDeclaredPublic");
+		measureList.add("autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity");
+		measureList.add("autocisq.measure.maintainability.CISQMM05MethodUnreachable");
+		measureList.add("autocisq.measure.maintainability.CISQMM06ClassInheritanceLevel");
+		measureList.add("autocisq.measure.maintainability.CISQMM12ClassCoupling");
+		measureList.add("autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackages");
+		measureList.add("autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop");
 
 		List<String> dbOrIoClassList = new LinkedList<>();
 		dbOrIoClassList.add("java.io.File");
