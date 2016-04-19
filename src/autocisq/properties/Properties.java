@@ -43,7 +43,7 @@ public class Properties extends PropertyPage {
 
 	private static final int TEXT_AREA_HEIGHT = 5;
 
-	private Map<String, PropertiesTextField> properties;
+	private Map<String, PropertiesField> properties;
 
 	/**
 	 * Constructor for SamplePropertyPage.
@@ -79,17 +79,17 @@ public class Properties extends PropertyPage {
 		int height = convertHeightInCharsToPixels(TEXT_AREA_HEIGHT);
 
 		// Measures properties
-		PropertiesTextField measures = new PropertiesTextField(composite, LABEL_MEASURES, KEY_MEASURES, height);
+		PropertiesField measures = new PropertiesChecklistField(composite, LABEL_MEASURES, KEY_MEASURES, 500);
 
 		// LayerMap properties
-		PropertiesTextField layerMap = new PropertiesTextField(composite, LABEL_LAYER_MAP, KEY_LAYER_MAP, height);
+		PropertiesField layerMap = new PropertiesTextField(composite, LABEL_LAYER_MAP, KEY_LAYER_MAP, height);
 
 		// DbOrIoClasses properties
-		PropertiesTextField dbOrIoClasses = new PropertiesTextField(composite, LABEL_DB_OR_IO_CLASSES,
-				KEY_DB_OR_IO_CLASSES, height);
+		PropertiesField dbOrIoClasses = new PropertiesTextField(composite, LABEL_DB_OR_IO_CLASSES, KEY_DB_OR_IO_CLASSES,
+				height);
 
 		// IgnoreFilter properties
-		PropertiesTextField ignoreFilter = new PropertiesTextField(composite, LABEL_IGNORE_FILTER, KEY_IGNORE_FILTER,
+		PropertiesField ignoreFilter = new PropertiesTextField(composite, LABEL_IGNORE_FILTER, KEY_IGNORE_FILTER,
 				height);
 
 		Button applyToAll = new Button(parent, SWT.PUSH);
@@ -112,30 +112,12 @@ public class Properties extends PropertyPage {
 
 		// Populate fields
 		for (String key : this.properties.keySet()) {
-			PropertiesTextField property = this.properties.get(key);
+			PropertiesField property = this.properties.get(key);
 			try {
 				String text = ((IResource) getElement()).getPersistentProperty(property.getqName());
 				property.setText(text);
 			} catch (CoreException | IllegalArgumentException e) {
 				property.setText("");
-			}
-		}
-	}
-
-	protected void applyToAll() {
-		boolean apply = MessageDialog.openConfirm(getShell(), "Apply settings to all projects",
-				"Apply settings to all projects?");
-		if (apply) {
-			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-			for (IProject project : projects) {
-				for (String key : this.properties.keySet()) {
-					try {
-						PropertiesTextField property = this.properties.get(key);
-						project.setPersistentProperty(property.getqName(), property.getText());
-					} catch (CoreException e) {
-						e.printStackTrace();
-					}
-				}
 			}
 		}
 	}
@@ -177,22 +159,22 @@ public class Properties extends PropertyPage {
 		super.performDefaults();
 
 		List<String> measureList = new LinkedList<>();
-		measureList.add("autocisq.measure.maintainability.CISQMM07ClassChildren");
-		measureList.add("autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch");
-		measureList.add("autocisq.measure.maintainability.CISQMM15FileLOC");
 		measureList.add("autocisq.measure.maintainability.CISQMM04FileDuplicateTokens");
-		measureList.add("autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructions");
-		measureList.add("autocisq.measure.maintainability.CISQMM11MethodFanOut");
-		measureList.add("autocisq.measure.maintainability.CISQMM20MethodParameters");
-		measureList.add("autocisq.measure.maintainability.CISQMM21HardCodedLiteral");
-		measureList.add("autocisq.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClass");
-		measureList.add("autocisq.measure.maintainability.CISQMM10VariableDeclaredPublic");
-		measureList.add("autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity");
 		measureList.add("autocisq.measure.maintainability.CISQMM05MethodUnreachable");
 		measureList.add("autocisq.measure.maintainability.CISQMM06ClassInheritanceLevel");
+		measureList.add("autocisq.measure.maintainability.CISQMM07ClassChildren");
+		measureList.add("autocisq.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClass");
+		measureList.add("autocisq.measure.maintainability.CISQMM10VariableDeclaredPublic");
+		measureList.add("autocisq.measure.maintainability.CISQMM11MethodFanOut");
 		measureList.add("autocisq.measure.maintainability.CISQMM12ClassCoupling");
 		measureList.add("autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackages");
+		measureList.add("autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructions");
+		measureList.add("autocisq.measure.maintainability.CISQMM15FileLOC");
 		measureList.add("autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop");
+		measureList.add("autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch");
+		measureList.add("autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity");
+		measureList.add("autocisq.measure.maintainability.CISQMM20MethodParameters");
+		measureList.add("autocisq.measure.maintainability.CISQMM21HardCodedLiteral");
 
 		List<String> dbOrIoClassList = new LinkedList<>();
 		dbOrIoClassList.add("java.io.File");
@@ -224,15 +206,31 @@ public class Properties extends PropertyPage {
 	@Override
 	public boolean performOk() {
 		// store the values
+		IResource resource = (IResource) getElement();
+		applySettings(resource);
+		return true;
+	}
+
+	protected void applyToAll() {
+		boolean apply = MessageDialog.openConfirm(getShell(), "Apply settings to all projects",
+				"Apply settings to all projects?");
+		if (apply) {
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			for (IProject project : projects) {
+				applySettings(project);
+			}
+		}
+	}
+
+	private void applySettings(IResource resource) {
 		for (String key : this.properties.keySet()) {
 			try {
-				PropertiesTextField property = this.properties.get(key);
-				((IResource) getElement()).setPersistentProperty(property.getqName(), property.getText());
+				PropertiesField property = this.properties.get(key);
+				resource.setPersistentProperty(property.getqName(), property.getText());
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
-		return true;
 	}
 
 }
