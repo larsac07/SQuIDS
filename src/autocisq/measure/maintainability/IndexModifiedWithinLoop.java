@@ -46,7 +46,7 @@ import autocisq.models.Issue;
  */
 public class IndexModifiedWithinLoop extends TypeDependentMeasure {
 
-	public final static String ISSUE_TYPE = "Index modified within loop";
+	public final static String ISSUE_TYPE = "CISQ MM16: Index modified within loop";
 	private final static String MESSAGE = " is an index variable modified within a loop";
 	private Set<String> variablesModifiedInLoop;
 	private Set<String> indexVariables;

@@ -33,7 +33,7 @@ import autocisq.models.Issue;
  */
 public class MethodDirectlyUsingFieldFromOtherClass extends TypeDependentMeasure {
 
-	public final static String ISSUE_TYPE = "Method directly using field from other class";
+	public final static String ISSUE_TYPE = "CISQ MM09: Method directly using field from other class";
 	private Set<String> markedMethods;
 
 	public MethodDirectlyUsingFieldFromOtherClass(Map<String, Object> settings) {

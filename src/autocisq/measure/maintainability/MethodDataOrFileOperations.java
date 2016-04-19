@@ -18,7 +18,7 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link MethodTooManyDataOrFileOperations} class represents the CISQ
+ * The {@link MethodDataOrFileOperations} class represents the CISQ
  * Maintainability measure 19: # of methods with ≥ 7 data or file operations.
  *
  * It depends on a {@link List} of canonical name strings (e.g. "java.io.File")
@@ -33,20 +33,20 @@ import autocisq.models.Issue;
  * e.g. java.io.File, not java.io.*.
  *
  * @author Lars A. V. Cabrera
- * 
+ *
  */
-public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
+public class MethodDataOrFileOperations extends TypeDependentMeasure {
 
 	private final static int THRESHOLD = 7;
 
-	public final static String ISSUE_TYPE = "Method with >= " + THRESHOLD + " data or file operations";
+	public final static String ISSUE_TYPE = "CISQ MM19: Method with >= " + THRESHOLD + " data or file operations";
 
 	private List<String> dbOrIoClasses;
 	private int count;
 
 	/**
-	 * Creates a new {@link MethodTooManyDataOrFileOperations} object and tries
-	 * to retrieve a list of classes which contain data or file operations.
+	 * Creates a new {@link MethodDataOrFileOperations} object and tries to
+	 * retrieve a list of classes which contain data or file operations.
 	 *
 	 * @param settings
 	 *            - a map of settings, including at least a key
@@ -55,7 +55,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 	 *            or file operations.
 	 */
 	@SuppressWarnings("unchecked")
-	public MethodTooManyDataOrFileOperations(Map<String, Object> settings) {
+	public MethodDataOrFileOperations(Map<String, Object> settings) {
 		super(settings);
 		try {
 			this.dbOrIoClasses = (List<String>) settings.get("db_or_io_classes");
@@ -76,8 +76,8 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 	/**
 	 * Filters out {@link MethodCallExpr} objects to check if they are called
 	 * upon classes which contain data or file operations. Calls
-	 * {@link MethodTooManyDataOrFileOperations#storeVariables(Node)} if the
-	 * node is not a {@link MethodCallExpr}.
+	 * {@link MethodDataOrFileOperations#storeVariables(Node)} if the node is
+	 * not a {@link MethodCallExpr}.
 	 *
 	 * @return - a list of issues with 0 or 1 {@link FileIssue}, depending on
 	 *         whether an issue was found.
@@ -165,7 +165,7 @@ public class MethodTooManyDataOrFileOperations extends TypeDependentMeasure {
 
 	/**
 	 * Resets import and variable maps and calls
-	 * {@link MethodTooManyDataOrFileOperations#resetCount()}.
+	 * {@link MethodDataOrFileOperations#resetCount()}.
 	 */
 	@Override
 	protected void reset() {

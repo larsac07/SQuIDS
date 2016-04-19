@@ -5,15 +5,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -32,6 +38,8 @@ public class Properties extends PropertyPage {
 
 	private static final String LABEL_IGNORE_FILTER = "&Files/folders to ignore:";
 	public static final String KEY_IGNORE_FILTER = "ignore_filter";
+
+	private static final String LABEL_APPLY_TO_ALL = "Apply to all projects";
 
 	private static final int TEXT_AREA_HEIGHT = 5;
 
@@ -84,6 +92,19 @@ public class Properties extends PropertyPage {
 		PropertiesTextField ignoreFilter = new PropertiesTextField(composite, LABEL_IGNORE_FILTER, KEY_IGNORE_FILTER,
 				height);
 
+		Button applyToAll = new Button(parent, SWT.PUSH);
+		applyToAll.setText(LABEL_APPLY_TO_ALL);
+		applyToAll.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				switch (event.type) {
+					case SWT.Selection:
+						applyToAll();
+				}
+			}
+		});
+
 		this.properties.put(measures.getId(), measures);
 		this.properties.put(layerMap.getId(), layerMap);
 		this.properties.put(dbOrIoClasses.getId(), dbOrIoClasses);
@@ -97,6 +118,24 @@ public class Properties extends PropertyPage {
 				property.setText(text);
 			} catch (CoreException | IllegalArgumentException e) {
 				property.setText("");
+			}
+		}
+	}
+
+	protected void applyToAll() {
+		boolean apply = MessageDialog.openConfirm(getShell(), "Apply settings to all projects",
+				"Apply settings to all projects?");
+		if (apply) {
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			for (IProject project : projects) {
+				for (String key : this.properties.keySet()) {
+					try {
+						PropertiesTextField property = this.properties.get(key);
+						project.setPersistentProperty(property.getqName(), property.getText());
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}
@@ -138,7 +177,7 @@ public class Properties extends PropertyPage {
 		super.performDefaults();
 
 		List<String> measureList = new LinkedList<>();
-		measureList.add("autocisq.measure.maintainability.ClassTooManyChildren");
+		measureList.add("autocisq.measure.maintainability.ClassChildren");
 		measureList.add("autocisq.measure.maintainability.ContinueOrBreakOutsideSwitch");
 		measureList.add("autocisq.measure.maintainability.FileLOC");
 		measureList.add("autocisq.measure.maintainability.FileDuplicateTokens");

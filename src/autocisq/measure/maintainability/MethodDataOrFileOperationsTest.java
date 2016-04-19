@@ -16,7 +16,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
-public class MethodTooManyDataOrFileOperationsTest extends MeasureTest {
+public class MethodDataOrFileOperationsTest extends MeasureTest {
 
 	private List<String> dbOrIoClasses;
 	private MethodDeclaration method6DbOrIoCalls;
@@ -41,7 +41,7 @@ public class MethodTooManyDataOrFileOperationsTest extends MeasureTest {
 		dbOrIoClasses.add("com.github.javaparser.JavaParser");
 		this.settings = new HashMap<>();
 		this.settings.put("db_or_io_classes", dbOrIoClasses);
-		this.issueFinder.putMeasure(new MethodTooManyDataOrFileOperations(this.settings));
+		this.issueFinder.putMeasure(new MethodDataOrFileOperations(this.settings));
 
 		File testFile = new File("res/test/MethodsWithDataOrFileOperations.java");
 
@@ -94,7 +94,7 @@ public class MethodTooManyDataOrFileOperationsTest extends MeasureTest {
 
 	@Override
 	public String getIssueType() {
-		return MethodTooManyDataOrFileOperations.ISSUE_TYPE;
+		return MethodDataOrFileOperations.ISSUE_TYPE;
 	}
 
 }

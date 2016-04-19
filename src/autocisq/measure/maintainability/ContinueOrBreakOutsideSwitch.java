@@ -35,7 +35,7 @@ public class ContinueOrBreakOutsideSwitch extends MaintainabilityMeasure {
 		super(settings);
 	}
 
-	public final static String ISSUE_TYPE = "Continue or Break outside switch";
+	public final static String ISSUE_TYPE = "CISQ MM17: Continue or Break outside switch";
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {

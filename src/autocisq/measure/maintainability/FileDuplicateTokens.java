@@ -32,7 +32,7 @@ import autocisq.models.Issue;
 public class FileDuplicateTokens extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 100;
-	public final static String ISSUE_TYPE = "File with >= " + THRESHOLD + " consecutive duplicate tokens";
+	public final static String ISSUE_TYPE = "CISQ MM04: File with >= " + THRESHOLD + " consecutive duplicate tokens";
 
 	private final static String SEPARATORS = ";|,|\\.|\\(|\\)|\\{|\\|\\}|\\[|\\]";
 	private final static String OPERATORS = "~|\\?|:|==|=|<=|>=|>|<|!=|!|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||\\^|%|\\$|\\#";

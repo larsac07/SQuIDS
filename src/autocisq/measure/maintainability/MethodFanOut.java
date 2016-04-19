@@ -41,7 +41,7 @@ import autocisq.models.Issue;
 public class MethodFanOut extends TypeDependentMeasure {
 
 	public final static int THRESHOLD = 10;
-	public final static String ISSUE_TYPE = "Function with fan-out >= " + THRESHOLD;
+	public final static String ISSUE_TYPE = "CISQ MM11: Function with fan-out >= " + THRESHOLD;
 	private final static String MESSAGE = " has a fan-out of ";
 	private Set<Node> markedMemberVariablesAndMethodCalls;
 	private Set<String> fields;

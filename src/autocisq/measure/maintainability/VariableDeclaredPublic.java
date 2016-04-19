@@ -26,7 +26,7 @@ import autocisq.models.Issue;
  */
 public class VariableDeclaredPublic extends MaintainabilityMeasure {
 
-	public final static String ISSUE_TYPE = "Variable declared public";
+	public final static String ISSUE_TYPE = "CISQ MM10: Variable declared public";
 
 	public VariableDeclaredPublic(Map<String, Object> settings) {
 		super(settings);

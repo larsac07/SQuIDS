@@ -24,7 +24,7 @@ import autocisq.models.ProjectIssue;
 public class HorizontalLayers extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 8;
-	public final static String ISSUE_TYPE = "Horizontal Layers > " + THRESHOLD;
+	public final static String ISSUE_TYPE = "CISQ MM03: Horizontal Layers > " + THRESHOLD;
 
 	private Map<String, Integer> layerMap;
 	private List<Issue> issues;

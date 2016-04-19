@@ -27,7 +27,7 @@ import autocisq.models.Issue;
 public class ClassInheritanceLevel extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 7;
-	public final static String ISSUE_TYPE = "Class with inheritance level >= " + THRESHOLD;
+	public final static String ISSUE_TYPE = "CISQ MM06: Class with inheritance level >= " + THRESHOLD;
 
 	public ClassInheritanceLevel(Map<String, Object> settings) {
 		super(settings);

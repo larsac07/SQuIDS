@@ -36,7 +36,7 @@ import autocisq.models.Issue;
  */
 public class CyclicCallBetweenPackages extends TypeDependentMeasure {
 
-	public final static String ISSUE_TYPE = "Cyclic call between packages";
+	public final static String ISSUE_TYPE = "CISQ MM13: Cyclic call between packages";
 
 	// E.g. <"package1", "package2">
 	private Map<String, Set<String>> callMap;

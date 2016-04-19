@@ -30,7 +30,7 @@ import autocisq.models.Issue;
 public class MethodCommentedOutInstructions extends MaintainabilityMeasure {
 
 	public final static double THRESHOLD = 0.02d;
-	public final static String ISSUE_TYPE = "Function with > " + (int) (THRESHOLD * 100)
+	public final static String ISSUE_TYPE = "CISQ MM14: Function with > " + (int) (THRESHOLD * 100)
 			+ "% commented out instructions";
 	private TextOrJavaCode textOrJava;
 

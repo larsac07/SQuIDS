@@ -16,7 +16,7 @@ import autocisq.models.Issue;
 public class MethodParameters extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 7;
-	public final static String ISSUE_TYPE = "Function passing >= " + THRESHOLD + " parameters";
+	public final static String ISSUE_TYPE = "CISQ MM20: Function passing >= " + THRESHOLD + " parameters";
 
 	public MethodParameters(Map<String, Object> settings) {
 		super(settings);

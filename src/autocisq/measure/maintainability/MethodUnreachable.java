@@ -43,7 +43,7 @@ import autocisq.models.Issue;
  */
 public class MethodUnreachable extends TypeDependentMeasure {
 
-	public final static String ISSUE_TYPE = "Unreachable function";
+	public final static String ISSUE_TYPE = "CISQ MM05: Unreachable function";
 
 	private Set<String> referencedFunctions;
 

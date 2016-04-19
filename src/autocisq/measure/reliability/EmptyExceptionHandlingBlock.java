@@ -24,7 +24,7 @@ import autocisq.models.Issue;
  */
 public class EmptyExceptionHandlingBlock extends ReliabilityMeasure {
 
-	public final static String ISSUE_TYPE = "Empty exception handling block";
+	public final static String ISSUE_TYPE = "CISQ RM01: Empty exception handling block";
 
 	public EmptyExceptionHandlingBlock(Map<String, Object> settings) {
 		super(settings);

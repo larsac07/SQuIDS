@@ -16,8 +16,8 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link ClassTooManyChildren} class represents the CISQ Maintainability
- * measure 7: # of classes with >= 10 children.
+ * The {@link ClassChildren} class represents the CISQ Maintainability measure
+ * 7: # of classes with >= 10 children.
  *
  * Classes are considered as {@link ClassOrInterfaceDeclaration}, i.e. both
  * classes and interfaces.
@@ -32,14 +32,14 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class ClassTooManyChildren extends MaintainabilityMeasure {
+public class ClassChildren extends MaintainabilityMeasure {
 
-	public final static String ISSUE_TYPE = "Class with >= 10 children";
+	public final static String ISSUE_TYPE = "CISQ MM07: Class with >= 10 children";
 	public final static int THRESHOLD = 10;
 
 	private final static String MESSAGE = "Found the following subclasses: ";
 
-	public ClassTooManyChildren(Map<String, Object> settings) {
+	public ClassChildren(Map<String, Object> settings) {
 		super(settings);
 	}
 

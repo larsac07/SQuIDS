@@ -22,7 +22,7 @@ import autocisq.models.Issue;
 public class FileLOC extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 1000;
-	public final static String ISSUE_TYPE = "More than " + THRESHOLD + " Lines of Code";
+	public final static String ISSUE_TYPE = "CISQ MM15: More than " + THRESHOLD + " Lines of Code";
 
 	public FileLOC(Map<String, Object> settings) {
 		super(settings);

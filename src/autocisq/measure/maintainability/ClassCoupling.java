@@ -45,7 +45,7 @@ import autocisq.models.Issue;
 public class ClassCoupling extends TypeDependentMeasure {
 
 	public final static int THRESHOLD = 7;
-	public final static String ISSUE_TYPE = "Class with coupling > " + THRESHOLD;
+	public final static String ISSUE_TYPE = "CISQ MM12: Class with coupling > " + THRESHOLD;
 
 	// E.g. <package.uri.Class, 8>
 	private Map<String, Integer> couplingMap;

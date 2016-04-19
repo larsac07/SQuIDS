@@ -37,7 +37,7 @@ public class HardCodedLiteral extends TypeDependentMeasure {
 
 	public final static int MIN_INTEGER_LITERAL = -1;
 	public final static int MAX_INTEGER_LITERAL = 2;
-	public final static String ISSUE_TYPE = "Non-valid, hard coded literal";
+	public final static String ISSUE_TYPE = "CISQ MM21: Non-valid, hard coded literal";
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {

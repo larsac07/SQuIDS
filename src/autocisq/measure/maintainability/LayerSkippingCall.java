@@ -23,7 +23,7 @@ import autocisq.models.Issue;
  */
 public class LayerSkippingCall extends MaintainabilityMeasure {
 
-	public final static String ISSUE_TYPE = "Layer-Skipping Call";
+	public final static String ISSUE_TYPE = "CISQ MM02: Layer-Skipping Call";
 
 	private Map<String, Integer> layerMap;
 

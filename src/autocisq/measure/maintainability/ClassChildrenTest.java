@@ -14,7 +14,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
-public class ClassTooManyChildrenTest extends MeasureTest {
+public class ClassChildrenTest extends MeasureTest {
 
 	private List<String> fileStrings;
 	private List<CompilationUnit> children9;
@@ -27,7 +27,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 	@Before
 	public void setUp() throws Exception {
 		this.issueFinder.getMeasures().clear();
-		this.issueFinder.putMeasure(new ClassTooManyChildren(new HashMap<>()));
+		this.issueFinder.putMeasure(new ClassChildren(new HashMap<>()));
 
 		File superClass = new File("res/test/inheritance/SuperClass.java");
 		File subClass1 = new File("res/test/inheritance/SubClass1.java");
@@ -132,7 +132,7 @@ public class ClassTooManyChildrenTest extends MeasureTest {
 
 	@Override
 	public String getIssueType() {
-		return ClassTooManyChildren.ISSUE_TYPE;
+		return ClassChildren.ISSUE_TYPE;
 	}
 
 }

@@ -38,7 +38,7 @@ import autocisq.models.Issue;
 public class MethodCyclomaticComplexity extends MaintainabilityMeasure {
 
 	public final static int THRESHOLD = 10;
-	public final static String ISSUE_TYPE = "Function with Cyclomatic Complexity >= " + THRESHOLD;
+	public final static String ISSUE_TYPE = "CISQ MM18: Function with Cyclomatic Complexity >= " + THRESHOLD;
 
 	private Node methodOrConstructor;
 	private Set<Node> blamedMethodsAndConstructors;
