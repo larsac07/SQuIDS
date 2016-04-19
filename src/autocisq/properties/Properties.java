@@ -1,5 +1,6 @@
 package autocisq.properties;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,7 +44,11 @@ public class Properties extends PropertyPage {
 
 	private static final int TEXT_AREA_HEIGHT = 5;
 
+	private static final String NL = System.lineSeparator();
+
 	private Map<String, PropertiesField> properties;
+	private List<String> measures;
+	private List<String> dbOrIoClasses;
 
 	/**
 	 * Constructor for SamplePropertyPage.
@@ -51,6 +56,7 @@ public class Properties extends PropertyPage {
 	public Properties() {
 		super();
 		this.properties = new LinkedHashMap<>();
+		createDefaults();
 	}
 
 	private void addHeaderSection(Composite parent) {
@@ -79,7 +85,8 @@ public class Properties extends PropertyPage {
 		int height = convertHeightInCharsToPixels(TEXT_AREA_HEIGHT);
 
 		// Measures properties
-		PropertiesField measures = new PropertiesChecklistField(composite, LABEL_MEASURES, KEY_MEASURES, 500);
+		PropertiesField measures = new PropertiesChecklistField(composite, LABEL_MEASURES, KEY_MEASURES, height,
+				this.measures);
 
 		// LayerMap properties
 		PropertiesField layerMap = new PropertiesTextField(composite, LABEL_LAYER_MAP, KEY_LAYER_MAP, height);
@@ -92,7 +99,7 @@ public class Properties extends PropertyPage {
 		PropertiesField ignoreFilter = new PropertiesTextField(composite, LABEL_IGNORE_FILTER, KEY_IGNORE_FILTER,
 				height);
 
-		Button applyToAll = new Button(parent, SWT.PUSH);
+		Button applyToAll = new Button(composite, SWT.PUSH);
 		applyToAll.setText(LABEL_APPLY_TO_ALL);
 		applyToAll.addListener(SWT.Selection, new Listener() {
 
@@ -115,9 +122,9 @@ public class Properties extends PropertyPage {
 			PropertiesField property = this.properties.get(key);
 			try {
 				String text = ((IResource) getElement()).getPersistentProperty(property.getqName());
-				property.setText(text);
+				property.setValues(Arrays.asList(text.split(NL)));
 			} catch (CoreException | IllegalArgumentException e) {
-				property.setText("");
+				property.setValues(new LinkedList<>());
 			}
 		}
 	}
@@ -158,49 +165,10 @@ public class Properties extends PropertyPage {
 	protected void performDefaults() {
 		super.performDefaults();
 
-		List<String> measureList = new LinkedList<>();
-		measureList.add("autocisq.measure.maintainability.CISQMM04FileDuplicateTokens");
-		measureList.add("autocisq.measure.maintainability.CISQMM05MethodUnreachable");
-		measureList.add("autocisq.measure.maintainability.CISQMM06ClassInheritanceLevel");
-		measureList.add("autocisq.measure.maintainability.CISQMM07ClassChildren");
-		measureList.add("autocisq.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClass");
-		measureList.add("autocisq.measure.maintainability.CISQMM10VariableDeclaredPublic");
-		measureList.add("autocisq.measure.maintainability.CISQMM11MethodFanOut");
-		measureList.add("autocisq.measure.maintainability.CISQMM12ClassCoupling");
-		measureList.add("autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackages");
-		measureList.add("autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructions");
-		measureList.add("autocisq.measure.maintainability.CISQMM15FileLOC");
-		measureList.add("autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop");
-		measureList.add("autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch");
-		measureList.add("autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity");
-		measureList.add("autocisq.measure.maintainability.CISQMM20MethodParameters");
-		measureList.add("autocisq.measure.maintainability.CISQMM21HardCodedLiteral");
-
-		List<String> dbOrIoClassList = new LinkedList<>();
-		dbOrIoClassList.add("java.io.File");
-		dbOrIoClassList.add("java.nio.file.Files");
-		dbOrIoClassList.add("java.sql.Connection");
-		dbOrIoClassList.add("java.sql.DriverManager");
-		dbOrIoClassList.add("java.sql.PreparedStatement");
-		dbOrIoClassList.add("java.sql.Statement");
-		dbOrIoClassList.add("com.github.javaparser.JavaParser");
-
-		String nl = System.lineSeparator();
-
-		String measures = "";
-		for (String measure : measureList) {
-			measures += measure + nl;
-		}
-
-		String dbOrIoClasses = "";
-		for (String dbOrIoClass : dbOrIoClassList) {
-			dbOrIoClasses += dbOrIoClass + nl;
-		}
-
-		this.properties.get(KEY_MEASURES).setText(measures);
-		this.properties.get(KEY_LAYER_MAP).setText("");
-		this.properties.get(KEY_DB_OR_IO_CLASSES).setText(dbOrIoClasses);
-		this.properties.get(KEY_IGNORE_FILTER).setText("");
+		this.properties.get(KEY_MEASURES).setValues(this.measures);
+		this.properties.get(KEY_LAYER_MAP).setValues(new LinkedList<>());
+		this.properties.get(KEY_DB_OR_IO_CLASSES).setValues(this.dbOrIoClasses);
+		this.properties.get(KEY_IGNORE_FILTER).setValues(new LinkedList<>());
 	}
 
 	@Override
@@ -226,11 +194,41 @@ public class Properties extends PropertyPage {
 		for (String key : this.properties.keySet()) {
 			try {
 				PropertiesField property = this.properties.get(key);
-				resource.setPersistentProperty(property.getqName(), property.getText());
+				String propertyValue = String.join(NL, property.getValues());
+				resource.setPersistentProperty(property.getqName(), propertyValue);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void createDefaults() {
+		this.measures = new LinkedList<>();
+		this.measures.add("autocisq.measure.maintainability.CISQMM04FileDuplicateTokens");
+		this.measures.add("autocisq.measure.maintainability.CISQMM05MethodUnreachable");
+		this.measures.add("autocisq.measure.maintainability.CISQMM06ClassInheritanceLevel");
+		this.measures.add("autocisq.measure.maintainability.CISQMM07ClassChildren");
+		this.measures.add("autocisq.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClass");
+		this.measures.add("autocisq.measure.maintainability.CISQMM10VariableDeclaredPublic");
+		this.measures.add("autocisq.measure.maintainability.CISQMM11MethodFanOut");
+		this.measures.add("autocisq.measure.maintainability.CISQMM12ClassCoupling");
+		this.measures.add("autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackages");
+		this.measures.add("autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructions");
+		this.measures.add("autocisq.measure.maintainability.CISQMM15FileLOC");
+		this.measures.add("autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop");
+		this.measures.add("autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch");
+		this.measures.add("autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity");
+		this.measures.add("autocisq.measure.maintainability.CISQMM20MethodParameters");
+		this.measures.add("autocisq.measure.maintainability.CISQMM21HardCodedLiteral");
+
+		this.dbOrIoClasses = new LinkedList<>();
+		this.dbOrIoClasses.add("java.io.File");
+		this.dbOrIoClasses.add("java.nio.file.Files");
+		this.dbOrIoClasses.add("java.sql.Connection");
+		this.dbOrIoClasses.add("java.sql.DriverManager");
+		this.dbOrIoClasses.add("java.sql.PreparedStatement");
+		this.dbOrIoClasses.add("java.sql.Statement");
+		this.dbOrIoClasses.add("com.github.javaparser.JavaParser");
 	}
 
 }

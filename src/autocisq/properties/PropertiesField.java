@@ -1,5 +1,7 @@
 package autocisq.properties;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -43,8 +45,8 @@ public abstract class PropertiesField {
 		this.id = id;
 	}
 
-	public abstract void setText(String text);
+	public abstract void setValues(List<String> values);
 
-	public abstract String getText();
+	public abstract List<String> getValues();
 
 }

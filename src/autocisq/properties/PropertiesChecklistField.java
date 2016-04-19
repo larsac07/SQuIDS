@@ -1,5 +1,8 @@
 package autocisq.properties;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
@@ -9,10 +12,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 
 public class PropertiesChecklistField extends PropertiesField {
-	private final static String NL = System.lineSeparator();
 	private Group checklist;
 
-	public PropertiesChecklistField(Composite parent, String label, String id, int height) {
+	public PropertiesChecklistField(Composite parent, String label, String id, int height, List<String> checkboxes) {
 		super(parent, label, id);
 		this.checklist = new Group(parent, SWT.SHADOW_IN);
 		this.checklist.setLayout(new RowLayout(SWT.VERTICAL));
@@ -22,24 +24,29 @@ public class PropertiesChecklistField extends PropertiesField {
 	}
 
 	@Override
-	public String getText() {
-		String text = "";
-		Control[] controls = this.checklist.getChildren();
-		System.out.println(controls.length);
-		for (int i = 1; i < controls.length; i++) {
-			Control control = controls[i];
+	public List<String> getValues() {
+		List<String> selected = new LinkedList<>();
+		for (Control control : this.checklist.getChildren()) {
 			if (control instanceof Button) {
-				text += ((Button) control).getText();
+				Button checkbox = (Button) control;
+				if (checkbox.getSelection())
+					selected.add(((Button) control).getText());
 			}
 		}
-		return text;
+		return selected;
 	}
 
 	@Override
-	public void setText(String text) {
-		String[] lines = text.split(NL);
-		for (String line : lines) {
-			new Button(this.checklist, SWT.CHECK).setText(line);
+	public void setValues(List<String> values) {
+		for (String value : values) {
+			for (Control control : this.checklist.getChildren()) {
+				if (control instanceof Button) {
+					Button checkbox = (Button) control;
+					if (checkbox.getText().equals(value)) {
+						checkbox.setSelection(true);
+					}
+				}
+			}
 		}
 	}
 

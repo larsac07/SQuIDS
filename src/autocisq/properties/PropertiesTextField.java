@@ -1,11 +1,15 @@
 package autocisq.properties;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 public class PropertiesTextField extends PropertiesField {
+	private final static String NL = System.lineSeparator();
 	private Text text;
 
 	public PropertiesTextField(Composite parent, String label, String id, int height) {
@@ -17,13 +21,13 @@ public class PropertiesTextField extends PropertiesField {
 	}
 
 	@Override
-	public String getText() {
-		return this.text.getText();
+	public List<String> getValues() {
+		return Arrays.asList(this.text.getText().split(NL));
 	}
 
 	@Override
-	public void setText(String text) {
-		this.text.setText(text);
+	public void setValues(List<String> values) {
+		this.text.setText(String.join(NL, values));
 	}
 
 }
