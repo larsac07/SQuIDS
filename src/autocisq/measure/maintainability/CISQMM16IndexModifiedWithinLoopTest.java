@@ -30,7 +30,7 @@ public class CISQMM16IndexModifiedWithinLoopTest extends MeasureTest {
 		this.issueFinder.getMeasures().clear();
 		this.issueFinder.putMeasure(new CISQMM16IndexModifiedWithinLoop(new HashMap<>()));
 
-		File testFile = new File("res/test/CISQMM16IndexModifiedWithinLoop.java");
+		File testFile = new File("res/test/IndexModifiedWithinLoop.java");
 
 		this.fileString = IOUtils.fileToString(testFile);
 		this.testCU = JavaParser.parse(testFile);
