@@ -11,8 +11,8 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The CISQMM15FileLOC class represents the CISQ Maintainability Measure 15: # files >
- * 1000 LOC.
+ * The CISQMM15FileLOC class represents the CISQ Maintainability Measure 15: #
+ * files > 1000 LOC.
  *
  * It counts all lines, except empty lines, directly from the source file.
  *
@@ -32,18 +32,27 @@ public class CISQMM15FileLOC extends CISQMMMaintainabilityMeasure {
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof CompilationUnit) {
-			String[] lines = fileString.split("\r?\n|\r");
-			int length = 0;
-			for (String line : lines) {
-				if (!line.isEmpty()) {
-					length++;
-				}
-			}
-			if (length > THRESHOLD) {
+			int ploc = calculatePhysicalLOC(node);
+			if (ploc > THRESHOLD) {
 				issues.add(new FileIssue(this, node, fileString));
 			}
 		}
 		return issues;
+	}
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public static int calculatePhysicalLOC(Node node) {
+		String[] lines = node.toStringWithoutComments().split("\r?\n|\r");
+		int length = 0;
+		for (String line : lines) {
+			if (!line.isEmpty()) {
+				length++;
+			}
+		}
+		return length;
 	}
 
 	@Override
