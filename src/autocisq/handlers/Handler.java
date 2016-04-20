@@ -129,7 +129,7 @@ public class Handler extends AbstractHandler {
 							String fileAnalysis = "Analyzing file " + fileIndex + "/" + filesTot + ": "
 									+ file.getPath();
 							monitor.subTask(fileAnalysis);
-							Logger.log(fileAnalysis);
+							// Logger.log(fileAnalysis);
 
 							analyzeSourceFile(project, iFileMap, qcj, issueFinder, file);
 
@@ -287,11 +287,11 @@ public class Handler extends AbstractHandler {
 	 * @param issueFinder
 	 */
 	private void logMeasureTimes(String projectName, IssueFinder issueFinder) {
-		Logger.log(projectName + " measure times: ");
+		Logger.log(projectName + " measure times (ms): ");
 		Map<Measure, Long> measureTimes = issueFinder.getMeasureTimes();
 		for (Measure measure : measureTimes.keySet()) {
 			Long measureTime = measureTimes.get(measure);
-			Logger.log("- " + measureTime + " milliseconds: " + measure.getClass().getSimpleName());
+			Logger.log(measure.getClass().getSimpleName() + "\t" + measureTime);
 		}
 	}
 

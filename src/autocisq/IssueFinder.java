@@ -21,13 +21,15 @@ import autocisq.models.Issue;
 public class IssueFinder {
 
 	private List<CompilationUnit> compilationUnits;
+	private Map<File, CompilationUnit> fileCompilationUnitMap;
 	private Map<String, Measure> measures;
 	private Map<Measure, Long> measureTimes;
 
 	public IssueFinder() {
+		this.compilationUnits = new LinkedList<>();
+		this.fileCompilationUnitMap = new LinkedHashMap<>();
 		this.measures = new LinkedHashMap<>();
 		this.measureTimes = new LinkedHashMap<>();
-		this.compilationUnits = new LinkedList<>();
 	}
 
 	public IssueFinder(List<File> files, Map<String, Object> settings) {
@@ -37,7 +39,7 @@ public class IssueFinder {
 	}
 
 	public List<Issue> findIssues(File file) {
-		CompilationUnit compilationUnit = createCompilationUnit(file);
+		CompilationUnit compilationUnit = this.fileCompilationUnitMap.get(file);
 		String fileString = IOUtils.fileToString(file);
 
 		List<Issue> issues = analyzeNode(compilationUnit, null, fileString);
@@ -77,7 +79,9 @@ public class IssueFinder {
 
 	private void createCompilationUnits(List<File> files) {
 		for (File file : files) {
-			this.compilationUnits.add(createCompilationUnit(file));
+			CompilationUnit cu = createCompilationUnit(file);
+			this.fileCompilationUnitMap.put(file, cu);
+			this.compilationUnits.add(cu);
 		}
 	}
 
@@ -169,5 +173,13 @@ public class IssueFinder {
 
 	public Map<Measure, Long> getMeasureTimes() {
 		return this.measureTimes;
+	}
+
+	public Map<File, CompilationUnit> getFileCompilationUnitMap() {
+		return this.fileCompilationUnitMap;
+	}
+
+	public void setFileCompilationUnitMap(Map<File, CompilationUnit> fileCompilationUnitMap) {
+		this.fileCompilationUnitMap = fileCompilationUnitMap;
 	}
 }
