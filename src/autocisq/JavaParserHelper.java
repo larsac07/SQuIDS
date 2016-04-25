@@ -64,6 +64,38 @@ public abstract class JavaParserHelper {
 	}
 
 	/**
+	 * Find a Node's ancestors of a specified class
+	 *
+	 * @param node
+	 *            - the node of reference
+	 * @param ancestorClass
+	 *            - the class of the ancestor you wish to find
+	 * @return all ancestors found of the specified class in order
+	 * @throws NoSuchAncestorFoundException
+	 */
+
+	@SafeVarargs
+	public static List<Node> findNodeAncestorsOfType(Node node, List<Node> ancestors,
+			Class<? extends Node>... ancestorClasses) throws NoSuchAncestorFoundException {
+		if (ancestors == null) {
+			ancestors = new LinkedList<>();
+		}
+		if (node == null && !ancestors.isEmpty()) {
+			return ancestors;
+		} else if (node == null && ancestors.isEmpty()) {
+			throw new NoSuchAncestorFoundException();
+		} else {
+
+			for (Class<? extends Node> ancestorClass : ancestorClasses) {
+				if (node.getClass().equals(ancestorClass)) {
+					ancestors.add(node);
+				}
+			}
+		}
+		return findNodeAncestorsOfType(node.getParentNode(), ancestors, ancestorClasses);
+	}
+
+	/**
 	 * Find a Node's ancestor of a specified class
 	 *
 	 * @param node
