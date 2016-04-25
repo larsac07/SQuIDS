@@ -4,35 +4,36 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import autocisq.measure.maintainability.CISQMM12ClassCouplingTest;
+import autocisq.measure.maintainability.CISQMM02LayerSkippingCallTest;
+import autocisq.measure.maintainability.CISQMM03HorizontalLayersTest;
+import autocisq.measure.maintainability.CISQMM04FileDuplicateTokensTest;
+import autocisq.measure.maintainability.CISQMM05MethodUnreachableTest;
 import autocisq.measure.maintainability.CISQMM06ClassInheritanceLevelTest;
 import autocisq.measure.maintainability.CISQMM07ClassChildrenTest;
-import autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitchTest;
-import autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackagesTest;
-import autocisq.measure.maintainability.CISQMM04FileDuplicateTokensTest;
-import autocisq.measure.maintainability.CISQMM15FileLOCTest;
-import autocisq.measure.maintainability.CISQMM21HardCodedLiteralTest;
-import autocisq.measure.maintainability.CISQMM03HorizontalLayersTest;
-import autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoopTest;
-import autocisq.measure.maintainability.CISQMM02LayerSkippingCallTest;
-import autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructionsTest;
-import autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexityTest;
 import autocisq.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClassTest;
-import autocisq.measure.maintainability.CISQMM11MethodFanOutTest;
-import autocisq.measure.maintainability.CISQMM20MethodParametersTest;
-import autocisq.measure.maintainability.CISQMM19MethodDataOrFileOperationsTest;
-import autocisq.measure.maintainability.CISQMM05MethodUnreachableTest;
 import autocisq.measure.maintainability.CISQMM10VariableDeclaredPublicTest;
-import autocisq.measure.reliability.CISQRM01EmptyExceptionHandlingBlockTest;
+import autocisq.measure.maintainability.CISQMM11MethodFanOutTest;
+import autocisq.measure.maintainability.CISQMM12ClassCouplingTest;
+import autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackagesTest;
+import autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructionsTest;
+import autocisq.measure.maintainability.CISQMM15FileLOCTest;
+import autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoopTest;
+import autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitchTest;
+import autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexityTest;
+import autocisq.measure.maintainability.CISQMM19MethodDataOrFileOperationsTest;
+import autocisq.measure.maintainability.CISQMM20MethodParametersTest;
+import autocisq.measure.maintainability.CISQMM21HardCodedLiteralTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ CISQRM01EmptyExceptionHandlingBlockTest.class, CISQMM03HorizontalLayersTest.class, CISQMM02LayerSkippingCallTest.class,
-		CISQMM15FileLOCTest.class, CISQMM20MethodParametersTest.class, CISQMM10VariableDeclaredPublicTest.class, CISQMM11MethodFanOutTest.class,
-		CISQMM09MethodDirectlyUsingFieldFromOtherClassTest.class, CISQMM14MethodCommentedOutInstructionsTest.class,
-		CISQMM17ContinueOrBreakOutsideSwitchTest.class, CISQMM21HardCodedLiteralTest.class, CISQMM07ClassChildrenTest.class,
-		CISQMM19MethodDataOrFileOperationsTest.class, CISQMM04FileDuplicateTokensTest.class,
-		CISQMM18MethodCyclomaticComplexityTest.class, CISQMM05MethodUnreachableTest.class, CISQMM06ClassInheritanceLevelTest.class,
-		CISQMM12ClassCouplingTest.class, CISQMM13CyclicCallBetweenPackagesTest.class, CISQMM16IndexModifiedWithinLoopTest.class })
+@SuiteClasses({ CISQMM02LayerSkippingCallTest.class, CISQMM03HorizontalLayersTest.class,
+		CISQMM04FileDuplicateTokensTest.class, CISQMM05MethodUnreachableTest.class,
+		CISQMM06ClassInheritanceLevelTest.class, CISQMM07ClassChildrenTest.class,
+		CISQMM09MethodDirectlyUsingFieldFromOtherClassTest.class, CISQMM10VariableDeclaredPublicTest.class,
+		CISQMM11MethodFanOutTest.class, CISQMM12ClassCouplingTest.class, CISQMM13CyclicCallBetweenPackagesTest.class,
+		CISQMM14MethodCommentedOutInstructionsTest.class, CISQMM15FileLOCTest.class,
+		CISQMM16IndexModifiedWithinLoopTest.class, CISQMM17ContinueOrBreakOutsideSwitchTest.class,
+		CISQMM18MethodCyclomaticComplexityTest.class, CISQMM19MethodDataOrFileOperationsTest.class,
+		CISQMM20MethodParametersTest.class, CISQMM21HardCodedLiteralTest.class })
 
 public class AllMeasuresTests {
 
