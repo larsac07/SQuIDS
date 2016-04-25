@@ -111,9 +111,12 @@ public class IssueFinder {
 			issues = new LinkedList<>();
 		}
 		for (Measure measure : this.measures.values()) {
-			long startTime = System.currentTimeMillis();
 			try {
+				long startTime = System.currentTimeMillis();
 				List<Issue> measureIssues = measure.analyzeNode(rootNode, fileString, this.compilationUnits);
+				long stopTime = System.currentTimeMillis();
+				long elapsedTime = stopTime - startTime;
+				addTimeToMeasure(measure, elapsedTime);
 				if (measureIssues != null) {
 					issues.addAll(measureIssues);
 				}
@@ -122,9 +125,6 @@ public class IssueFinder {
 						+ " measure. See details below:");
 				e.printStackTrace();
 			}
-			long stopTime = System.currentTimeMillis();
-			long elapsedTime = stopTime - startTime;
-			addTimeToMeasure(measure, elapsedTime);
 		}
 
 		// Recursive call for each child node
