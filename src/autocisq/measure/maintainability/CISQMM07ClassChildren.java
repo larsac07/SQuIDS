@@ -5,19 +5,23 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.NamedNode;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
+import autocisq.JavaParserHelper;
+import autocisq.NoSuchAncestorFoundException;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link CISQMM07ClassChildren} class represents the CISQ Maintainability measure
- * 7: # of classes with >= 10 children.
+ * The {@link CISQMM07ClassChildren} class represents the CISQ Maintainability
+ * measure 7: # of classes with >= 10 children.
  *
  * Classes are considered as {@link ClassOrInterfaceDeclaration}, i.e. both
  * classes and interfaces.
@@ -47,34 +51,25 @@ public class CISQMM07ClassChildren extends CISQMMMaintainabilityMeasure {
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof ClassOrInterfaceDeclaration) {
 			ClassOrInterfaceDeclaration classDeclaration = (ClassOrInterfaceDeclaration) node;
-			List<String> subClasses = getSubClasses(classDeclaration, compilationUnits);
-			if (subClasses.size() >= THRESHOLD) {
-				List<Issue> issues = new LinkedList<>();
-				String message = MESSAGE + subClasses.toString();
-				issues.add(new FileIssue(this, classDeclaration.getNameExpr(), fileString, message));
-				return issues;
+			if (!classDeclaration.isInterface()) {
+				List<String> subClasses = getSubClasses(classDeclaration, compilationUnits);
+				if (subClasses.size() >= THRESHOLD) {
+					List<Issue> issues = new LinkedList<>();
+					String message = MESSAGE + subClasses.toString();
+					issues.add(new FileIssue(this, classDeclaration.getNameExpr(), fileString, message));
+					return issues;
+				}
 			}
 		}
 		return null;
 	}
 
-	private List<String> getSubClasses(ClassOrInterfaceDeclaration superClass,
+	public List<String> getSubClasses(ClassOrInterfaceDeclaration superClass,
 			List<CompilationUnit> projectCompilationUnits) {
 		List<String> subClasses = new LinkedList<>();
 		for (CompilationUnit cu : projectCompilationUnits) {
-			List<ClassOrInterfaceDeclaration> namedClasses = getNamedClasses(cu);
-			for (ClassOrInterfaceDeclaration subClassCandidate : namedClasses) {
-				List<ClassOrInterfaceType> anonymousClasses = getAnonymousClasses(subClassCandidate, null);
-				List<ClassOrInterfaceType> allClasses = new LinkedList<>();
-				allClasses.addAll(anonymousClasses);
-				allClasses.addAll(subClassCandidate.getExtends());
-				for (ClassOrInterfaceType extendedClass : allClasses) {
-					if (extendedClass.getName().equals(superClass.getName())) {
-						String classID = createClassID(cu, subClassCandidate);
-						subClasses.add(classID);
-					}
-				}
-			}
+			List<String> subClassesInCU = getAllExtendingClasses(cu, superClass, cu, null);
+			subClasses.addAll(subClassesInCU);
 		}
 		return subClasses;
 	}
@@ -85,42 +80,72 @@ public class CISQMM07ClassChildren extends CISQMMMaintainabilityMeasure {
 	 * @return
 	 */
 	private String createClassID(CompilationUnit cu, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
+		String classID = createPackageName(cu) + getMemberPath(classOrInterfaceDeclaration.getParentNode())
+				+ classOrInterfaceDeclaration.getName();
+		return classID;
+	}
+
+	private String createClassID(CompilationUnit cu, ObjectCreationExpr objectCreationExpr) {
+		String classID = createPackageName(cu) + getMemberPath(objectCreationExpr) + "AnonymousInnerClass";
+		return classID;
+	}
+
+	private String getMemberPath(Node node) {
+		String memberPath = "";
+		try {
+			List<Node> typeAncestors = JavaParserHelper.findNodeAncestorsOfType(node, null,
+					ClassOrInterfaceDeclaration.class, MethodDeclaration.class, ConstructorDeclaration.class);
+			// Traverse backwards
+			for (int i = typeAncestors.size() - 1; i >= 0; i--) {
+				Node nodeAncestor = typeAncestors.get(i);
+				if (nodeAncestor instanceof NamedNode) {
+					NamedNode typeAncestor = (NamedNode) nodeAncestor;
+					memberPath += typeAncestor.getName() + ".";
+				}
+			}
+			return memberPath;
+		} catch (NoSuchAncestorFoundException e) {
+			return memberPath;
+		}
+	}
+
+	private String createPackageName(CompilationUnit cu) {
 		PackageDeclaration packageDeclaration = cu.getPackage();
 		String packageName = "";
 		if (packageDeclaration != null) {
 			packageName = packageDeclaration.getName() + ".";
 		}
-		String classID = packageName + classOrInterfaceDeclaration.getName();
-		return classID;
+		return packageName;
 	}
 
-	private List<ClassOrInterfaceDeclaration> getNamedClasses(CompilationUnit cu) {
-		List<ClassOrInterfaceDeclaration> namedClasses = new LinkedList<>();
-		for (TypeDeclaration typeDeclaration : cu.getTypes()) {
-			if (typeDeclaration instanceof ClassOrInterfaceDeclaration) {
-				ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) typeDeclaration;
-				namedClasses.add(classOrInterfaceDeclaration);
-			}
-		}
-		return namedClasses;
-	}
-
-	private List<ClassOrInterfaceType> getAnonymousClasses(Node rootNode, List<ClassOrInterfaceType> anonymousClasses) {
-		if (anonymousClasses == null) {
-			anonymousClasses = new LinkedList<>();
+	private List<String> getAllExtendingClasses(CompilationUnit cu, ClassOrInterfaceDeclaration superClass,
+			Node rootNode, List<String> innerClasses) {
+		if (innerClasses == null) {
+			innerClasses = new LinkedList<>();
 		}
 
 		if (rootNode instanceof ObjectCreationExpr) {
 			ObjectCreationExpr objectCreationExpr = (ObjectCreationExpr) rootNode;
 			if (objectCreationExpr.getAnonymousClassBody() != null) {
-				anonymousClasses.add(objectCreationExpr.getType());
+				if (objectCreationExpr.getType().getName().equals(superClass.getName())) {
+					String classID = createClassID(cu, objectCreationExpr);
+					innerClasses.add(classID);
+				}
+			}
+		} else if (rootNode instanceof ClassOrInterfaceDeclaration) {
+			ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) rootNode;
+			for (ClassOrInterfaceType type : classOrInterfaceDeclaration.getExtends()) {
+				if (type.getName().equals(superClass.getName())) {
+					String classID = createClassID(cu, classOrInterfaceDeclaration);
+					innerClasses.add(classID);
+				}
 			}
 		}
 
 		for (Node childNode : rootNode.getChildrenNodes()) {
-			getAnonymousClasses(childNode, anonymousClasses);
+			getAllExtendingClasses(cu, superClass, childNode, innerClasses);
 		}
-		return anonymousClasses;
+		return innerClasses;
 	}
 
 	@Override

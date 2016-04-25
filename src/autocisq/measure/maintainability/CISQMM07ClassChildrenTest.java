@@ -1,5 +1,7 @@
 package autocisq.measure.maintainability;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import org.junit.Test;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
@@ -21,6 +24,10 @@ public class CISQMM07ClassChildrenTest extends MeasureTest {
 	private List<CompilationUnit> children10;
 	private List<CompilationUnit> children11;
 	private List<CompilationUnit> children9WithOtherClass;
+	private CompilationUnit innerClassesCU;
+	private String fileStringInnerClasses;
+	private ClassOrInterfaceDeclaration innerClassesClass;
+	private ClassOrInterfaceDeclaration innerClassesInnerClass;
 	private CompilationUnit superClassCU;
 	private String fileStringSuperClass;
 
@@ -42,6 +49,7 @@ public class CISQMM07ClassChildrenTest extends MeasureTest {
 		File subClass10 = new File("res/test/inheritance/SubClass10.java");
 		File subClass11 = new File("res/test/inheritance/SubClass11.java");
 		File subClassOther = new File("res/test/inheritance/SubClassOther.java");
+		File innerClasses = new File("res/test/inheritance/InnerClasses.java");
 
 		this.fileStringSuperClass = IOUtils.fileToString(superClass);
 		String fileStringSubClass1 = IOUtils.fileToString(subClass1);
@@ -56,6 +64,7 @@ public class CISQMM07ClassChildrenTest extends MeasureTest {
 		String fileStringSubClass10 = IOUtils.fileToString(subClass10);
 		String fileStringSubClass11 = IOUtils.fileToString(subClass11);
 		String fileStringSubClassOther = IOUtils.fileToString(subClassOther);
+		this.fileStringInnerClasses = IOUtils.fileToString(innerClasses);
 
 		this.fileStrings = new ArrayList<>();
 		this.fileStrings.add(this.fileStringSuperClass);
@@ -85,6 +94,9 @@ public class CISQMM07ClassChildrenTest extends MeasureTest {
 		CompilationUnit subClass10CU = JavaParser.parse(subClass10);
 		CompilationUnit subClass11CU = JavaParser.parse(subClass11);
 		CompilationUnit subClassOtherCU = JavaParser.parse(subClassOther);
+		this.innerClassesCU = JavaParser.parse(innerClasses);
+		this.innerClassesClass = (ClassOrInterfaceDeclaration) this.innerClassesCU.getTypes().get(0);
+		this.innerClassesInnerClass = (ClassOrInterfaceDeclaration) this.innerClassesClass.getMembers().get(1);
 
 		this.children9 = new ArrayList<>();
 		this.children9.add(this.superClassCU);
@@ -128,6 +140,30 @@ public class CISQMM07ClassChildrenTest extends MeasureTest {
 	public void find11Children() {
 		this.issueFinder.setCompilationUnits(this.children11);
 		findIssue(this.superClassCU, this.fileStringSuperClass);
+	}
+
+	@Test
+	public void findNamedInnerClasses() {
+		this.children9.add(this.innerClassesCU);
+		List<String> innerClasses = new CISQMM07ClassChildren(new HashMap<>()).getSubClasses(this.innerClassesClass,
+				this.children9);
+		int expected = 10;
+		int actual = innerClasses.size();
+		assertEquals(expected, actual);
+		this.issueFinder.setCompilationUnits(this.children9);
+		findIssue(this.innerClassesCU, this.fileStringInnerClasses);
+	}
+
+	@Test
+	public void findAnonInnerClasses() {
+		this.children9.add(this.innerClassesCU);
+		List<String> innerClasses = new CISQMM07ClassChildren(new HashMap<>())
+				.getSubClasses(this.innerClassesInnerClass, this.children9);
+		int expected = 10;
+		int actual = innerClasses.size();
+		assertEquals(expected, actual);
+		this.issueFinder.setCompilationUnits(this.children9);
+		findIssue(this.innerClassesCU, this.fileStringInnerClasses);
 	}
 
 	@Override
