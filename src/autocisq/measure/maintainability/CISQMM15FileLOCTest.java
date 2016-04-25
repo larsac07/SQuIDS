@@ -1,5 +1,7 @@
 package autocisq.measure.maintainability;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.HashMap;
 
@@ -13,10 +15,10 @@ import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
 
 public class CISQMM15FileLOCTest extends MeasureTest {
-	private CompilationUnit cu1517;
+	private CompilationUnit cu1512;
 	private CompilationUnit cu1001;
 	private CompilationUnit cu1000;
-	private String fileString1517;
+	private String fileString1512;
 	private String fileString1001;
 	private String fileString1000;
 
@@ -25,15 +27,15 @@ public class CISQMM15FileLOCTest extends MeasureTest {
 		this.issueFinder.getMeasures().clear();
 		this.issueFinder.putMeasure(new CISQMM15FileLOC(new HashMap<>()));
 
-		File testFile1517 = new File("res/test/DumpVisitor.java");
+		File testFile1512 = new File("res/test/DumpVisitor.java");
 		File testFile1001 = new File("res/test/DumpVisitor1001.java");
 		File testFile1000 = new File("res/test/DumpVisitor1000.java");
 
-		this.fileString1517 = IOUtils.fileToString(testFile1517);
+		this.fileString1512 = IOUtils.fileToString(testFile1512);
 		this.fileString1001 = IOUtils.fileToString(testFile1001);
 		this.fileString1000 = IOUtils.fileToString(testFile1000);
 
-		this.cu1517 = JavaParser.parse(testFile1517);
+		this.cu1512 = JavaParser.parse(testFile1512);
 		this.cu1001 = JavaParser.parse(testFile1001);
 		this.cu1000 = JavaParser.parse(testFile1000);
 	}
@@ -49,8 +51,29 @@ public class CISQMM15FileLOCTest extends MeasureTest {
 	}
 
 	@Test
-	public void findFileWith1517Lines() {
-		findIssue(this.cu1517, this.fileString1517);
+	public void findFileWith1512Lines() {
+		findIssue(this.cu1512, this.fileString1512);
+	}
+
+	@Test
+	public void findExactly1000() {
+		int expected = 1000;
+		int actual = CISQMM15FileLOC.calculatePhysicalLOC(this.fileString1000);
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void findExactly1001() {
+		int expected = 1001;
+		int actual = CISQMM15FileLOC.calculatePhysicalLOC(this.fileString1001);
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void findExactly1512() {
+		int expected = 1512;
+		int actual = CISQMM15FileLOC.calculatePhysicalLOC(this.fileString1512);
+		assertEquals(expected, actual);
 	}
 
 	@Override

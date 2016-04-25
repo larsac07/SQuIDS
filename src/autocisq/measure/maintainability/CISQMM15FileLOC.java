@@ -23,6 +23,7 @@ public class CISQMM15FileLOC extends CISQMMMaintainabilityMeasure {
 
 	public final static int THRESHOLD = 1000;
 	public final static String ISSUE_TYPE = "CISQ MM15: More than " + THRESHOLD + " Lines of Code";
+	private final static String COMMENTS = "^\\s*//" + "|" + "([^\"]/\\*\\*(?s:(?!\\*/).)*\\*/[^\"])";
 
 	public CISQMM15FileLOC(Map<String, Object> settings) {
 		super(settings);
@@ -32,7 +33,8 @@ public class CISQMM15FileLOC extends CISQMMMaintainabilityMeasure {
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof CompilationUnit) {
-			int ploc = calculatePhysicalLOC(node);
+			int ploc = calculatePhysicalLOC(fileString);
+			System.out.println(((CompilationUnit) node).getTypes().get(0).getName() + ": " + ploc);
 			if (ploc > THRESHOLD) {
 				issues.add(new FileIssue(this, node, fileString));
 			}
@@ -44,8 +46,9 @@ public class CISQMM15FileLOC extends CISQMMMaintainabilityMeasure {
 	 * @param node
 	 * @return
 	 */
-	public static int calculatePhysicalLOC(Node node) {
-		String[] lines = node.toStringWithoutComments().split("\r?\n|\r");
+	public static int calculatePhysicalLOC(String fileString) {
+		String nodeString = removeAllComments(fileString);
+		String[] lines = nodeString.split("\r?\n|\r");
 		int length = 0;
 		for (String line : lines) {
 			if (!line.isEmpty()) {
@@ -53,6 +56,10 @@ public class CISQMM15FileLOC extends CISQMMMaintainabilityMeasure {
 			}
 		}
 		return length;
+	}
+
+	private static String removeAllComments(String fileString) {
+		return fileString.replaceAll(COMMENTS, "");
 	}
 
 	@Override

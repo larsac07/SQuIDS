@@ -1109,7 +1109,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
         n.getId().accept(this, arg);
     }
 
-	@Override public void visit(final ExplicitConstructorInvocationStmt n, final Object arg) {
+    @Override public void visit(final ExplicitConstructorInvocationStmt n, final Object arg) {
 		printJavaComment(n.getComment(), arg);
 		if (n.isThis()) {
 			printTypeArgs(n.getTypeArgs(), arg);
@@ -1120,6 +1120,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 				printer.print(".");
 			}
 			printTypeArgs(n.getTypeArgs(), arg);
+			printer.print("super");
 		}
+		printArguments(n.getArgs(), arg);
+		printer.print(";");
+		printArguments(n.getArgs(), arg);
+		printer.print(";");
 	}
 }
