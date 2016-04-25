@@ -1,6 +1,7 @@
 package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import autocisq.models.Issue;
 public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasure {
 
 	private final static int THRESHOLD = 7;
+	private final static String ASTERISK = "*";
+	private final static String POINT = ".";
 
 	public final static String ISSUE_TYPE = "CISQ MM19: Method with >= " + THRESHOLD + " data or file operations";
 
 	private List<String> dbOrIoClasses;
+	private List<String> dbOrIoPackages;
 	private int count;
 
 	/**
-	 * Creates a new {@link CISQMM19MethodDataOrFileOperations} object and tries to
-	 * retrieve a list of classes which contain data or file operations.
+	 * Creates a new {@link CISQMM19MethodDataOrFileOperations} object and tries
+	 * to retrieve a list of classes which contain data or file operations.
 	 *
 	 * @param settings
 	 *            - a map of settings, including at least a key
@@ -58,14 +62,16 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 	public CISQMM19MethodDataOrFileOperations(Map<String, Object> settings) {
 		super(settings);
 		try {
-			this.dbOrIoClasses = (List<String>) settings.get("db_or_io_classes");
-			if (this.dbOrIoClasses == null) {
+			List<String> dbOrIoClassesAndPackages = (List<String>) settings.get("db_or_io_classes");
+			if (dbOrIoClassesAndPackages == null) {
 				System.err.println(this.getClass().getSimpleName()
 						+ " was provided an empty db_or_io_classes list and will not work. Please provide a db_or_io_classes list");
-				this.dbOrIoClasses = new ArrayList<>();
+				createLists(null);
+			} else {
+				createLists(dbOrIoClassesAndPackages);
 			}
 		} catch (NullPointerException | ClassCastException e) {
-			this.dbOrIoClasses = new ArrayList<>();
+			createLists(null);
 			System.err.println(this.getClass().getSimpleName()
 					+ " was not provided a db_or_io_classes list and will not work. Please provide a db_or_io_classes list");
 			e.printStackTrace();
@@ -76,8 +82,8 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 	/**
 	 * Filters out {@link MethodCallExpr} objects to check if they are called
 	 * upon classes which contain data or file operations. Calls
-	 * {@link CISQMM19MethodDataOrFileOperations#storeVariables(Node)} if the node is
-	 * not a {@link MethodCallExpr}.
+	 * {@link CISQMM19MethodDataOrFileOperations#storeVariables(Node)} if the
+	 * node is not a {@link MethodCallExpr}.
 	 *
 	 * @return - a list of issues with 0 or 1 {@link FileIssue}, depending on
 	 *         whether an issue was found.
@@ -102,8 +108,9 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 	}
 
 	/**
-	 * Calls {@link CISQMMTypeDependentMeasure#storeVariables(Node)} and resets count
-	 * if node is {@link ConstructorDeclaration} or {@link MethodDeclaration}
+	 * Calls {@link CISQMMTypeDependentMeasure#storeVariables(Node)} and resets
+	 * count if node is {@link ConstructorDeclaration} or
+	 * {@link MethodDeclaration}
 	 *
 	 * @param node
 	 *            - the node to store variables from.
@@ -155,8 +162,14 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 	 * @return true if the class contains data or file operations, false if not
 	 */
 	private boolean isDbOrIoClass(String classCanonicalName) {
+		String classPackage = classCanonicalName.substring(0, classCanonicalName.lastIndexOf(POINT));
 		for (String dbOrIoClass : this.dbOrIoClasses) {
 			if (dbOrIoClass.equals(classCanonicalName)) {
+				return true;
+			}
+		}
+		for (String dbOrIoPackage : this.dbOrIoPackages) {
+			if (classPackage.contains(dbOrIoPackage)) {
 				return true;
 			}
 		}
@@ -179,6 +192,20 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 	 */
 	private void resetCount() {
 		this.count = 0;
+	}
+
+	private void createLists(List<String> dbOrIoClassesAndPackages) {
+		this.dbOrIoClasses = new LinkedList<>();
+		this.dbOrIoPackages = new LinkedList<>();
+		if (dbOrIoClassesAndPackages != null) {
+			for (String line : dbOrIoClassesAndPackages) {
+				if (line.endsWith(ASTERISK)) {
+					this.dbOrIoPackages.add(line.substring(0, line.lastIndexOf(POINT)));
+				} else {
+					this.dbOrIoClasses.add(line);
+				}
+			}
+		}
 	}
 
 	@Override

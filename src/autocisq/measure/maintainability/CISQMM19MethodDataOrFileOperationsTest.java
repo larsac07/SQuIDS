@@ -18,7 +18,6 @@ import autocisq.measure.MeasureTest;
 
 public class CISQMM19MethodDataOrFileOperationsTest extends MeasureTest {
 
-	private List<String> dbOrIoClasses;
 	private MethodDeclaration method6DbOrIoCalls;
 	private MethodDeclaration method7DbOrIoCalls;
 	private MethodDeclaration method8DbOrIoCalls;
@@ -32,12 +31,9 @@ public class CISQMM19MethodDataOrFileOperationsTest extends MeasureTest {
 	public void setUp() throws Exception {
 		this.issueFinder.getMeasures().clear();
 		List<String> dbOrIoClasses = new LinkedList<>();
-		dbOrIoClasses.add("java.io.File");
-		dbOrIoClasses.add("java.nio.file.Files");
-		dbOrIoClasses.add("java.sql.Connection");
-		dbOrIoClasses.add("java.sql.DriverManager");
-		dbOrIoClasses.add("java.sql.PreparedStatement");
-		dbOrIoClasses.add("java.sql.Statement");
+		dbOrIoClasses.add("java.io.*");
+		dbOrIoClasses.add("java.nio.*");
+		dbOrIoClasses.add("java.sql.*");
 		dbOrIoClasses.add("com.github.javaparser.JavaParser");
 		this.settings = new HashMap<>();
 		this.settings.put("db_or_io_classes", dbOrIoClasses);
@@ -56,14 +52,6 @@ public class CISQMM19MethodDataOrFileOperationsTest extends MeasureTest {
 		this.methodExternalLibraryDbOrIoCalls = (MethodDeclaration) this.cabCU.getTypes().get(0).getChildrenNodes()
 				.get(16);
 
-		this.dbOrIoClasses = new LinkedList<>();
-		this.dbOrIoClasses.add("java.io.File");
-		this.dbOrIoClasses.add("java.nio.file.Files");
-		this.dbOrIoClasses.add("java.sql.Connection");
-		this.dbOrIoClasses.add("java.sql.DriverManager");
-		this.dbOrIoClasses.add("java.sql.PreparedStatement");
-		this.dbOrIoClasses.add("java.sql.Statement");
-		this.dbOrIoClasses.add("com.github.javaparser.JavaParser");
 		this.issueFinder.analyzeNode(this.cabCU, null, this.fileString);
 	}
 

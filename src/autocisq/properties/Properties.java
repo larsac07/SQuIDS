@@ -222,12 +222,9 @@ public class Properties extends PropertyPage {
 		this.measures.add("autocisq.measure.maintainability.CISQMM21HardCodedLiteral");
 
 		this.dbOrIoClasses = new LinkedList<>();
-		this.dbOrIoClasses.add("java.io.File");
-		this.dbOrIoClasses.add("java.nio.file.Files");
-		this.dbOrIoClasses.add("java.sql.Connection");
-		this.dbOrIoClasses.add("java.sql.DriverManager");
-		this.dbOrIoClasses.add("java.sql.PreparedStatement");
-		this.dbOrIoClasses.add("java.sql.Statement");
+		this.dbOrIoClasses.add("java.io.*");
+		this.dbOrIoClasses.add("java.nio.*");
+		this.dbOrIoClasses.add("java.sql.*");
 		this.dbOrIoClasses.add("com.github.javaparser.JavaParser");
 	}
 
