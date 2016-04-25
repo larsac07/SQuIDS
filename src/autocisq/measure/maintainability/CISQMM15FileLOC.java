@@ -34,7 +34,6 @@ public class CISQMM15FileLOC extends CISQMMMaintainabilityMeasure {
 		List<Issue> issues = new LinkedList<>();
 		if (node instanceof CompilationUnit) {
 			int ploc = calculatePhysicalLOC(fileString);
-			System.out.println(((CompilationUnit) node).getTypes().get(0).getName() + ": " + ploc);
 			if (ploc > THRESHOLD) {
 				issues.add(new FileIssue(this, node, fileString));
 			}

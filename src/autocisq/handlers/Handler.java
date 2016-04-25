@@ -129,7 +129,7 @@ public class Handler extends AbstractHandler {
 							String fileAnalysis = "Analyzing file " + fileIndex + "/" + filesTot + ": "
 									+ file.getPath();
 							monitor.subTask(fileAnalysis);
-							// Logger.log(fileAnalysis);
+							Logger.log(fileAnalysis);
 
 							analyzeSourceFile(project, iFileMap, qcj, issueFinder, file);
 
