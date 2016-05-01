@@ -36,7 +36,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class CISQMM07ClassChildren extends CISQMMMaintainabilityMeasure {
+public class CISQMM07ClassChildren extends CISQMaintainabilityMeasure {
 
 	public final static String ISSUE_TYPE = "CISQ MM07: Class with >= 10 children";
 	public final static int THRESHOLD = 10;

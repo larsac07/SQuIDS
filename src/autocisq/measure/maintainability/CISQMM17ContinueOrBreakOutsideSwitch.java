@@ -29,7 +29,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class CISQMM17ContinueOrBreakOutsideSwitch extends CISQMMMaintainabilityMeasure {
+public class CISQMM17ContinueOrBreakOutsideSwitch extends CISQMaintainabilityMeasure {
 
 	public CISQMM17ContinueOrBreakOutsideSwitch(Map<String, Object> settings) {
 		super(settings);

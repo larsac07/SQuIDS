@@ -19,7 +19,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class CISQMM15FileLOC extends CISQMMMaintainabilityMeasure {
+public class CISQMM15FileLOC extends CISQMaintainabilityMeasure {
 
 	public final static int THRESHOLD = 1000;
 	public final static String ISSUE_TYPE = "CISQ MM15: More than " + THRESHOLD + " Lines of Code";

@@ -24,7 +24,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class CISQMM10VariableDeclaredPublic extends CISQMMMaintainabilityMeasure {
+public class CISQMM10VariableDeclaredPublic extends CISQMaintainabilityMeasure {
 
 	public final static String ISSUE_TYPE = "CISQ MM10: Variable declared public";
 

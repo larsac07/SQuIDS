@@ -9,11 +9,11 @@ import com.github.javaparser.ast.Node;
 import autocisq.measure.Measure;
 import autocisq.models.Issue;
 
-public abstract class CISQMMMaintainabilityMeasure extends Measure {
+public abstract class CISQMaintainabilityMeasure extends Measure {
 
 	public final static String QC = "CISQ Maintainability";
 
-	public CISQMMMaintainabilityMeasure(Map<String, Object> settings) {
+	public CISQMaintainabilityMeasure(Map<String, Object> settings) {
 		super(settings);
 	}
 

@@ -27,7 +27,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class CISQMM14MethodCommentedOutInstructions extends CISQMMMaintainabilityMeasure {
+public class CISQMM14MethodCommentedOutInstructions extends CISQMaintainabilityMeasure {
 
 	public final static double THRESHOLD = 0.02d;
 	public final static String ISSUE_TYPE = "CISQ MM14: Function with > " + (int) (THRESHOLD * 100)

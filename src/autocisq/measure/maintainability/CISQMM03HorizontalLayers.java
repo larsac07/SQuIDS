@@ -2,7 +2,6 @@ package autocisq.measure.maintainability;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,37 +14,22 @@ import autocisq.models.Issue;
 import autocisq.models.ProjectIssue;
 
 /**
- * The CISQMM03HorizontalLayers class represents the CISQ Maintainability Measure 3: #
- * of layers (threshold 4 ≤ # Layers ≤ 8).
+ * The CISQMM03HorizontalLayers class represents the CISQ Maintainability
+ * Measure 3: # of layers (threshold 4 ≤ # Layers ≤ 8).
  *
  * @author Lars A. V. Cabrera
  *
  */
-public class CISQMM03HorizontalLayers extends CISQMMMaintainabilityMeasure {
+public class CISQMM03HorizontalLayers extends CISQMMLayerDependentMeasure {
 
 	public final static int THRESHOLD = 8;
 	public final static String ISSUE_TYPE = "CISQ MM03: Horizontal Layers > " + THRESHOLD;
 
-	private Map<String, Integer> layerMap;
 	private List<Issue> issues;
 	private boolean returned;
 
-	@SuppressWarnings("unchecked")
 	public CISQMM03HorizontalLayers(Map<String, Object> settings) {
 		super(settings);
-		try {
-			this.layerMap = (Map<String, Integer>) settings.get("layer_map");
-			if (this.layerMap == null) {
-				System.err.println(this.getClass().getSimpleName()
-						+ " was provided an empty layer_map and will not work. Please provide a layer_map");
-				this.layerMap = new HashMap<>();
-			}
-		} catch (NullPointerException | ClassCastException e) {
-			this.layerMap = new HashMap<>();
-			System.err.println(this.getClass().getSimpleName()
-					+ " was not provided a layer_map and will not work. Please provide a layer_map");
-			e.printStackTrace();
-		}
 		this.issues = new ArrayList<>();
 		this.returned = false;
 	}

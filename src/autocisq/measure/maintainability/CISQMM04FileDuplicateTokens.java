@@ -29,7 +29,7 @@ import autocisq.models.Issue;
  * @author Lars A. V. Cabrera
  *
  */
-public class CISQMM04FileDuplicateTokens extends CISQMMMaintainabilityMeasure {
+public class CISQMM04FileDuplicateTokens extends CISQMaintainabilityMeasure {
 
 	public final static int THRESHOLD = 100;
 	public final static String ISSUE_TYPE = "CISQ MM04: File with >= " + THRESHOLD + " consecutive duplicate tokens";

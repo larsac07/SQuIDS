@@ -18,7 +18,7 @@ import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 
 import autocisq.models.Issue;
 
-public abstract class CISQMMTypeDependentMeasure extends CISQMMMaintainabilityMeasure {
+public abstract class CISQMMTypeDependentMeasure extends CISQMaintainabilityMeasure {
 
 	private Map<String, String> typeImports;
 	private Map<String, String> variableTypes;

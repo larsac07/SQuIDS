@@ -13,7 +13,7 @@ import com.github.javaparser.ast.body.Parameter;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
-public class CISQMM20MethodParameters extends CISQMMMaintainabilityMeasure {
+public class CISQMM20MethodParameters extends CISQMaintainabilityMeasure {
 
 	public final static int THRESHOLD = 7;
 	public final static String ISSUE_TYPE = "CISQ MM20: Function passing >= " + THRESHOLD + " parameters";
