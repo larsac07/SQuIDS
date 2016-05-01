@@ -5,10 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.NamedNode;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.MultiTypeParameter;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -24,6 +28,52 @@ import com.github.javaparser.ast.type.Type;
 public abstract class JavaParserHelper {
 	public static boolean methodCallFromSameType(MethodCallExpr methodCall) {
 		return methodCall.getScope() == null;
+	}
+
+	public static String getMemberPath(Node node) {
+		String memberPath = "";
+		try {
+			List<Node> typeAncestors = findNodeAncestorsOfType(node, null, ClassOrInterfaceDeclaration.class,
+					MethodDeclaration.class, ConstructorDeclaration.class, CompilationUnit.class);
+			// Traverse backwards
+			for (int i = typeAncestors.size() - 1; i >= 0; i--) {
+				Node nodeAncestor = typeAncestors.get(i);
+				if (nodeAncestor instanceof NamedNode) {
+					memberPath += ((NamedNode) nodeAncestor).getName();
+					if (nodeAncestor instanceof MethodDeclaration || nodeAncestor instanceof ConstructorDeclaration) {
+						List<Parameter> params;
+						if (nodeAncestor instanceof MethodDeclaration) {
+							params = ((MethodDeclaration) nodeAncestor).getParameters();
+						} else {
+							params = ((ConstructorDeclaration) nodeAncestor).getParameters();
+						}
+						memberPath += "(";
+						for (int paramI = 0; paramI < params.size(); paramI++) {
+							Parameter param = params.get(paramI);
+							memberPath += param.getType().toString();
+							if (paramI < params.size() - 1) {
+								memberPath += ",";
+							}
+						}
+						memberPath += ")";
+					}
+					if (i > 0) {
+						memberPath += ".";
+					}
+				} else if (nodeAncestor instanceof CompilationUnit) {
+					PackageDeclaration packageDeclaration = ((CompilationUnit) nodeAncestor).getPackage();
+					if (packageDeclaration != null) {
+						memberPath += packageDeclaration.getName().toString();
+						if (i > 0) {
+							memberPath += ".";
+						}
+					}
+				}
+			}
+			return memberPath;
+		} catch (NoSuchAncestorFoundException e) {
+			return memberPath;
+		}
 	}
 
 	public static CompilationUnit findMethodCompilationUnit(MethodCallExpr methodCall,

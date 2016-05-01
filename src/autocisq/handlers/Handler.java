@@ -212,7 +212,7 @@ public class Handler extends AbstractHandler {
 					|| qualifier.equals(Properties.KEY_IGNORE_FILTER)) {
 				settings.put(key.getLocalName(), linesToList(projectProps.get(key)));
 			} else if (qualifier.equals(Properties.KEY_LAYER_MAP)) {
-				settings.put(key.getLocalName(), linesToStringIntMap(projectProps.get(key), ","));
+				settings.put(key.getLocalName(), linesToStringListOfSets(projectProps.get(key), ","));
 			}
 
 		}
@@ -227,15 +227,23 @@ public class Handler extends AbstractHandler {
 		return list;
 	}
 
-	private Map<String, Integer> linesToStringIntMap(String string, String delimiter) {
-		Map<String, Integer> map = new HashMap<>();
+	protected List<Set<String>> linesToStringListOfSets(String string, String delimiter) {
+		List<Set<String>> layers = new LinkedList<>();
+		Set<String> layer = new HashSet<>();
+		Set<String> layerIDs = new HashSet<>();
 		for (String line : string.split("\r?\n|\r")) {
 			String[] parts = line.split(delimiter);
 			if (parts.length >= 2) {
-				map.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
+				String assignment = parts[0].trim();
+				String layerID = parts[1].trim();
+				if (layerIDs.add(layerID)) {
+					layer = new HashSet<>();
+					layers.add(layer);
+				}
+				layer.add(assignment);
 			}
 		}
-		return null;
+		return layers;
 	}
 
 	/**

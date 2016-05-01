@@ -2,8 +2,11 @@ package autocisq.measure.maintainability;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +19,9 @@ import autocisq.measure.MeasureTest;
 
 public class CISQMM03HorizontalLayersTest extends MeasureTest {
 
-	private Map<String, Integer> layerMap7;
-	private Map<String, Integer> layerMap8;
-	private Map<String, Integer> layerMap9;
+	private List<Set<String>> layers7;
+	private List<Set<String>> layers8;
+	private List<Set<String>> layers9;
 	private CompilationUnit testCU;
 	private String fileString;
 	private Map<String, Object> settings;
@@ -26,22 +29,40 @@ public class CISQMM03HorizontalLayersTest extends MeasureTest {
 	@Before
 	public void setUp() throws Exception {
 
-		this.layerMap7 = new LinkedHashMap<>();
-		this.layerMap7.put("no.uib.lca092.rtms.gui.GUI", 1);
-		this.layerMap7.put("no.uib.lca092.rtms.gui.GUIUtils", 2);
-		this.layerMap7.put("no.uib.lca092.rtms.gui.SettingsGUI", 3);
-		this.layerMap7.put("no.uib.lca092.rtms.gui.ThemeManager", 4);
-		this.layerMap7.put("no.uib.lca092.rtms.TsvToHtml", 5);
-		this.layerMap7.put("no.uib.lca092.rtms.io.Parser", 6);
-		this.layerMap7.put("no.uib.lca092.rtms.gui.ThemeManager2", 7);
+		this.layers7 = new LinkedList<>();
+		Set<String> layer1 = new HashSet<>();
+		Set<String> layer2 = new HashSet<>();
+		Set<String> layer3 = new HashSet<>();
+		Set<String> layer4 = new HashSet<>();
+		Set<String> layer5 = new HashSet<>();
+		Set<String> layer6 = new HashSet<>();
+		Set<String> layer7 = new HashSet<>();
+		layer1.add("no.uib.lca092.rtms.gui.GUI");
+		layer2.add("no.uib.lca092.rtms.gui.GUIUtils");
+		layer3.add("no.uib.lca092.rtms.gui.SettingsGUI");
+		layer4.add("no.uib.lca092.rtms.gui.ThemeManager");
+		layer5.add("no.uib.lca092.rtms.TsvToHtml");
+		layer6.add("no.uib.lca092.rtms.io.Parser");
+		layer7.add("no.uib.lca092.rtms.gui.ThemeManager2");
+		this.layers7.add(layer1);
+		this.layers7.add(layer2);
+		this.layers7.add(layer3);
+		this.layers7.add(layer4);
+		this.layers7.add(layer5);
+		this.layers7.add(layer6);
+		this.layers7.add(layer7);
 
-		this.layerMap8 = new LinkedHashMap<>();
-		this.layerMap8.putAll(this.layerMap7);
-		this.layerMap8.put("no.uib.lca092.rtms.TsvToHtml2", 8);
+		this.layers8 = new LinkedList<>();
+		Set<String> layer8 = new HashSet<>();
+		layer8.add("no.uib.lca092.rtms.TsvToHtml2");
+		this.layers8.addAll(this.layers7);
+		this.layers8.add(layer8);
 
-		this.layerMap9 = new LinkedHashMap<>();
-		this.layerMap9.putAll(this.layerMap8);
-		this.layerMap9.put("no.uib.lca092.rtms.io.Parser2", 9);
+		this.layers9 = new LinkedList<>();
+		Set<String> layer9 = new HashSet<>();
+		layer9.add("no.uib.lca092.rtms.io.Parser2");
+		this.layers9.addAll(this.layers8);
+		this.layers9.add(layer9);
 
 		this.settings = new HashMap<>();
 
@@ -52,21 +73,21 @@ public class CISQMM03HorizontalLayersTest extends MeasureTest {
 
 	@Test
 	public void skipProjectWith7Layers() {
-		this.settings.put("layer_map", this.layerMap7);
+		this.settings.put("layer_map", this.layers7);
 		this.issueFinder.putMeasure(new CISQMM03HorizontalLayers(this.settings));
 		skipIssue(this.testCU, this.fileString);
 	}
 
 	@Test
 	public void skipProjectWith8Layers() {
-		this.settings.put("layer_map", this.layerMap8);
+		this.settings.put("layer_map", this.layers8);
 		this.issueFinder.putMeasure(new CISQMM03HorizontalLayers(this.settings));
 		skipIssue(this.testCU, this.fileString);
 	}
 
 	@Test
 	public void findProjectWith9Layers() {
-		this.settings.put("layer_map", this.layerMap9);
+		this.settings.put("layer_map", this.layers9);
 		this.issueFinder.putMeasure(new CISQMM03HorizontalLayers(this.settings));
 		findIssue(this.testCU, this.fileString);
 	}

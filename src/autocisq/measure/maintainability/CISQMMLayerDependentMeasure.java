@@ -1,7 +1,9 @@
 package autocisq.measure.maintainability;
 
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The CISQMM03HorizontalLayers class represents the CISQ Maintainability
@@ -12,23 +14,20 @@ import java.util.Map;
  */
 public abstract class CISQMMLayerDependentMeasure extends CISQMaintainabilityMeasure {
 
-	public final static int THRESHOLD = 8;
-	public final static String ISSUE_TYPE = "CISQ MM03: Horizontal Layers > " + THRESHOLD;
-
-	protected Map<String, Integer> layerMap;
+	protected List<Set<String>> layers;
 
 	@SuppressWarnings("unchecked")
 	public CISQMMLayerDependentMeasure(Map<String, Object> settings) {
 		super(settings);
 		try {
-			this.layerMap = (Map<String, Integer>) settings.get("layer_map");
-			if (this.layerMap == null) {
+			this.layers = (List<Set<String>>) settings.get("layer_map");
+			if (this.layers == null) {
 				System.err.println(this.getClass().getSimpleName()
 						+ " was provided an empty layer_map and will not work. Please provide a layer_map");
-				this.layerMap = new HashMap<>();
+				this.layers = new LinkedList<>();
 			}
 		} catch (NullPointerException | ClassCastException e) {
-			this.layerMap = new HashMap<>();
+			this.layers = new LinkedList<>();
 			System.err.println(this.getClass().getSimpleName()
 					+ " was not provided a layer_map and will not work. Please provide a layer_map");
 			e.printStackTrace();

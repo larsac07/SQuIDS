@@ -1,8 +1,10 @@
 package autocisq.measure.maintainability;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -30,7 +32,6 @@ public class CISQMM02LayerSkippingCall extends CISQMMLayerDependentMeasure {
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
-		List<Issue> issues = new LinkedList<>();
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr methodCall = (MethodCallExpr) node;
 			if (!JavaParserHelper.methodCallFromSameType(methodCall)) {
@@ -52,13 +53,12 @@ public class CISQMM02LayerSkippingCall extends CISQMMLayerDependentMeasure {
 						String targetClass = methodCallCompilationUnit.getTypes().get(0).getName();
 						String targetMethodClass = targetPackage + "." + targetClass;
 
-						Integer methodLayer = this.layerMap.get(methodClass);
-						Integer methodCallLayer = this.layerMap.get(targetMethodClass);
+						boolean layerSkippingCall = isLayerSkippingCall(methodClass, targetMethodClass);
 
-						if (methodLayer != null) {
-							if (Math.abs(methodLayer - methodCallLayer) > 1) {
-								issues.add(new FileIssue(this, methodCall, fileString));
-							}
+						if (layerSkippingCall) {
+							List<Issue> issues = new LinkedList<>();
+							issues.add(new FileIssue(this, methodCall, fileString));
+							return issues;
 						}
 					} catch (NoSuchAncestorFoundException e) {
 						// TODO Auto-generated catch block
@@ -68,7 +68,35 @@ public class CISQMM02LayerSkippingCall extends CISQMMLayerDependentMeasure {
 				}
 			}
 		}
-		return issues;
+		return null;
+	}
+
+	/**
+	 * @param methodClass
+	 * @param targetMethodClass
+	 * @param layerSkippingCall
+	 * @return
+	 */
+	public boolean isLayerSkippingCall(String methodClass, String targetMethodClass) {
+		Set<Integer> methodLayers = new HashSet<>();
+		for (int i = 0; i < this.layers.size(); i++) {
+			Set<String> layerAssignments = this.layers.get(i);
+			if (layerAssignments.contains(methodClass)) {
+				methodLayers.add(i);
+			}
+		}
+
+		for (int i = 0; i < this.layers.size(); i++) {
+			Set<String> layerAssignments = this.layers.get(i);
+			if (layerAssignments.contains(targetMethodClass)) {
+				for (Integer methodLayer : methodLayers) {
+					if (methodLayer != i) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

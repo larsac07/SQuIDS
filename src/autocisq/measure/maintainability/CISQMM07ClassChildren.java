@@ -5,17 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.NamedNode;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import autocisq.JavaParserHelper;
-import autocisq.NoSuchAncestorFoundException;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -80,42 +75,14 @@ public class CISQMM07ClassChildren extends CISQMaintainabilityMeasure {
 	 * @return
 	 */
 	private String createClassID(CompilationUnit cu, ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
-		String classID = createPackageName(cu) + getMemberPath(classOrInterfaceDeclaration.getParentNode())
+		String classID = JavaParserHelper.getMemberPath(classOrInterfaceDeclaration.getParentNode())
 				+ classOrInterfaceDeclaration.getName();
 		return classID;
 	}
 
 	private String createClassID(CompilationUnit cu, ObjectCreationExpr objectCreationExpr) {
-		String classID = createPackageName(cu) + getMemberPath(objectCreationExpr) + "AnonymousInnerClass";
+		String classID = JavaParserHelper.getMemberPath(objectCreationExpr) + "AnonymousInnerClass";
 		return classID;
-	}
-
-	private String getMemberPath(Node node) {
-		String memberPath = "";
-		try {
-			List<Node> typeAncestors = JavaParserHelper.findNodeAncestorsOfType(node, null,
-					ClassOrInterfaceDeclaration.class, MethodDeclaration.class, ConstructorDeclaration.class);
-			// Traverse backwards
-			for (int i = typeAncestors.size() - 1; i >= 0; i--) {
-				Node nodeAncestor = typeAncestors.get(i);
-				if (nodeAncestor instanceof NamedNode) {
-					NamedNode typeAncestor = (NamedNode) nodeAncestor;
-					memberPath += typeAncestor.getName() + ".";
-				}
-			}
-			return memberPath;
-		} catch (NoSuchAncestorFoundException e) {
-			return memberPath;
-		}
-	}
-
-	private String createPackageName(CompilationUnit cu) {
-		PackageDeclaration packageDeclaration = cu.getPackage();
-		String packageName = "";
-		if (packageDeclaration != null) {
-			packageName = packageDeclaration.getName() + ".";
-		}
-		return packageName;
 	}
 
 	private List<String> getAllExtendingClasses(CompilationUnit cu, ClassOrInterfaceDeclaration superClass,

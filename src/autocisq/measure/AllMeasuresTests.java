@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import autocisq.measure.maintainability.CISQMM01MethodSpansLayerTest;
 import autocisq.measure.maintainability.CISQMM02LayerSkippingCallTest;
 import autocisq.measure.maintainability.CISQMM03HorizontalLayersTest;
 import autocisq.measure.maintainability.CISQMM04FileDuplicateTokensTest;
@@ -25,8 +26,8 @@ import autocisq.measure.maintainability.CISQMM20MethodParametersTest;
 import autocisq.measure.maintainability.CISQMM21HardCodedLiteralTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ CISQMM02LayerSkippingCallTest.class, CISQMM03HorizontalLayersTest.class,
-		CISQMM04FileDuplicateTokensTest.class, CISQMM05MethodUnreachableTest.class,
+@SuiteClasses({ CISQMM01MethodSpansLayerTest.class, CISQMM02LayerSkippingCallTest.class,
+		CISQMM03HorizontalLayersTest.class, CISQMM04FileDuplicateTokensTest.class, CISQMM05MethodUnreachableTest.class,
 		CISQMM06ClassInheritanceLevelTest.class, CISQMM07ClassChildrenTest.class,
 		CISQMM09MethodDirectlyUsingFieldFromOtherClassTest.class, CISQMM10VariableDeclaredPublicTest.class,
 		CISQMM11MethodFanOutTest.class, CISQMM12ClassCouplingTest.class, CISQMM13CyclicCallBetweenPackagesTest.class,
