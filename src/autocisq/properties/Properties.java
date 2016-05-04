@@ -204,6 +204,9 @@ public class Properties extends PropertyPage {
 
 	private void createDefaults() {
 		this.measures = new LinkedList<>();
+		this.measures.add("autocisq.measure.maintainability.CISQMM01MethodSpansLayer");
+		this.measures.add("autocisq.measure.maintainability.CISQMM02LayerSkippingCall");
+		this.measures.add("autocisq.measure.maintainability.CISQMM03HorizontalLayers");
 		this.measures.add("autocisq.measure.maintainability.CISQMM04FileDuplicateTokens");
 		this.measures.add("autocisq.measure.maintainability.CISQMM05MethodUnreachable");
 		this.measures.add("autocisq.measure.maintainability.CISQMM06ClassInheritanceLevel");
@@ -218,6 +221,7 @@ public class Properties extends PropertyPage {
 		this.measures.add("autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop");
 		this.measures.add("autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch");
 		this.measures.add("autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity");
+		this.measures.add("autocisq.measure.maintainability.CISQMM19MethodDataOrFileOperations");
 		this.measures.add("autocisq.measure.maintainability.CISQMM20MethodParameters");
 		this.measures.add("autocisq.measure.maintainability.CISQMM21HardCodedLiteral");
 
