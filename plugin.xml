@@ -137,13 +137,21 @@
    	
    	
    	
+   	<extension point="org.eclipse.ui.views">
+    	<view id="autocisq.view.cisqreport"
+    		name="CISQ Report"
+          	class="autocisq.view.CISQReport"
+          	icon="icons/sample.gif"/>
+	</extension>
+   	
+   	
+   	
    <extension
        	 id="autocisq.properties.Properties"
          point="org.eclipse.ui.propertyPages">
          <page
          	id="autocisq.properties.Properties"
 	     	class="autocisq.properties.Properties"
-	     	objectClass="org.eclipse.core.resources.IProject"
          	name="AutoCISQ settings"
          	icon="icons/sample.gif">
          </page>

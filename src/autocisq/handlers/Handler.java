@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -28,6 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import autocisq.IssueFinder;
@@ -38,6 +41,7 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 import autocisq.models.ProjectIssue;
 import autocisq.properties.Properties;
+import autocisq.view.CISQReport;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -51,6 +55,7 @@ public class Handler extends AbstractHandler {
 	public final static String COMMAND_ALL_PROJECTS = "AutoCISQ.commands.analyzeAllProjects";
 	private final static String JAVA = "java";
 	private final static String JOB_NAME = "Analyze project";
+	private final static String NL = System.lineSeparator();
 
 	/**
 	 * The constructor.
@@ -65,29 +70,41 @@ public class Handler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String cmdID = event.getCommand().getId();
-		if (cmdID.equals(COMMAND_SELECTED_PROJECTS)) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (window != null) {
-				IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
-				Object[] selections = selection.toArray();
-				Set<IProject> projects = new HashSet<>();
-				for (Object object : selections) {
-					if (object instanceof IAdaptable) {
-						IProject project = ((IAdaptable) object).getAdapter(IProject.class);
-						projects.add(project);
-					}
-				}
-				for (IProject project : projects) {
-					analyzeSourceFiles(project);
+		if (cmdID.equals(COMMAND_SELECTED_PROJECTS) || cmdID.equals(COMMAND_ALL_PROJECTS)) {
+			resetCISQReport();
+			Set<IProject> projects = new LinkedHashSet<>();
+			if (cmdID.equals(COMMAND_SELECTED_PROJECTS)) {
+				projects = getSelectedProjects();
+			} else {
+				IProject[] projectArray = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+				for (IProject project : projectArray) {
+					projects.add(project);
 				}
 			}
-		} else if (cmdID.equals(COMMAND_ALL_PROJECTS)) {
-			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (IProject project : projects) {
 				analyzeSourceFiles(project);
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param projects
+	 */
+	public Set<IProject> getSelectedProjects() {
+		Set<IProject> projects = new LinkedHashSet<>();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
+			Object[] selections = selection.toArray();
+			for (Object object : selections) {
+				if (object instanceof IAdaptable) {
+					IProject project = ((IAdaptable) object).getAdapter(IProject.class);
+					projects.add(project);
+				}
+			}
+		}
+		return projects;
 	}
 
 	private void analyzeSourceFiles(IProject project) {
@@ -141,6 +158,7 @@ public class Handler extends AbstractHandler {
 					}
 					logMeasureTimes(project.getName(), issueFinder);
 					logQCj(project.getName(), qcj);
+					viewQCJ(project.getName(), qcj);
 
 					return Status.OK_STATUS;
 				}
@@ -302,17 +320,64 @@ public class Handler extends AbstractHandler {
 	 * @param qcj
 	 */
 	private void logQCj(String projectName, Map<String, Map<String, Integer>> qcj) {
+		String qcjString = createQCJ(projectName, qcj);
+		Logger.log(qcjString);
+	}
+
+	private void viewQCJ(String projectName, Map<String, Map<String, Integer>> qcj) {
+		String qcjString = createQCJ(projectName, qcj);
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					CISQReport report = (CISQReport) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+							.getActivePage().showView(CISQReport.ID);
+					report.add(qcjString);
+				} catch (PartInitException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		});
+
+	}
+
+	private void resetCISQReport() {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					CISQReport report = (CISQReport) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+							.getActivePage().showView(CISQReport.ID);
+					report.setString("");
+					;
+				} catch (PartInitException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		});
+	}
+
+	private String createQCJ(String projectName, Map<String, Map<String, Integer>> qcj) {
+		String qcjString = "";
+
 		for (String qc : qcj.keySet()) {
 			Map<String, Integer> qcMap = qcj.get(qc);
-			Logger.log("#############\n" + projectName + " " + qc + ": ");
+			qcjString += projectName + " " + qc + ": " + NL;
 			int violationsTot = 0;
-			for (String measureElement : qcMap.keySet()) {
+			// Sort measures by name
+			Set<String> measureElements = new TreeSet<>(qcMap.keySet());
+			for (String measureElement : measureElements) {
 				Integer violations = qcMap.get(measureElement);
 				violationsTot += violations;
-				Logger.log(" - " + measureElement + ": " + violations);
+				qcjString += " - " + measureElement + ": " + violations + NL;
 			}
-			Logger.log("QCj(" + qc + ") = " + violationsTot);
+			qcjString += "QCj(" + qc + ") = " + violationsTot + NL + NL;
 		}
+		return qcjString;
 	}
 
 	private static void markIssue(IFile file, int errorLineNumber, int startIndex, int endIndex, String message)
