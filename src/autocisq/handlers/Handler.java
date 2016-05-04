@@ -271,24 +271,19 @@ public class Handler extends AbstractHandler {
 	 * @param issue
 	 */
 	private void markIssues(IProject project, File file, IFile iFile, Issue issue) {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (issue instanceof FileIssue) {
-						FileIssue fileIssue = (FileIssue) issue;
-						markIssue(iFile, fileIssue.getBeginLine(), fileIssue.getStartIndex(), fileIssue.getEndIndex(),
-								fileIssue.getMeasureElement() + ": " + fileIssue.getMessage());
-					} else if (issue instanceof ProjectIssue) {
-						ProjectIssue projectIssue = (ProjectIssue) issue;
-						markIssue(project, projectIssue.getMeasureElement());
-					}
-				} catch (CoreException e) {
-					Logger.bug("Could not create marker on file " + file);
-					e.printStackTrace();
-				}
+		try {
+			if (issue instanceof FileIssue) {
+				FileIssue fileIssue = (FileIssue) issue;
+				markIssue(iFile, fileIssue.getBeginLine(), fileIssue.getStartIndex(), fileIssue.getEndIndex(),
+						fileIssue.getMeasureElement() + ": " + fileIssue.getMessage());
+			} else if (issue instanceof ProjectIssue) {
+				ProjectIssue projectIssue = (ProjectIssue) issue;
+				markIssue(project, projectIssue.getMeasureElement());
 			}
-		});
+		} catch (CoreException e) {
+			Logger.bug("Could not create marker on file " + file);
+			e.printStackTrace();
+		}
 	}
 
 	/**
