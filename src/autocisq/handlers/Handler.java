@@ -56,12 +56,10 @@ public class Handler extends AbstractHandler {
 	private final static String JAVA = "java";
 	private final static String JOB_NAME = "Analyze project";
 	private final static String NL = System.lineSeparator();
-
-	/**
-	 * The constructor.
-	 */
-	public Handler() {
-	}
+	private long parsingTime;
+	private long analysisTime;
+	private long markingTime;
+	private long totalTime;
 
 	/**
 	 * the command has been executed, so extract extract the needed information
@@ -71,6 +69,7 @@ public class Handler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String cmdID = event.getCommand().getId();
 		if (cmdID.equals(COMMAND_SELECTED_PROJECTS) || cmdID.equals(COMMAND_ALL_PROJECTS)) {
+			this.totalTime = System.currentTimeMillis();
 			resetCISQReport();
 			Set<IProject> projects = new LinkedHashSet<>();
 			if (cmdID.equals(COMMAND_SELECTED_PROJECTS)) {
@@ -134,11 +133,14 @@ public class Handler extends AbstractHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					Map<String, Map<String, Integer>> qcj = new LinkedHashMap<>();
+					Handler.this.parsingTime = System.currentTimeMillis();
 					IssueFinder issueFinder = new IssueFinder(files, settings);
+					Handler.this.parsingTime = System.currentTimeMillis() - Handler.this.parsingTime;
 					int fileIndex = 1;
 					int filesTot = files.size();
 					monitor.beginTask("Analyzing files", files.size());
 					try {
+						Handler.this.markingTime = 0;
 						for (File file : files) {
 							if (monitor.isCanceled()) {
 								return Status.CANCEL_STATUS;
@@ -156,10 +158,12 @@ public class Handler extends AbstractHandler {
 					} finally {
 						monitor.done();
 					}
-					logMeasureTimes(project.getName(), issueFinder);
 					logQCj(project.getName(), qcj);
 					viewQCJ(project.getName(), qcj);
 
+					Handler.this.totalTime = System.currentTimeMillis() - Handler.this.totalTime;
+					logMeasureTimes(project.getName(), issueFinder);
+					logAllTimes();
 					return Status.OK_STATUS;
 				}
 			};
@@ -169,6 +173,14 @@ public class Handler extends AbstractHandler {
 			e.printStackTrace();
 			return;
 		}
+	}
+
+	protected void logAllTimes() {
+		Logger.log("Analysis time (CISQMM total)\t" + this.analysisTime);
+		Logger.log("Parsing time\t" + this.parsingTime);
+		Logger.log("Marking time\t" + this.markingTime);
+		Logger.log("Rest time\t" + (this.totalTime - this.parsingTime - this.analysisTime - this.markingTime));
+		Logger.log("Total time\t" + this.totalTime);
 	}
 
 	/**
@@ -277,8 +289,9 @@ public class Handler extends AbstractHandler {
 		IFile iFile = iFileMap.get(file);
 		for (Issue issue : issues) {
 			countQCJ(issue, qcj);
-			// Update UI
+			long time = System.currentTimeMillis();
 			markIssues(project, file, iFile, issue);
+			this.markingTime += System.currentTimeMillis() - time;
 		}
 	}
 
@@ -310,8 +323,10 @@ public class Handler extends AbstractHandler {
 	private void logMeasureTimes(String projectName, IssueFinder issueFinder) {
 		Logger.log(projectName + " measure times (ms): ");
 		Map<Measure, Long> measureTimes = issueFinder.getMeasureTimes();
+		this.analysisTime = 0;
 		for (Measure measure : measureTimes.keySet()) {
 			Long measureTime = measureTimes.get(measure);
+			this.analysisTime += measureTime;
 			Logger.log(measure.getClass().getSimpleName() + "\t" + measureTime);
 		}
 	}
