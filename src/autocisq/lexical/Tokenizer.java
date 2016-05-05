@@ -1,6 +1,7 @@
 package autocisq.lexical;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,11 @@ public class Tokenizer {
 			this.regex = regex;
 			this.token = token;
 		}
+
+		@Override
+		public String toString() {
+			return this.token + ": " + this.regex.toString();
+		}
 	}
 
 	public class Token {
@@ -24,6 +30,11 @@ public class Tokenizer {
 			super();
 			this.token = token;
 			this.sequence = sequence;
+		}
+
+		@Override
+		public String toString() {
+			return this.token + ": " + this.sequence;
 		}
 
 	}
@@ -74,5 +85,21 @@ public class Tokenizer {
 		}
 
 		return sb.toString();
+	}
+
+	public synchronized int[] getTokenIDs() {
+		int[] tokens = new int[this.tokens.size()];
+		if (this.tokens != null) {
+			for (int i = 0; i < this.tokens.size(); i++) {
+				Tokenizer.Token tok = this.tokens.get(i);
+				tokens[i] = tok.token;
+			}
+		}
+
+		return tokens;
+	}
+
+	public synchronized List<Token> getTokens() {
+		return this.tokens;
 	}
 }
