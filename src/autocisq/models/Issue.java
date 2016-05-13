@@ -6,6 +6,7 @@ public abstract class Issue {
 	private String type;
 	private String qualityCharacteristic;
 	private String message;
+	private Measure measure;
 
 	public Issue(Measure measure) {
 		this(measure, "");
@@ -15,6 +16,7 @@ public abstract class Issue {
 		this.type = measure.getMeasureElement();
 		this.qualityCharacteristic = measure.getQualityCharacteristic();
 		this.message = message;
+		this.measure = measure;
 	}
 
 	public String getMeasureElement() {
@@ -27,6 +29,10 @@ public abstract class Issue {
 
 	public String getMessage() {
 		return this.message;
+	}
+
+	public Measure getMeasure() {
+		return this.measure;
 	}
 
 	public abstract String getID();
