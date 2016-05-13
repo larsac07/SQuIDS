@@ -36,6 +36,7 @@ import org.eclipse.ui.PlatformUI;
 import autocisq.IssueFinder;
 import autocisq.debug.Logger;
 import autocisq.io.EclipseFiles;
+import autocisq.io.XMLWriter;
 import autocisq.measure.Measure;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -138,6 +139,7 @@ public class Handler extends AbstractHandler {
 					Handler.this.parsingTime = System.currentTimeMillis() - Handler.this.parsingTime;
 					int fileIndex = 1;
 					int filesTot = files.size();
+					Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
 					monitor.beginTask("Analyzing files", files.size());
 					try {
 						Handler.this.markingTime = 0;
@@ -150,7 +152,8 @@ public class Handler extends AbstractHandler {
 							monitor.subTask(fileAnalysis);
 							Logger.log(fileAnalysis);
 
-							analyzeSourceFile(project, iFileMap, qcj, issueFinder, file);
+							List<Issue> issues = analyzeSourceFile(project, iFileMap, qcj, issueFinder, file);
+							fileIssuesMap.put(file, issues);
 
 							monitor.worked(1);
 							fileIndex++;
@@ -164,6 +167,8 @@ public class Handler extends AbstractHandler {
 					Handler.this.totalTime = System.currentTimeMillis() - Handler.this.totalTime;
 					logMeasureTimes(project.getName(), issueFinder);
 					logAllTimes();
+					XMLWriter writer = new XMLWriter();
+					writer.writeIssues(project.getName(), fileIssuesMap);
 					return Status.OK_STATUS;
 				}
 			};
@@ -283,8 +288,8 @@ public class Handler extends AbstractHandler {
 	 * @param issueFinder
 	 * @param file
 	 */
-	private void analyzeSourceFile(IProject project, Map<File, IFile> iFileMap, Map<String, Map<String, Integer>> qcj,
-			IssueFinder issueFinder, File file) {
+	private List<Issue> analyzeSourceFile(IProject project, Map<File, IFile> iFileMap,
+			Map<String, Map<String, Integer>> qcj, IssueFinder issueFinder, File file) {
 		List<Issue> issues = issueFinder.findIssues(file);
 		IFile iFile = iFileMap.get(file);
 		for (Issue issue : issues) {
@@ -293,6 +298,7 @@ public class Handler extends AbstractHandler {
 			markIssues(project, file, iFile, issue);
 			this.markingTime += System.currentTimeMillis() - time;
 		}
+		return issues;
 	}
 
 	/**

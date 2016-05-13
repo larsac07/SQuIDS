@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<items>
+    <item>
+        <metric>CISQMM06ClassInheritanceLevel</metric>
+        <file>/home/lars/Development/java_workspace/tvbrowser-2.2.6/src/tvbrowser/ui/programtable/ChannelLabel.java</file>
+        <line>17</line>
+        <detail>XXX</detail>
+    </item>
+</items>
