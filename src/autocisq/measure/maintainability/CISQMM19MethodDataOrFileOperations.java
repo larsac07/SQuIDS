@@ -162,6 +162,9 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 	 * @return true if the class contains data or file operations, false if not
 	 */
 	private boolean isDbOrIoClass(String classCanonicalName) {
+		if (classCanonicalName == null) {
+			return false;
+		}
 		String classPackage = classCanonicalName.substring(0, classCanonicalName.lastIndexOf(POINT));
 		for (String dbOrIoClass : this.dbOrIoClasses) {
 			if (dbOrIoClass.equals(classCanonicalName)) {
