@@ -24,10 +24,12 @@ public class XMLWriter {
 
 	private final static String EL_ITEMS = "items";
 	private final static String EL_ITEM = "item";
+	private final static String EL_TOOL = "tool";
 	private final static String EL_METRIC = "metric";
 	private final static String EL_FILE = "file";
 	private final static String EL_LINE = "line";
 	private final static String EL_DETAIL = "detail";
+	private final static String TOOL = "SQuIDS";
 	private final static String UNKNOWN = "XXX";
 	private final static String FOLDER = "/home/lars/Development/java_workspace/SQuIDS/compare/SQuIDS/";
 	private final static String XML_FILE = "result.xml";
@@ -97,6 +99,10 @@ public class XMLWriter {
 	 */
 	private Element createItem(Document doc, File fileKey, Issue issue) {
 		Element item = doc.createElement(EL_ITEM);
+
+		Element tool = doc.createElement(EL_TOOL);
+		tool.appendChild(doc.createTextNode(TOOL));
+		item.appendChild(tool);
 
 		Element metric = doc.createElement(EL_METRIC);
 		metric.appendChild(doc.createTextNode(notEmpty(issue.getMeasure().getClass().getSimpleName())));
