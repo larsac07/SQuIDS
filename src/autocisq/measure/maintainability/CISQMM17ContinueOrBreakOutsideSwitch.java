@@ -8,6 +8,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.stmt.BreakStmt;
 import com.github.javaparser.ast.stmt.ContinueStmt;
+import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 
 import autocisq.JavaParserHelper;
@@ -41,8 +42,16 @@ public class CISQMM17ContinueOrBreakOutsideSwitch extends CISQMaintainabilityMea
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof ContinueStmt || node instanceof BreakStmt) {
 			try {
-				JavaParserHelper.findNodeAncestorOfType(node, SwitchStmt.class);
+				Node ancestor = JavaParserHelper.findNodeAncestorOfType(node, SwitchStmt.class, IfStmt.class);
+				if (ancestor instanceof IfStmt) {
+					// The continue/break statement was inside an if-statement
+					List<Issue> issues = new ArrayList<>();
+					issues.add(new FileIssue(this, node, fileString));
+					return issues;
+				}
 			} catch (NoSuchAncestorFoundException e) {
+				// The continue/break statement was not inside a
+				// switch-statement
 				List<Issue> issues = new ArrayList<>();
 				issues.add(new FileIssue(this, node, fileString));
 				return issues;

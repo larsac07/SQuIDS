@@ -18,6 +18,8 @@ public class CISQMM17ContinueOrBreakOutsideSwitchTest extends MeasureTest {
 	private MethodDeclaration nodeB;
 	private MethodDeclaration nodeC;
 	private MethodDeclaration nodeD;
+	private MethodDeclaration nodeE;
+	private MethodDeclaration nodeF;
 	private String fileString;
 
 	@Before
@@ -35,6 +37,8 @@ public class CISQMM17ContinueOrBreakOutsideSwitchTest extends MeasureTest {
 		this.nodeB = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(1);
 		this.nodeC = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(2);
 		this.nodeD = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(3);
+		this.nodeE = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(4);
+		this.nodeF = (MethodDeclaration) cabCU.getTypes().get(0).getChildrenNodes().get(5);
 
 	}
 
@@ -49,13 +53,23 @@ public class CISQMM17ContinueOrBreakOutsideSwitchTest extends MeasureTest {
 	}
 
 	@Test
+	public void findContinueInsideIfInsideSwitch() {
+		findIssue(this.nodeC, this.fileString);
+	}
+
+	@Test
+	public void findBreakInsideIfInsideSwitch() {
+		findIssue(this.nodeD, this.fileString);
+	}
+
+	@Test
 	public void skipContinueInsideSwitch() {
-		skipIssue(this.nodeC, this.fileString);
+		skipIssue(this.nodeE, this.fileString);
 	}
 
 	@Test
 	public void skipBreakInsideSwitch() {
-		skipIssue(this.nodeD, this.fileString);
+		skipIssue(this.nodeF, this.fileString);
 	}
 
 	@Override
