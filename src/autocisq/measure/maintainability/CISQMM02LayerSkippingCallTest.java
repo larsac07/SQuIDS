@@ -1,5 +1,9 @@
 package autocisq.measure.maintainability;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +30,7 @@ public class CISQMM02LayerSkippingCallTest extends MeasureTest {
 	private String classGUIFileString;
 	private String classTsvToHtmlFileString;
 	private String classParserFileString;
+	private Map<String, Object> settings;
 
 	@Before
 	public void setUp() throws Exception {
@@ -46,12 +51,8 @@ public class CISQMM02LayerSkippingCallTest extends MeasureTest {
 		layers.add(layer3);
 		layers.add(layer4);
 
-		List<String> measureStrings = new LinkedList<>();
-		measureStrings.add(CISQMM02LayerSkippingCall.class.getCanonicalName());
-
-		Map<String, Object> settings = new HashMap<>();
-		settings.put("layer_map", layers);
-		settings.put("measures", measureStrings);
+		this.settings = new HashMap<>();
+		this.settings.put("layer_map", layers);
 
 		File fileGUI = new File("res/test/layers/GUI.java");
 		File fileTsvToHtml = new File("res/test/layers/TsvToHtml.java");
@@ -79,7 +80,7 @@ public class CISQMM02LayerSkippingCallTest extends MeasureTest {
 		compilationUnits.add(classParser);
 
 		this.issueFinder.setCompilationUnits(compilationUnits);
-		this.issueFinder.putMeasure(new CISQMM02LayerSkippingCall(settings));
+		this.issueFinder.putMeasure(new CISQMM02LayerSkippingCall(this.settings));
 	}
 
 	@Test
@@ -95,6 +96,54 @@ public class CISQMM02LayerSkippingCallTest extends MeasureTest {
 	@Test
 	public void findCallToLayerDistance3() {
 		findIssue(this.callDistance3, this.classParserFileString);
+	}
+
+	@Test
+	public void testIsLayerSkippingCall() {
+		List<Set<String>> layers = new LinkedList<>();
+
+		Set<String> layer1 = new HashSet<>();
+		layer1.add("no.uib.lca092.rtms.gui.GUI");
+		Set<String> layer2 = new HashSet<>();
+		Set<String> layer3 = new HashSet<>();
+		layer3.add("no.uib.lca092.rtms.TsvToHtml");
+
+		layers.add(layer1);
+		layers.add(layer2);
+		layers.add(layer3);
+		this.settings = new HashMap<>();
+		this.settings.put("layer_map", layers);
+
+		CISQMM02LayerSkippingCall measure = new CISQMM02LayerSkippingCall(this.settings);
+
+		assertTrue(measure.isLayerSkippingCall("no.uib.lca092.rtms.gui.GUI", "no.uib.lca092.rtms.TsvToHtml"));
+	}
+
+	@Test
+	public void testIsNotLayerSkippingCall() {
+		List<Set<String>> layers = new LinkedList<>();
+
+		Set<String> layer1 = new HashSet<>();
+		layer1.add("no.uib.lca092.rtms.gui.GUI");
+		Set<String> layer2 = new HashSet<>();
+		layer2.add("no.uib.lca092.rtms.TsvToHtml");
+
+		layers.add(layer1);
+		layers.add(layer2);
+		this.settings = new HashMap<>();
+		this.settings.put("layer_map", layers);
+
+		CISQMM02LayerSkippingCall measure = new CISQMM02LayerSkippingCall(this.settings);
+
+		assertFalse(measure.isLayerSkippingCall("no.uib.lca092.rtms.gui.GUI", "no.uib.lca092.rtms.TsvToHtml"));
+	}
+
+	@Test
+	public void testDiff() {
+		CISQMM02LayerSkippingCall measure = new CISQMM02LayerSkippingCall(this.settings);
+		int expected = 5;
+		int actual = measure.diff(3, 8);
+		assertEquals(expected, actual);
 	}
 
 	@Override

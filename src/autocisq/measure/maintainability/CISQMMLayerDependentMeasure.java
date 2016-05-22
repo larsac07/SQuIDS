@@ -20,17 +20,22 @@ public abstract class CISQMMLayerDependentMeasure extends CISQMaintainabilityMea
 	public CISQMMLayerDependentMeasure(Map<String, Object> settings) {
 		super(settings);
 		try {
-			this.layers = (List<Set<String>>) settings.get("layer_map");
-			if (this.layers == null) {
-				System.err.println(this.getClass().getSimpleName()
-						+ " was provided an empty layer_map and will not work. Please provide a layer_map");
-				this.layers = new LinkedList<>();
-			}
+			List<Set<String>> layers = (List<Set<String>>) settings.get("layer_map");
+			setLayers(layers);
 		} catch (NullPointerException | ClassCastException e) {
-			this.layers = new LinkedList<>();
+			setLayers(new LinkedList<>());
 			System.err.println(this.getClass().getSimpleName()
 					+ " was not provided a layer_map and will not work. Please provide a layer_map");
-			e.printStackTrace();
 		}
 	}
+
+	public void setLayers(List<Set<String>> layers) {
+		if (layers == null) {
+			System.err.println(this.getClass().getSimpleName()
+					+ " was provided an empty layer_map and will not work. Please provide a layer_map");
+			layers = new LinkedList<>();
+		}
+		this.layers = layers;
+	}
+
 }

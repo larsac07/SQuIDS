@@ -49,7 +49,7 @@ public class Person {
 	}
 	
 	public Person getPersonFanOut12(String firstName, String[] middleNames, int birthYear, int birthMonth, int birthDate, String streetName, int streetNo, String zipCode, String city, String country) {
-		this.firstName = firstName;
+		firstName = newFirstName;
 		this.middleNames = middleNames;
 		this.birthYear = birthYear;
 		this.birthMonth = birthMonth;

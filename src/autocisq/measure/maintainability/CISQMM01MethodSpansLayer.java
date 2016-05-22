@@ -42,9 +42,12 @@ public class CISQMM01MethodSpansLayer extends CISQMMLayerDependentMeasure {
 				String message = path + MESSAGE + layerAmount;
 				issues.add(new FileIssue(this, node, fileString, message));
 				return issues;
+			} else {
+				return null;
 			}
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 	protected boolean isMethod(String string) {

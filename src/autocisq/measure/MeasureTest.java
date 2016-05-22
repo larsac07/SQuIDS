@@ -1,7 +1,9 @@
 package autocisq.measure;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -20,7 +22,12 @@ public abstract class MeasureTest {
 	}
 
 	public void findIssue(String message, Node nodeToAnalyze, String fileString) {
-		this.issues = this.issueFinder.analyzeNode(nodeToAnalyze, null, fileString);
+		try {
+			this.issues = this.issueFinder.analyzeNode(nodeToAnalyze, null, fileString);
+		} catch (RuntimeException e) {
+			fail();
+		}
+		assertNotNull(this.issues);
 		assertTrue(this.issues.size() > 0);
 		boolean found = false;
 		for (Issue issue : this.issues) {

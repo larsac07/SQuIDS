@@ -15,7 +15,6 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
 import autocisq.JavaParserHelper;
-import autocisq.NoSuchAncestorFoundException;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -210,12 +209,8 @@ public class CISQMM13CyclicCallBetweenPackages extends CISQMMTypeDependentMeasur
 	 *         ancestor of the node
 	 */
 	private PackageDeclaration getNodePackage(Node node) {
-		try {
-			CompilationUnit cu = JavaParserHelper.findNodeCompilationUnit(node);
-			return cu.getPackage();
-		} catch (NoSuchAncestorFoundException e) {
-			return null;
-		}
+		CompilationUnit cu = JavaParserHelper.findNodeCompilationUnit(node);
+		return cu.getPackage();
 	}
 
 	@Override

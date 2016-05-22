@@ -1,14 +1,20 @@
 package autocisq.measure.maintainability;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.DoStmt;
 import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
@@ -24,11 +30,13 @@ public class CISQMM16IndexModifiedWithinLoopTest extends MeasureTest {
 	private ForStmt modifyingFor;
 	private WhileStmt modifyingWhile;
 	private DoStmt modifyingDoWhile;
+	private CISQMM16IndexModifiedWithinLoop measure;
 
 	@Before
 	public void setUp() throws Exception {
+		this.measure = new CISQMM16IndexModifiedWithinLoop(new HashMap<>());
 		this.issueFinder.getMeasures().clear();
-		this.issueFinder.putMeasure(new CISQMM16IndexModifiedWithinLoop(new HashMap<>()));
+		this.issueFinder.putMeasure(this.measure);
 
 		File testFile = new File("res/test/IndexModifiedWithinLoop.java");
 
@@ -62,6 +70,40 @@ public class CISQMM16IndexModifiedWithinLoopTest extends MeasureTest {
 	@Test
 	public void findModifyingDoWhileLoop() {
 		findIssue(this.modifyingDoWhile, this.fileString);
+	}
+
+	@Test
+	public void testIsVariableModification() throws ParseException {
+		List<Expression> exprs = new ArrayList<>();
+		exprs.add(JavaParser.parseExpression("i + 1"));
+		exprs.add(JavaParser.parseExpression("i - 1"));
+		exprs.add(JavaParser.parseExpression("i * 1"));
+		exprs.add(JavaParser.parseExpression("i / 1"));
+		exprs.add(JavaParser.parseExpression("i += 1"));
+		exprs.add(JavaParser.parseExpression("i -= 1"));
+		exprs.add(JavaParser.parseExpression("i *= 1"));
+		exprs.add(JavaParser.parseExpression("i /= 1"));
+		exprs.add(JavaParser.parseExpression("i++"));
+		exprs.add(JavaParser.parseExpression("i--"));
+		exprs.add(JavaParser.parseExpression("++i"));
+		exprs.add(JavaParser.parseExpression("--i"));
+		exprs.add(JavaParser.parseExpression("i = 1"));
+		exprs.add(JavaParser.parseExpression("i %= 1"));
+		exprs.add(JavaParser.parseExpression("i <<= 1"));
+		exprs.add(JavaParser.parseExpression("i >>= 1"));
+		exprs.add(JavaParser.parseExpression("i >>>= 1"));
+		exprs.add(JavaParser.parseExpression("1 + 1"));
+		exprs.add(JavaParser.parseExpression("1 - 1"));
+		exprs.add(JavaParser.parseExpression("1 * 1"));
+		exprs.add(JavaParser.parseExpression("1 / 1"));
+		exprs.add(JavaParser.parseExpression("1 << 1"));
+		exprs.add(JavaParser.parseExpression("1 >> 1"));
+		exprs.add(JavaParser.parseExpression("1 >>> 1"));
+		exprs.add(JavaParser.parseExpression("1 % 1"));
+
+		for (Expression expr : exprs) {
+			assertTrue(this.measure.isVariableModification(expr));
+		}
 	}
 
 	private void dryRun() {

@@ -109,8 +109,12 @@ public abstract class JavaParserHelper {
 		return (ClassOrInterfaceDeclaration) findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
 	}
 
-	public static CompilationUnit findNodeCompilationUnit(Node node) throws NoSuchAncestorFoundException {
-		return (CompilationUnit) findNodeAncestorOfType(node, CompilationUnit.class);
+	public static CompilationUnit findNodeCompilationUnit(Node node) {
+		try {
+			return (CompilationUnit) findNodeAncestorOfType(node, CompilationUnit.class);
+		} catch (NoSuchAncestorFoundException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -398,11 +402,7 @@ public abstract class JavaParserHelper {
 	 *         node
 	 */
 	public static String getNodeFileString(Node node) {
-		try {
-			CompilationUnit cu = findNodeCompilationUnit(node);
-			return cu.toString();
-		} catch (NoSuchAncestorFoundException e) {
-			return null;
-		}
+		CompilationUnit cu = findNodeCompilationUnit(node);
+		return cu.toString();
 	}
 }

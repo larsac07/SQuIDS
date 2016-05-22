@@ -7,8 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.ForStmt;
 
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
@@ -70,6 +72,18 @@ public class CISQMM17ContinueOrBreakOutsideSwitchTest extends MeasureTest {
 	@Test
 	public void skipBreakInsideSwitch() {
 		skipIssue(this.nodeF, this.fileString);
+	}
+
+	@Test
+	public void findBreakNotInsideSwitch() throws ParseException {
+		ForStmt forStmt = (ForStmt) JavaParser.parseStatement("for (int i = 0; i < 10; i++){break;}");
+		findIssue(forStmt, this.fileString);
+	}
+
+	@Test
+	public void findContinueNotInsideSwitch() throws ParseException {
+		ForStmt forStmt = (ForStmt) JavaParser.parseStatement("for (int i = 0; i < 10; i++){continue;}");
+		findIssue(forStmt, this.fileString);
 	}
 
 	@Override

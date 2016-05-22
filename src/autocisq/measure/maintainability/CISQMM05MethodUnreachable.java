@@ -35,8 +35,8 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link CISQMM05MethodUnreachable} class represents the CISQ Maintainability
- * measure 5: # of unreachable functions.
+ * The {@link CISQMM05MethodUnreachable} class represents the CISQ
+ * Maintainability measure 5: # of unreachable functions.
  *
  * @author Lars A. V. Cabrera
  *
@@ -89,15 +89,13 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 					return issues;
 				}
 			} catch (NoSuchAncestorFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 		return null;
 
 	}
 
-	private void storeReferences(Node node, String fileString, List<CompilationUnit> compilationUnits) {
+	protected void storeReferences(Node node, String fileString, List<CompilationUnit> compilationUnits) {
 		if (node instanceof MethodCallExpr || node instanceof ObjectCreationExpr
 				|| node instanceof ExplicitConstructorInvocationStmt) {
 			if (node instanceof MethodCallExpr) {
@@ -132,7 +130,7 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 	 * @param methodName
 	 * @param types
 	 */
-	private void addStaticMethodOrConstructorReference(Node node, String methodName, List<String> types) {
+	protected void addStaticMethodOrConstructorReference(Node node, String methodName, List<String> types) {
 		try {
 			ClassOrInterfaceDeclaration enclosingClass = (ClassOrInterfaceDeclaration) JavaParserHelper
 					.findNodeAncestorOfType(node, ClassOrInterfaceDeclaration.class);
@@ -141,8 +139,6 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 			}
 			addReference(enclosingClass.getName(), methodName, types);
 		} catch (NoSuchAncestorFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -150,7 +146,7 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 	 * @param scope
 	 * @return
 	 */
-	private String getVariableName(Expression scope) {
+	protected String getVariableName(Expression scope) {
 		if (scope instanceof FieldAccessExpr) {
 			FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) scope;
 			return JavaParserHelper.getNameExprType(fieldAccessExpr.getFieldExpr());
@@ -161,7 +157,7 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 		return null;
 	}
 
-	private List<String> argsToTypes(Node callingNode, List<Expression> args) {
+	protected List<String> argsToTypes(Node callingNode, List<Expression> args) {
 		List<String> types = new ArrayList<>();
 		if (args == null) {
 			return types;
@@ -173,8 +169,6 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 								.findNodeAncestorOfType(callingNode, ClassOrInterfaceDeclaration.class);
 						types.add(enclosingClass.getName());
 					} catch (NoSuchAncestorFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				} else if (arg instanceof NameExpr) {
 					NameExpr nameExpr = (NameExpr) arg;
@@ -211,7 +205,7 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 	 * @param types
 	 *            - the types of the parameters in the method
 	 */
-	private void addReference(String className, String functionName, List<String> types) {
+	protected void addReference(String className, String functionName, List<String> types) {
 		this.referencedFunctions.add(concatClassAndFunction(className, functionName, types));
 	}
 
@@ -226,7 +220,7 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 	 *            - the types of the parameters in the method
 	 * @return true if the method is referenced, false if not
 	 */
-	private boolean isReferenced(String className, String functionName, List<String> types) {
+	protected boolean isReferenced(String className, String functionName, List<String> types) {
 		String classAndFunction = concatClassAndFunction(className, functionName, types);
 		return this.referencedFunctions.contains(classAndFunction);
 	}
@@ -243,7 +237,7 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 	 *            - the types of the parameters in the method
 	 * @return
 	 */
-	private String concatClassAndFunction(String className, String functionName, List<String> types) {
+	protected String concatClassAndFunction(String className, String functionName, List<String> types) {
 		String classAndFunction = className;
 		classAndFunction += "." + functionName;
 		classAndFunction += "(";

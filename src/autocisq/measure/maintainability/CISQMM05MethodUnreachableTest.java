@@ -1,16 +1,25 @@
 package autocisq.measure.maintainability;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.Expression;
 
 import autocisq.io.IOUtils;
 import autocisq.measure.MeasureTest;
@@ -35,9 +44,11 @@ public class CISQMM05MethodUnreachableTest extends MeasureTest {
 	private ConstructorDeclaration constructorInnerClassPrivateUnreferenced;
 	private CompilationUnit cu;
 	private String fileString;
+	private CISQMM05MethodUnreachable dummy;
 
 	@Before
 	public void setUp() throws Exception {
+		this.dummy = new CISQMM05MethodUnreachable(new HashMap<>());
 		this.issueFinder.getMeasures().clear();
 		this.issueFinder.putMeasure(new CISQMM05MethodUnreachable(new HashMap<>()));
 
@@ -147,6 +158,37 @@ public class CISQMM05MethodUnreachableTest extends MeasureTest {
 	@Test
 	public void findInnerClassPrivateUnreferencedConstructor() {
 		findIssue(this.constructorInnerClassPrivateUnreferenced, this.fileString);
+	}
+
+	@Test
+	public void testGetVariableNameNotNullNameExpr() throws ParseException, IOException {
+		CompilationUnit cu = JavaParser.parse(new File("res/test/HardCodedLiterals.java"));
+		Expression scope = (Expression) cu.getTypes().get(0).getMembers().get(13).getChildrenNodes().get(1)
+				.getChildrenNodes().get(0).getChildrenNodes().get(0).getChildrenNodes().get(0);
+		assertNotNull(this.dummy.getVariableName(scope));
+	}
+
+	@Test
+	public void testGetVariableNameNotNullFieldAccessExpr() throws ParseException, IOException {
+		CompilationUnit cu = JavaParser.parse(new File("res/test/HardCodedLiterals.java"));
+		Expression scope = (Expression) cu.getTypes().get(0).getMembers().get(13).getChildrenNodes().get(1)
+				.getChildrenNodes().get(0).getChildrenNodes().get(0).getChildrenNodes().get(0);
+		assertNotNull(this.dummy.getVariableName(scope));
+	}
+
+	@Test
+	public void testGetVariableNullAssignExpr() throws ParseException, IOException {
+		CompilationUnit cu = JavaParser.parse(new File("res/test/HardCodedLiterals.java"));
+		Expression scope = (Expression) cu.getTypes().get(0).getMembers().get(13).getChildrenNodes().get(1)
+				.getChildrenNodes().get(0).getChildrenNodes().get(0);
+		assertNull(this.dummy.getVariableName(scope));
+	}
+
+	@Test
+	public void testArgsToTypesEmptyArgs() {
+		List<String> expected = new ArrayList<>();
+		List<String> actual = this.dummy.argsToTypes(null, null);
+		assertEquals(expected, actual);
 	}
 
 	@Override

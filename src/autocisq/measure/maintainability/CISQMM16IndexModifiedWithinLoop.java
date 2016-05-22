@@ -27,8 +27,9 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link CISQMM16IndexModifiedWithinLoop} class represents the CISQ Maintainability
- * measure 16: # of instances of indexes modified within its loop.
+ * The {@link CISQMM16IndexModifiedWithinLoop} class represents the CISQ
+ * Maintainability measure 16: # of instances of indexes modified within its
+ * loop.
  *
  * It considers indexes to be integer values used to access arrays.
  *
@@ -134,7 +135,7 @@ public class CISQMM16IndexModifiedWithinLoop extends CISQMMTypeDependentMeasure 
 	 *            - the node
 	 * @return true if the node is a variable modification expression
 	 */
-	private boolean isVariableModification(Node node) {
+	protected boolean isVariableModification(Node node) {
 		if (node instanceof UnaryExpr) {
 			UnaryExpr.Operator op = ((UnaryExpr) node).getOperator();
 			return op.equals(UnaryExpr.Operator.positive) || op.equals(UnaryExpr.Operator.negative)
@@ -187,8 +188,8 @@ public class CISQMM16IndexModifiedWithinLoop extends CISQMMTypeDependentMeasure 
 	/**
 	 * Checks to see if a node is an index variable. If the node is a variable
 	 * reference of any kind (see
-	 * {@link CISQMM16IndexModifiedWithinLoop#getVariableName(Node)}), and it has an
-	 * ancestor of type {@link ArrayAccessExpr}, it is an index variable.
+	 * {@link CISQMM16IndexModifiedWithinLoop#getVariableName(Node)}), and it
+	 * has an ancestor of type {@link ArrayAccessExpr}, it is an index variable.
 	 *
 	 * @param node
 	 *            - the node

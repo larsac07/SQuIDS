@@ -1,5 +1,8 @@
 package autocisq.measure.maintainability;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,6 +29,7 @@ public class CISQMM19MethodDataOrFileOperationsTest extends MeasureTest {
 	private String fileString;
 	private CompilationUnit cabCU;
 	private Map<String, Object> settings;
+	private CISQMM19MethodDataOrFileOperations measure;
 
 	@Before
 	public void setUp() throws Exception {
@@ -37,7 +41,8 @@ public class CISQMM19MethodDataOrFileOperationsTest extends MeasureTest {
 		dbOrIoClasses.add("com.github.javaparser.JavaParser");
 		this.settings = new HashMap<>();
 		this.settings.put("db_or_io_classes", dbOrIoClasses);
-		this.issueFinder.putMeasure(new CISQMM19MethodDataOrFileOperations(this.settings));
+		this.measure = new CISQMM19MethodDataOrFileOperations(this.settings);
+		this.issueFinder.putMeasure(this.measure);
 
 		File testFile = new File("res/test/MethodsWithDataOrFileOperations.java");
 
@@ -78,6 +83,41 @@ public class CISQMM19MethodDataOrFileOperationsTest extends MeasureTest {
 	@Test
 	public void findMethodExternalLibraryDbOrIoCalls() {
 		findIssue(this.methodExternalLibraryDbOrIoCalls, this.fileString);
+	}
+
+	@Test
+	public void isDbOrIoClassNullReturnsFalse() {
+		assertFalse(this.measure.isDbOrIoClass(null));
+	}
+
+	@Test
+	public void createListsCalledNoProvidedDbOrIoClasses() {
+		CISQMM19CreateListsMock mockMeasure = new CISQMM19CreateListsMock(new HashMap<>());
+		String expected = "called";
+		String actual = mockMeasure.tracker;
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void createListsCalledNullSettings() {
+		CISQMM19CreateListsMock mockMeasure = new CISQMM19CreateListsMock(null);
+		String expected = "called";
+		String actual = mockMeasure.tracker;
+		assertEquals(expected, actual);
+	}
+
+	private class CISQMM19CreateListsMock extends CISQMM19MethodDataOrFileOperations {
+		private String tracker;
+
+		public CISQMM19CreateListsMock(Map<String, Object> settings) {
+			super(settings);
+		}
+
+		@Override
+		protected void createLists(List<String> dbOrIoClassesAndPackages) {
+			this.tracker = "called";
+		}
+
 	}
 
 	@Override

@@ -74,7 +74,6 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 			createLists(null);
 			System.err.println(this.getClass().getSimpleName()
 					+ " was not provided a db_or_io_classes list and will not work. Please provide a db_or_io_classes list");
-			e.printStackTrace();
 		}
 		reset();
 	}
@@ -161,7 +160,7 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 	 *            - the canonical name of the class, e.g. "java.io.File"
 	 * @return true if the class contains data or file operations, false if not
 	 */
-	private boolean isDbOrIoClass(String classCanonicalName) {
+	protected boolean isDbOrIoClass(String classCanonicalName) {
 		if (classCanonicalName == null) {
 			return false;
 		}
@@ -197,7 +196,7 @@ public class CISQMM19MethodDataOrFileOperations extends CISQMMTypeDependentMeasu
 		this.count = 0;
 	}
 
-	private void createLists(List<String> dbOrIoClassesAndPackages) {
+	protected void createLists(List<String> dbOrIoClassesAndPackages) {
 		this.dbOrIoClasses = new LinkedList<>();
 		this.dbOrIoPackages = new LinkedList<>();
 		if (dbOrIoClassesAndPackages != null) {

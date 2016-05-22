@@ -24,6 +24,7 @@ import autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexityTest;
 import autocisq.measure.maintainability.CISQMM19MethodDataOrFileOperationsTest;
 import autocisq.measure.maintainability.CISQMM20MethodParametersTest;
 import autocisq.measure.maintainability.CISQMM21HardCodedLiteralTest;
+import autocisq.measure.maintainability.CISQMMLayerDependentMeasureTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({ CISQMM01MethodSpansLayerTest.class, CISQMM02LayerSkippingCallTest.class,
@@ -34,7 +35,7 @@ import autocisq.measure.maintainability.CISQMM21HardCodedLiteralTest;
 		CISQMM14MethodCommentedOutInstructionsTest.class, CISQMM15FileLOCTest.class,
 		CISQMM16IndexModifiedWithinLoopTest.class, CISQMM17ContinueOrBreakOutsideSwitchTest.class,
 		CISQMM18MethodCyclomaticComplexityTest.class, CISQMM19MethodDataOrFileOperationsTest.class,
-		CISQMM20MethodParametersTest.class, CISQMM21HardCodedLiteralTest.class })
+		CISQMM20MethodParametersTest.class, CISQMM21HardCodedLiteralTest.class, CISQMMLayerDependentMeasureTest.class })
 
 public class AllMeasuresTests {
 

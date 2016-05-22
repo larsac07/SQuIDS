@@ -29,8 +29,8 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The CISQMM11MethodFanOut class represents the CISQ Maintainability Measure 11: # of
- * functions that have a fan-out ≥ 10.
+ * The CISQMM11MethodFanOut class represents the CISQ Maintainability Measure
+ * 11: # of functions that have a fan-out ≥ 10.
  *
  * The fan-out is calculated by summing up the number of called functions
  * (methods) and the number of member variables set.
@@ -71,12 +71,12 @@ public class CISQMM11MethodFanOut extends CISQMMTypeDependentMeasure {
 		return null;
 	}
 
-	private String createMessage(BodyDeclaration member, int fanOut) {
+	protected String createMessage(BodyDeclaration member, int fanOut) {
 		String methodID = createMemberID(member);
 		return methodID + MESSAGE + fanOut;
 	}
 
-	private String createMemberID(BodyDeclaration member) {
+	protected String createMemberID(BodyDeclaration member) {
 		String memberID = "";
 		try {
 			ClassOrInterfaceDeclaration type = JavaParserHelper.findNodeClassOrInterfaceDeclaration(member);
@@ -87,8 +87,6 @@ public class CISQMM11MethodFanOut extends CISQMMTypeDependentMeasure {
 			}
 			memberID += type.getName() + ".";
 		} catch (NoSuchAncestorFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		if (member instanceof MethodDeclaration) {
 			memberID += ((MethodDeclaration) member).getName();
@@ -98,7 +96,7 @@ public class CISQMM11MethodFanOut extends CISQMMTypeDependentMeasure {
 		return memberID;
 	}
 
-	private void storeFields(ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
+	protected void storeFields(ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
 		this.fields = new HashSet<>();
 		for (BodyDeclaration member : classOrInterfaceDeclaration.getMembers()) {
 			if (member instanceof FieldDeclaration) {
@@ -110,12 +108,12 @@ public class CISQMM11MethodFanOut extends CISQMMTypeDependentMeasure {
 		}
 	}
 
-	private int calculateFanOut(Node node) {
+	protected int calculateFanOut(Node node) {
 		List<Issue> issues = new ArrayList<>();
 		return calculateFanOut(node, issues);
 	}
 
-	private int calculateFanOut(Node node, List<Issue> issues) {
+	protected int calculateFanOut(Node node, List<Issue> issues) {
 		int fanOut = 0;
 		if (node instanceof AssignExpr) {
 			AssignExpr assignExpr = (AssignExpr) node;
@@ -140,7 +138,7 @@ public class CISQMM11MethodFanOut extends CISQMMTypeDependentMeasure {
 		return fanOut;
 	}
 
-	private boolean isField(Expression target) {
+	protected boolean isField(Expression target) {
 		if (target instanceof NameExpr) {
 			String name = ((NameExpr) target).getName();
 			if (this.fields.contains(name)) {
@@ -161,6 +159,10 @@ public class CISQMM11MethodFanOut extends CISQMMTypeDependentMeasure {
 	@Override
 	public String getMeasureElement() {
 		return ISSUE_TYPE;
+	}
+
+	public Set<String> getFields() {
+		return this.fields;
 	}
 
 }
