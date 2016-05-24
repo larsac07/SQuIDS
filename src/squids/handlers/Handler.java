@@ -55,7 +55,7 @@ public class Handler extends AbstractHandler {
 	public final static String COMMAND_SELECTED_PROJECTS = "SQuIDS.commands.analyzeSelectedProjects";
 	public final static String COMMAND_ALL_PROJECTS = "SQuIDS.commands.analyzeAllProjects";
 	private final static String JAVA = "java";
-	private final static String JOB_NAME = "Analyze project";
+	private final static String JOB_NAME = "SQuIDS";
 	private final static String NL = System.lineSeparator();
 	private final static String MARKER_ID = "SQuIDS.javaqualityissue";
 	private long parsingTime;
@@ -71,20 +71,34 @@ public class Handler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String cmdID = event.getCommand().getId();
 		if (cmdID.equals(COMMAND_SELECTED_PROJECTS) || cmdID.equals(COMMAND_ALL_PROJECTS)) {
-			this.totalTime = System.currentTimeMillis();
-			resetCISQReport();
-			Set<IProject> projects = new LinkedHashSet<>();
-			if (cmdID.equals(COMMAND_SELECTED_PROJECTS)) {
-				projects = getSelectedProjects();
-			} else {
-				IProject[] projectArray = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-				for (IProject project : projectArray) {
-					projects.add(project);
+
+			Job job = new Job(JOB_NAME) {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					Handler.this.totalTime = System.currentTimeMillis();
+					resetCISQReport();
+					Set<IProject> projects = new LinkedHashSet<>();
+					if (cmdID.equals(COMMAND_SELECTED_PROJECTS)) {
+						projects = getSelectedProjects();
+					} else {
+						IProject[] projectArray = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+						for (IProject project : projectArray) {
+							projects.add(project);
+						}
+					}
+					for (IProject project : projects) {
+						try {
+							analyzeSourceFiles(project, monitor);
+						} catch (InterruptedException e) {
+							System.err.println(e.getMessage());
+							return Status.CANCEL_STATUS;
+						}
+					}
+					return Status.OK_STATUS;
 				}
-			}
-			for (IProject project : projects) {
-				analyzeSourceFiles(project);
-			}
+			};
+			job.setPriority(Job.LONG);
+			job.schedule();
 		}
 		return null;
 	}
@@ -108,10 +122,10 @@ public class Handler extends AbstractHandler {
 		return projects;
 	}
 
-	private void analyzeSourceFiles(IProject project) {
+	private void analyzeSourceFiles(IProject project, IProgressMonitor monitor) throws InterruptedException {
 		Map<String, Object> settings = loadSettings(project);
 		List<File> files = new LinkedList<>();
-		analyzeSourceFiles(project, settings, files);
+		analyzeSourceFiles(project, settings, files, monitor);
 	}
 
 	/**
@@ -120,7 +134,8 @@ public class Handler extends AbstractHandler {
 	 * @param files
 	 * @param iFileMap
 	 */
-	private void analyzeSourceFiles(IProject project, Map<String, Object> settings, List<File> files) {
+	private void analyzeSourceFiles(IProject project, Map<String, Object> settings, List<File> files,
+			IProgressMonitor monitor) throws InterruptedException {
 		Map<File, IFile> iFileMap = new HashMap<>();
 		List<IFile> iFiles;
 		try {
@@ -131,50 +146,42 @@ public class Handler extends AbstractHandler {
 				return;
 			}
 			prepareIFiles(iFiles, files, iFileMap);
-			Job job = new Job(JOB_NAME + " " + project.getName()) {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					Map<String, Map<String, Integer>> qcj = new LinkedHashMap<>();
-					Handler.this.parsingTime = System.currentTimeMillis();
-					IssueFinder issueFinder = new IssueFinder(files, settings);
-					Handler.this.parsingTime = System.currentTimeMillis() - Handler.this.parsingTime;
-					int fileIndex = 1;
-					int filesTot = files.size();
-					Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
-					monitor.beginTask("Analyzing files", files.size());
-					try {
-						Handler.this.markingTime = 0;
-						for (File file : files) {
-							if (monitor.isCanceled()) {
-								return Status.CANCEL_STATUS;
-							}
-							String fileAnalysis = "Analyzing file " + fileIndex + "/" + filesTot + ": "
-									+ file.getPath();
-							monitor.subTask(fileAnalysis);
-							Logger.log(fileAnalysis);
-
-							List<Issue> issues = analyzeSourceFile(project, iFileMap, qcj, issueFinder, file);
-							fileIssuesMap.put(file, issues);
-
-							monitor.worked(1);
-							fileIndex++;
-						}
-					} finally {
-						monitor.done();
+			Map<String, Map<String, Integer>> qcj = new LinkedHashMap<>();
+			Handler.this.parsingTime = System.currentTimeMillis();
+			IssueFinder issueFinder = new IssueFinder(files, settings);
+			Handler.this.parsingTime = System.currentTimeMillis() - Handler.this.parsingTime;
+			int fileIndex = 1;
+			int filesTot = files.size();
+			Map<File, List<Issue>> fileIssuesMap = new LinkedHashMap<>();
+			monitor.beginTask("Analyzing files", files.size());
+			try {
+				Handler.this.markingTime = 0;
+				for (File file : files) {
+					if (monitor.isCanceled()) {
+						throw new InterruptedException("Cancelled while analyzing project " + project.getName());
 					}
-					logQCj(project.getName(), qcj);
-					viewQCJ(project.getName(), qcj);
+					String fileAnalysis = "Analyzing file " + fileIndex + "/" + filesTot + ": " + file.getPath();
+					monitor.subTask(fileAnalysis);
+					Logger.log(fileAnalysis);
 
-					Handler.this.totalTime = System.currentTimeMillis() - Handler.this.totalTime;
-					logMeasureTimes(project.getName(), issueFinder);
-					logAllTimes();
-					XMLWriter writer = new XMLWriter();
-					writer.writeIssues(project.getName(), fileIssuesMap);
-					return Status.OK_STATUS;
+					List<Issue> issues = analyzeSourceFile(project, iFileMap, qcj, issueFinder, file);
+					fileIssuesMap.put(file, issues);
+
+					monitor.worked(1);
+					fileIndex++;
 				}
-			};
-			job.setPriority(Job.LONG);
-			job.schedule();
+			} finally {
+				monitor.done();
+			}
+			logQCj(project.getName(), qcj);
+			viewQCJ(project.getName(), qcj);
+
+			Handler.this.totalTime = System.currentTimeMillis() - Handler.this.totalTime;
+			logMeasureTimes(project.getName(), issueFinder);
+			logAllTimes();
+			XMLWriter writer = new XMLWriter();
+			writer.writeIssues(project.getName(), fileIssuesMap);
+
 		} catch (CoreException e) {
 			e.printStackTrace();
 			return;
