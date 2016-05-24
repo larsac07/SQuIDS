@@ -151,18 +151,6 @@ public class IssueFinder {
 		this.measures.put(measure.getClass().getSimpleName(), measure);
 	}
 
-	public Measure getMeasure(String classSimpleName) {
-		return this.measures.get(classSimpleName);
-	}
-
-	public boolean hasMeasure(Measure measure) {
-		return hasMeasure(measure.getClass().getSimpleName());
-	}
-
-	public boolean hasMeasure(String classSimpleName) {
-		return getMeasure(classSimpleName) != null;
-	}
-
 	public List<CompilationUnit> getCompilationUnits() {
 		return this.compilationUnits;
 	}
@@ -173,13 +161,5 @@ public class IssueFinder {
 
 	public Map<Measure, Long> getMeasureTimes() {
 		return this.measureTimes;
-	}
-
-	public Map<File, CompilationUnit> getFileCompilationUnitMap() {
-		return this.fileCompilationUnitMap;
-	}
-
-	public void setFileCompilationUnitMap(Map<File, CompilationUnit> fileCompilationUnitMap) {
-		this.fileCompilationUnitMap = fileCompilationUnitMap;
 	}
 }
