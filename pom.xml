@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>AutoCISQ</groupId>
-  <artifactId>AutoCISQ</artifactId>
+  <groupId>SQuIDS</groupId>
+  <artifactId>SQuIDS</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>AutoCISQ</name>
+  <name>SQuIDS</name>
   <description>Library to measure CISQ Maintainability measures</description>
   <build>
     <sourceDirectory>src</sourceDirectory>

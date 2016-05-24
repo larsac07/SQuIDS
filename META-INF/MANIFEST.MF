@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: AutoCISQ
-Bundle-SymbolicName: AutoCISQ;singleton:=true
+Bundle-Name: SQuIDS
+Bundle-SymbolicName: SQuIDS;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: autocisq.Activator
+Bundle-Activator: squids.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.10.1",
  org.junit,

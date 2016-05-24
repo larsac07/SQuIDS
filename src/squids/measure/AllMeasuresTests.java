@@ -1,0 +1,42 @@
+package squids.measure;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+import squids.measure.maintainability.CISQMM01MethodSpansLayerTest;
+import squids.measure.maintainability.CISQMM02LayerSkippingCallTest;
+import squids.measure.maintainability.CISQMM03HorizontalLayersTest;
+import squids.measure.maintainability.CISQMM04FileDuplicateTokensTest;
+import squids.measure.maintainability.CISQMM05MethodUnreachableTest;
+import squids.measure.maintainability.CISQMM06ClassInheritanceLevelTest;
+import squids.measure.maintainability.CISQMM07ClassChildrenTest;
+import squids.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClassTest;
+import squids.measure.maintainability.CISQMM10VariableDeclaredPublicTest;
+import squids.measure.maintainability.CISQMM11MethodFanOutTest;
+import squids.measure.maintainability.CISQMM12ClassCouplingTest;
+import squids.measure.maintainability.CISQMM13CyclicCallBetweenPackagesTest;
+import squids.measure.maintainability.CISQMM14MethodCommentedOutInstructionsTest;
+import squids.measure.maintainability.CISQMM15FileLOCTest;
+import squids.measure.maintainability.CISQMM16IndexModifiedWithinLoopTest;
+import squids.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitchTest;
+import squids.measure.maintainability.CISQMM18MethodCyclomaticComplexityTest;
+import squids.measure.maintainability.CISQMM19MethodDataOrFileOperationsTest;
+import squids.measure.maintainability.CISQMM20MethodParametersTest;
+import squids.measure.maintainability.CISQMM21HardCodedLiteralTest;
+import squids.measure.maintainability.CISQMMLayerDependentMeasureTest;
+
+@RunWith(Suite.class)
+@SuiteClasses({ CISQMM01MethodSpansLayerTest.class, CISQMM02LayerSkippingCallTest.class,
+		CISQMM03HorizontalLayersTest.class, CISQMM04FileDuplicateTokensTest.class, CISQMM05MethodUnreachableTest.class,
+		CISQMM06ClassInheritanceLevelTest.class, CISQMM07ClassChildrenTest.class,
+		CISQMM09MethodDirectlyUsingFieldFromOtherClassTest.class, CISQMM10VariableDeclaredPublicTest.class,
+		CISQMM11MethodFanOutTest.class, CISQMM12ClassCouplingTest.class, CISQMM13CyclicCallBetweenPackagesTest.class,
+		CISQMM14MethodCommentedOutInstructionsTest.class, CISQMM15FileLOCTest.class,
+		CISQMM16IndexModifiedWithinLoopTest.class, CISQMM17ContinueOrBreakOutsideSwitchTest.class,
+		CISQMM18MethodCyclomaticComplexityTest.class, CISQMM19MethodDataOrFileOperationsTest.class,
+		CISQMM20MethodParametersTest.class, CISQMM21HardCodedLiteralTest.class, CISQMMLayerDependentMeasureTest.class })
+
+public class AllMeasuresTests {
+
+}
