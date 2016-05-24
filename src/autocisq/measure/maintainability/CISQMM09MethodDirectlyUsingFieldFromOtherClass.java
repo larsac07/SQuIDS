@@ -60,7 +60,7 @@ public class CISQMM09MethodDirectlyUsingFieldFromOtherClass extends CISQMMTypeDe
 						ClassOrInterfaceDeclaration nodeClass = JavaParserHelper
 								.findNodeClassOrInterfaceDeclaration(node);
 						if (!fieldClass.equals(nodeClass)) {
-							FieldDeclaration fieldDeclaration = JavaParserHelper.findFieldDeclarationTopDown(fieldName,
+							FieldDeclaration fieldDeclaration = JavaParserHelper.findFieldDeclarationInType(fieldName,
 									fieldClass);
 							if (fieldDeclaration != null) {
 								if (isVariable(fieldDeclaration)) {

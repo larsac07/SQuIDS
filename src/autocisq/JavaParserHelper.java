@@ -1,6 +1,5 @@
 package autocisq;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.MultiTypeParameter;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
@@ -21,9 +19,6 @@ import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.ast.type.Type;
 
 public abstract class JavaParserHelper {
 	public static boolean methodCallFromSameType(MethodCallExpr methodCall) {
@@ -81,7 +76,7 @@ public abstract class JavaParserHelper {
 		CompilationUnit compilationUnit = null;
 		Expression scopeExpression = methodCall.getScope();
 		try {
-			TypeDeclaration parentType = findNodeClassOrInterfaceDeclaration(methodCall);
+			ClassOrInterfaceDeclaration parentType = findNodeClassOrInterfaceDeclaration(methodCall);
 			search: for (FieldDeclaration fieldDeclaration : findTypeFields(parentType)) {
 				List<VariableDeclarator> variables = fieldDeclaration.getVariables();
 				for (VariableDeclarator variable : variables) {
@@ -97,8 +92,7 @@ public abstract class JavaParserHelper {
 			}
 
 		} catch (NoSuchAncestorFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return compilationUnit;
 		}
 
 		return compilationUnit;
@@ -244,134 +238,16 @@ public abstract class JavaParserHelper {
 		return new int[] { startIndex, endIndex };
 	}
 
-	public static FieldDeclaration findFieldDeclarationTopDown(String fieldName, Node node) {
-		if (node instanceof FieldDeclaration) {
-			FieldDeclaration fieldDeclaration = (FieldDeclaration) node;
-			for (VariableDeclarator variableDeclarator : fieldDeclaration.getVariables()) {
-				if (variableDeclarator.getId().getName().equals(fieldName)) {
-					return fieldDeclaration;
+	public static FieldDeclaration findFieldDeclarationInType(String fieldName, TypeDeclaration classOrInterface) {
+		List<FieldDeclaration> fields = findTypeFields(classOrInterface);
+		for (FieldDeclaration field : fields) {
+			for (VariableDeclarator variable : field.getVariables()) {
+				if (variable.getId().getName().equals(fieldName)) {
+					return field;
 				}
 			}
 		}
-
-		for (Node child : node.getChildrenNodes()) {
-			FieldDeclaration childFieldDeclaration = findFieldDeclarationTopDown(fieldName, child);
-			if (childFieldDeclaration != null) {
-				return childFieldDeclaration;
-			}
-		}
-
 		return null;
-	}
-
-	public static List<Type> findVariableTypeBottomUp(String variableName, Node node) throws NoSuchVariableException {
-		Node parent = node.getParentNode();
-		List<Type> types = new ArrayList<>();
-
-		if (parent != null) {
-			for (Node sibling : parent.getChildrenNodes()) {
-				if (sibling instanceof VariableDeclarationExpr) {
-					VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) sibling;
-					for (VariableDeclarator variableDeclarator : variableDeclarationExpr.getVars()) {
-						if (variableDeclarator.getId().getName().equals(variableName)) {
-							types.add(variableDeclarationExpr.getType());
-							return types;
-						}
-					}
-				} else if (sibling instanceof Parameter) {
-					Parameter parameter = (Parameter) sibling;
-					if (parameter.getId().getName().equals(variableName)) {
-						types.add(parameter.getType());
-						return types;
-					}
-				} else if (sibling instanceof MultiTypeParameter) {
-					MultiTypeParameter multiTypeParameter = (MultiTypeParameter) sibling;
-					if (multiTypeParameter.getId().getName().equals(variableName)) {
-						types.addAll(multiTypeParameter.getTypes());
-						return types;
-					}
-				} else if (sibling instanceof FieldDeclaration) {
-					FieldDeclaration fieldDeclaration = (FieldDeclaration) sibling;
-					for (VariableDeclarator variableDeclarator : fieldDeclaration.getVariables()) {
-						if (variableDeclarator.getId().getName().equals(variableName)) {
-							types.add(fieldDeclaration.getType());
-							return types;
-						}
-					}
-				} else if (sibling instanceof ExpressionStmt) {
-					try {
-						VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) findNodeDescendantOfType(
-								sibling, VariableDeclarationExpr.class);
-						for (VariableDeclarator variableDeclarator : variableDeclarationExpr.getVars()) {
-							if (variableDeclarator.getId().getName().equals(variableName)) {
-								types.add(variableDeclarationExpr.getType());
-								return types;
-							}
-						}
-					} catch (NoSuchDescendantFoundException e) {
-					}
-				}
-			}
-
-			return findVariableTypeBottomUp(variableName, parent);
-
-		} else {
-			throw new NoSuchVariableException("Could not find variable", variableName);
-		}
-	}
-
-	public static Node findNodeDescendantOfType(Node node, Class<? extends Node> klass)
-			throws NoSuchDescendantFoundException {
-		if (node.getClass().isAssignableFrom(klass)) {
-			return node;
-		} else {
-			for (Node child : node.getChildrenNodes()) {
-				return findNodeDescendantOfType(child, klass);
-			}
-		}
-		throw new NoSuchDescendantFoundException();
-	}
-
-	/**
-	 * Generates a list of {@link Node} elements which are descendants of the
-	 * provided node and are assignable from (instanceof) the specified class.
-	 *
-	 * @param node
-	 *            - the root node to search from
-	 * @param klass
-	 *            - the class filter for the search
-	 * @param nodes
-	 *            - the list of nodes. Initally, this can be null. Used for
-	 *            recursion.
-	 * @return a list of nodes of the specified class which are descendants of
-	 *         the provided node
-	 * @throws NoSuchDescendantFoundException
-	 */
-	@SafeVarargs
-	public static List<Node> findNodeDescendantsOfType(Node node, Class<? extends Node>... classes)
-			throws NoSuchDescendantFoundException {
-		return findNodeDescendantsOfType(node, null, classes);
-	}
-
-	@SafeVarargs
-	private static List<Node> findNodeDescendantsOfType(Node node, List<Node> nodes, Class<? extends Node>... classes)
-			throws NoSuchDescendantFoundException {
-		if (nodes == null) {
-			nodes = new LinkedList<>();
-		}
-		for (Class<? extends Node> klass : classes) {
-			if (node.getClass().isAssignableFrom(klass)) {
-				nodes.add(node);
-			}
-		}
-		for (Node child : node.getChildrenNodes()) {
-			findNodeDescendantsOfType(child, nodes, classes);
-		}
-		if (nodes.isEmpty()) {
-			throw new NoSuchDescendantFoundException();
-		} else {
-			return nodes;
-		}
 	}
 
 	/**
@@ -390,19 +266,5 @@ public abstract class JavaParserHelper {
 		} else {
 			return nameExprString;
 		}
-	}
-
-	/**
-	 * Returns the complete file string (toString() value) of the
-	 * {@link CompilationUnit} ancestor of a node.
-	 *
-	 * @param node
-	 *            - the node to get the complete file string for
-	 * @return the toString() value of the {@link CompilationUnit} ancestor of a
-	 *         node
-	 */
-	public static String getNodeFileString(Node node) {
-		CompilationUnit cu = findNodeCompilationUnit(node);
-		return cu.toString();
 	}
 }
