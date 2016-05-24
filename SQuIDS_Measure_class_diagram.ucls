@@ -3,394 +3,335 @@
   realizations="true" associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="autocisq.measure.Measure" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/Measure.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="3555" y="37"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="151" y="576"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="true" package="true" protected="true" private="true" static="false"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="autocisq.JavaParserHelper" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/JavaParserHelper.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="419" width="893" x="6799" y="1098"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="3" language="java" name="autocisq.measure.maintainability.CISQMaintainabilityMeasure" project="SQuIDS" 
+  <class id="2" language="java" name="autocisq.measure.maintainability.CISQMaintainabilityMeasure" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMaintainabilityMeasure.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="3555" y="271"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="538" y="575"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructions" 
-    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM14MethodCommentedOutInstructions.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="269" width="675" x="41" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="5" language="java" name="autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM16IndexModifiedWithinLoop.java" binary="false" 
+  <class id="3" language="java" name="autocisq.measure.maintainability.CISQMMLayerDependentMeasure" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMMLayerDependentMeasure.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="169" width="611" x="8885" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="1042" y="130"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="autocisq.measure.maintainability.CISQMM19MethodDataOrFileOperations" 
-    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM19MethodDataOrFileOperations.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="169" width="621" x="10187" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+  <class id="4" language="java" name="autocisq.measure.maintainability.CISQMM01MethodSpansLayer" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM01MethodSpansLayer.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1571" y="45"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="autocisq.measure.maintainability.CISQMM11MethodFanOut" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM11MethodFanOut.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="219" width="611" x="6799" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+  <class id="5" language="java" name="autocisq.measure.maintainability.CISQMM02LayerSkippingCall" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM02LayerSkippingCall.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1563" y="140"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="autocisq.measure.maintainability.CISQMM03HorizontalLayers" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM03HorizontalLayers.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1558" y="230"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="autocisq.measure.maintainability.CISQMM04FileDuplicateTokens" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM04FileDuplicateTokens.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1028" y="216"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="8" language="java" name="autocisq.measure.maintainability.CISQMM05MethodUnreachable" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM05MethodUnreachable.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="169" width="611" x="8234" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="1595" y="723"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="autocisq.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClass" 
+  <class id="9" language="java" name="autocisq.measure.maintainability.CISQMM06ClassInheritanceLevel" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM06ClassInheritanceLevel.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1038" y="306"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="autocisq.measure.maintainability.CISQMM07ClassChildren" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM07ClassChildren.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="992" y="395"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="autocisq.measure.maintainability.CISQMM09MethodDirectlyUsingFieldFromOtherClass" 
     project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM09MethodDirectlyUsingFieldFromOtherClass.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="194" width="744" x="7450" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="1720" y="811"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="autocisq.measure.maintainability.CISQMM20MethodParameters" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM20MethodParameters.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="3555" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="11" language="java" name="autocisq.measure.maintainability.CISQMM21HardCodedLiteral" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM21HardCodedLiteral.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="244" width="611" x="6148" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="12" language="java" name="autocisq.measure.maintainability.CISQMM06ClassInheritanceLevel" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM06ClassInheritanceLevel.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="2904" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="13" language="java" name="autocisq.measure.maintainability.CISQMM07ClassChildren" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM07ClassChildren.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="219" width="791" x="1422" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="14" language="java" name="autocisq.measure.maintainability.CISQMM10VariableDeclaredPublic" project="SQuIDS" 
+  <class id="12" language="java" name="autocisq.measure.maintainability.CISQMM10VariableDeclaredPublic" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM10VariableDeclaredPublic.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="169" width="611" x="2253" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="1047" y="488"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="autocisq.measure.maintainability.CISQMM01MethodSpansLayer" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM01MethodSpansLayer.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="4825" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+  <class id="13" language="java" name="autocisq.measure.maintainability.CISQMM11MethodFanOut" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM11MethodFanOut.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1566" y="897"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="autocisq.measure.maintainability.CISQMM03HorizontalLayers" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM03HorizontalLayers.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="4174" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="17" language="java" name="autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch" 
-    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM17ContinueOrBreakOutsideSwitch.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="169" width="643" x="6108" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="18" language="java" name="autocisq.measure.maintainability.CISQMM15FileLOC" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM15FileLOC.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="219" width="611" x="4206" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="19" language="java" name="autocisq.measure.maintainability.CISQMM02LayerSkippingCall" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM02LayerSkippingCall.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="169" width="611" x="5476" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="20" language="java" name="autocisq.measure.maintainability.CISQMM04FileDuplicateTokens" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM04FileDuplicateTokens.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="4857" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="21" language="java" name="autocisq.measure.maintainability.CISQMM12ClassCoupling" project="SQuIDS" 
+  <class id="14" language="java" name="autocisq.measure.maintainability.CISQMM12ClassCoupling" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM12ClassCoupling.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="9536" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="1566" y="981"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="22" language="java" name="autocisq.measure.maintainability.CISQMMTypeDependentMeasure" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMMTypeDependentMeasure.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="194" width="611" x="8234" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="23" language="java" name="autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity" 
-    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM18MethodCyclomaticComplexity.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="219" width="626" x="756" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="24" language="java" name="autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackages" 
+  <class id="15" language="java" name="autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackages" 
     project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM13CyclicCallBetweenPackages.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="169" width="614" x="10848" y="814"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="1644" y="1060"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="25" language="java" name="autocisq.measure.maintainability.CISQMMLayerDependentMeasure" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMMLayerDependentMeasure.java" binary="false" 
+  <class id="16" language="java" name="autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructions" 
+    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM14MethodCommentedOutInstructions.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1116" y="571"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="17" language="java" name="autocisq.measure.maintainability.CISQMM15FileLOC" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM15FileLOC.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="963" y="660"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="18" language="java" name="autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM16IndexModifiedWithinLoop.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="560" x="5508" y="505"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    <position height="-1" width="-1" x="1634" y="1137"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="false" protected="false" private="false" static="true"/>      
-      <operations public="true" package="false" protected="false" private="false" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <dependency id="26">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <dependency id="28">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="29">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="30">    
-    <end type="SOURCE" refId="21"/>    
-    <end type="TARGET" refId="22"/>  
-  </generalization>  
-  <generalization id="31">    
-    <end type="SOURCE" refId="20"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="32">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="22"/>  
-  </generalization>  
-  <generalization id="33">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="25"/>  
-  </generalization>  
-  <dependency id="34">    
-    <bendpoint x="6117" y="814"/>    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="35">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="36">    
+  <class id="19" language="java" name="autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch" 
+    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM17ContinueOrBreakOutsideSwitch.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1101" y="749"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="20" language="java" name="autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity" 
+    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM18MethodCyclomaticComplexity.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1088" y="840"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="21" language="java" name="autocisq.measure.maintainability.CISQMM19MethodDataOrFileOperations" 
+    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM19MethodDataOrFileOperations.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1651" y="1216"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="22" language="java" name="autocisq.measure.maintainability.CISQMM20MethodParameters" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM20MethodParameters.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1025" y="924"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="23" language="java" name="autocisq.measure.maintainability.CISQMM21HardCodedLiteral" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM21HardCodedLiteral.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1585" y="1305"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="24" language="java" name="autocisq.measure.maintainability.CISQMMTypeDependentMeasure" project="SQuIDS" 
+    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMMTypeDependentMeasure.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1042" y="1013"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <generalization id="25">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="3"/>  
   </generalization>  
-  <generalization id="37">    
-    <end type="SOURCE" refId="23"/>    
-    <end type="TARGET" refId="3"/>  
+  <generalization id="26">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="24"/>  
   </generalization>  
-  <dependency id="38">    
-    <end type="SOURCE" refId="21"/>    
+  <generalization id="27">    
+    <end type="SOURCE" refId="22"/>    
     <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="39">    
-    <end type="SOURCE" refId="24"/>    
-    <end type="TARGET" refId="22"/>  
   </generalization>  
-  <dependency id="40">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="41">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <dependency id="42">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="43">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="25"/>  
-  </generalization>  
-  <dependency id="44">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="45">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="22"/>  
-  </generalization>  
-  <dependency id="46">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <dependency id="47">    
-    <end type="SOURCE" refId="24"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <dependency id="48">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="49">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="22"/>  
-  </generalization>  
-  <generalization id="50">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="22"/>  
-  </generalization>  
-  <generalization id="51">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="52">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="53">    
-    <end type="SOURCE" refId="3"/>    
+  <generalization id="28">    
+    <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
-  <generalization id="54">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="22"/>  
-  </generalization>  
-  <dependency id="55">    
-    <end type="SOURCE" refId="19"/>    
+  <generalization id="29">    
+    <end type="SOURCE" refId="10"/>    
     <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <dependency id="56">    
-    <bendpoint x="4120" y="814"/>    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <generalization id="57">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="25"/>  
   </generalization>  
-  <generalization id="58">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="59">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="60">    
+  <generalization id="30">    
     <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="22"/>  
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="31">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="32">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="34">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="35">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="36">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="37">    
+    <end type="SOURCE" refId="20"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="38">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="39">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="40">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="41">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="42">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="43">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="44">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="45">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="46">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="47">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="3"/>  
   </generalization>  
   <classifier-display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
-    <attributes public="true" package="false" protected="false" private="false" static="true"/>    
+    <attributes public="false" package="false" protected="false" private="false" static="true"/>    
     <operations public="true" package="false" protected="false" private="false" static="true"/>  
   </classifier-display>  
   <association-display labels="true" multiplicity="true"/>
