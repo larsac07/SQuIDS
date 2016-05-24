@@ -267,4 +267,22 @@ public abstract class JavaParserHelper {
 			return nameExprString;
 		}
 	}
+
+	/**
+	 * Get the NameExpr of a member (BodyDeclaration)
+	 */
+	public static NameExpr getNameExpr(BodyDeclaration member) {
+		if (member instanceof MethodDeclaration) {
+			return ((MethodDeclaration) member).getNameExpr();
+		} else if (member instanceof ConstructorDeclaration) {
+			return ((ConstructorDeclaration) member).getNameExpr();
+		} else if (member instanceof FieldDeclaration) {
+			return new NameExpr(member.getBeginLine(), member.getBeginColumn(), member.getEndLine(),
+					member.getEndColumn(), ((FieldDeclaration) member).getVariables().get(0).getId().getName());
+		} else {
+			Node node = member;
+			return new NameExpr(node.getBeginLine(), node.getBeginColumn(), node.getEndLine(), node.getEndColumn(),
+					member.toStringWithoutComments());
+		}
+	}
 }

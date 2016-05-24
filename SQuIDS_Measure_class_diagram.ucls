@@ -3,7 +3,7 @@
   realizations="true" associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="autocisq.measure.Measure" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/Measure.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="151" y="576"/>    
+    <position height="-1" width="-1" x="0" y="500"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -13,7 +13,7 @@
   <class id="2" language="java" name="autocisq.measure.maintainability.CISQMaintainabilityMeasure" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMaintainabilityMeasure.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="538" y="575"/>    
+    <position height="-1" width="-1" x="400" y="500"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -23,7 +23,7 @@
   <class id="3" language="java" name="autocisq.measure.maintainability.CISQMMLayerDependentMeasure" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMMLayerDependentMeasure.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1042" y="130"/>    
+    <position height="-1" width="-1" x="909" y="129"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -33,7 +33,7 @@
   <class id="4" language="java" name="autocisq.measure.maintainability.CISQMM01MethodSpansLayer" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM01MethodSpansLayer.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1571" y="45"/>    
+    <position height="-1" width="-1" x="1448" y="33"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -43,7 +43,7 @@
   <class id="5" language="java" name="autocisq.measure.maintainability.CISQMM02LayerSkippingCall" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM02LayerSkippingCall.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1563" y="140"/>    
+    <position height="-1" width="-1" x="1440" y="128"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -53,7 +53,7 @@
   <class id="6" language="java" name="autocisq.measure.maintainability.CISQMM03HorizontalLayers" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM03HorizontalLayers.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1558" y="230"/>    
+    <position height="-1" width="-1" x="1435" y="218"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -63,7 +63,7 @@
   <class id="7" language="java" name="autocisq.measure.maintainability.CISQMM04FileDuplicateTokens" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM04FileDuplicateTokens.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1028" y="216"/>    
+    <position height="-1" width="-1" x="895" y="215"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -73,7 +73,7 @@
   <class id="8" language="java" name="autocisq.measure.maintainability.CISQMM05MethodUnreachable" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM05MethodUnreachable.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1595" y="723"/>    
+    <position height="-1" width="-1" x="1462" y="722"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -83,7 +83,7 @@
   <class id="9" language="java" name="autocisq.measure.maintainability.CISQMM06ClassInheritanceLevel" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM06ClassInheritanceLevel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1038" y="306"/>    
+    <position height="-1" width="-1" x="905" y="305"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -92,7 +92,7 @@
   </class>  
   <class id="10" language="java" name="autocisq.measure.maintainability.CISQMM07ClassChildren" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM07ClassChildren.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="992" y="395"/>    
+    <position height="-1" width="-1" x="859" y="394"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -103,7 +103,7 @@
     project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM09MethodDirectlyUsingFieldFromOtherClass.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1720" y="811"/>    
+    <position height="-1" width="-1" x="1587" y="810"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -113,7 +113,7 @@
   <class id="12" language="java" name="autocisq.measure.maintainability.CISQMM10VariableDeclaredPublic" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM10VariableDeclaredPublic.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1047" y="488"/>    
+    <position height="-1" width="-1" x="914" y="487"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -122,7 +122,7 @@
   </class>  
   <class id="13" language="java" name="autocisq.measure.maintainability.CISQMM11MethodFanOut" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM11MethodFanOut.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1566" y="897"/>    
+    <position height="-1" width="-1" x="1433" y="896"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -131,7 +131,7 @@
   </class>  
   <class id="14" language="java" name="autocisq.measure.maintainability.CISQMM12ClassCoupling" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM12ClassCoupling.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1566" y="981"/>    
+    <position height="-1" width="-1" x="1433" y="980"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -141,7 +141,7 @@
   <class id="15" language="java" name="autocisq.measure.maintainability.CISQMM13CyclicCallBetweenPackages" 
     project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM13CyclicCallBetweenPackages.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1644" y="1060"/>    
+    <position height="-1" width="-1" x="1511" y="1059"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -151,7 +151,7 @@
   <class id="16" language="java" name="autocisq.measure.maintainability.CISQMM14MethodCommentedOutInstructions" 
     project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM14MethodCommentedOutInstructions.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1116" y="571"/>    
+    <position height="-1" width="-1" x="983" y="570"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -160,17 +160,17 @@
   </class>  
   <class id="17" language="java" name="autocisq.measure.maintainability.CISQMM15FileLOC" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM15FileLOC.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="963" y="660"/>    
+    <position height="-1" width="-1" x="830" y="659"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="18" language="java" name="autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop" project="SQuIDS" 
-    file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM16IndexModifiedWithinLoop.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1634" y="1137"/>    
+  <class id="18" language="java" name="autocisq.measure.maintainability.CISQMM16IndexModifiedWithinLoop" 
+    project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM16IndexModifiedWithinLoop.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1501" y="1136"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -180,7 +180,7 @@
   <class id="19" language="java" name="autocisq.measure.maintainability.CISQMM17ContinueOrBreakOutsideSwitch" 
     project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM17ContinueOrBreakOutsideSwitch.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1101" y="749"/>    
+    <position height="-1" width="-1" x="968" y="748"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -190,7 +190,7 @@
   <class id="20" language="java" name="autocisq.measure.maintainability.CISQMM18MethodCyclomaticComplexity" 
     project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM18MethodCyclomaticComplexity.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1088" y="840"/>    
+    <position height="-1" width="-1" x="955" y="839"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -200,7 +200,7 @@
   <class id="21" language="java" name="autocisq.measure.maintainability.CISQMM19MethodDataOrFileOperations" 
     project="SQuIDS" file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM19MethodDataOrFileOperations.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1651" y="1216"/>    
+    <position height="-1" width="-1" x="1518" y="1215"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -210,7 +210,7 @@
   <class id="22" language="java" name="autocisq.measure.maintainability.CISQMM20MethodParameters" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM20MethodParameters.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1025" y="924"/>    
+    <position height="-1" width="-1" x="892" y="923"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -220,7 +220,7 @@
   <class id="23" language="java" name="autocisq.measure.maintainability.CISQMM21HardCodedLiteral" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMM21HardCodedLiteral.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1585" y="1305"/>    
+    <position height="-1" width="-1" x="1452" y="1304"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -230,7 +230,7 @@
   <class id="24" language="java" name="autocisq.measure.maintainability.CISQMMTypeDependentMeasure" project="SQuIDS" 
     file="/SQuIDS/src/autocisq/measure/maintainability/CISQMMTypeDependentMeasure.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1042" y="1013"/>    
+    <position height="-1" width="-1" x="909" y="1012"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -238,95 +238,95 @@
     </display>  
   </class>  
   <generalization id="25">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="26">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="24"/>  
-  </generalization>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="28">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <generalization id="29">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="30">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="31">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="32">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="24"/>  
-  </generalization>  
-  <generalization id="33">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="34">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="24"/>  
-  </generalization>  
-  <generalization id="35">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="24"/>  
-  </generalization>  
-  <generalization id="36">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="37">    
-    <end type="SOURCE" refId="20"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="38">    
-    <end type="SOURCE" refId="24"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="39">    
-    <end type="SOURCE" refId="21"/>    
-    <end type="TARGET" refId="24"/>  
-  </generalization>  
-  <generalization id="40">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="41">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="24"/>  
-  </generalization>  
-  <generalization id="42">    
     <end type="SOURCE" refId="19"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <generalization id="43">    
-    <end type="SOURCE" refId="11"/>    
+  <generalization id="26">    
+    <end type="SOURCE" refId="21"/>    
     <end type="TARGET" refId="24"/>  
   </generalization>  
-  <generalization id="44">    
-    <end type="SOURCE" refId="3"/>    
+  <generalization id="27">    
+    <end type="SOURCE" refId="20"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <generalization id="45">    
+  <generalization id="28">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="29">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="30">    
     <end type="SOURCE" refId="16"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <generalization id="46">    
+  <generalization id="31">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="32">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="34">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="35">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="36">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="37">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="38">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="39">    
     <end type="SOURCE" refId="23"/>    
     <end type="TARGET" refId="24"/>  
   </generalization>  
-  <generalization id="47">    
+  <generalization id="40">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="41">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="42">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="43">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="24"/>  
+  </generalization>  
+  <generalization id="44">    
     <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="45">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="46">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="47">    
+    <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="3"/>  
   </generalization>  
   <classifier-display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 

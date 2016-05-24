@@ -21,8 +21,8 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link CISQMM12ClassCoupling} class represents the CISQ Maintainability measure
- * 12: # of objects with coupling > 7.
+ * The {@link CISQMM12ClassCoupling} class represents the CISQ Maintainability
+ * measure 12: # of objects with coupling > 7.
  *
  * This measure is implemented according to Chidamber & Kemerer's Coupling
  * Between Object Classes from "A Metrics Suite for Object-Oriented Design"
@@ -111,7 +111,7 @@ public class CISQMM12ClassCoupling extends CISQMMTypeDependentMeasure {
 	private List<Issue> checkCoupling(int count, ClassOrInterfaceDeclaration classToBlame, String fileString) {
 		if (count > THRESHOLD) {
 			List<Issue> issues = new LinkedList<>();
-			issues.add(new FileIssue(this, classToBlame, fileString));
+			issues.add(new FileIssue(this, classToBlame.getNameExpr(), fileString));
 			return issues;
 		}
 		return null;

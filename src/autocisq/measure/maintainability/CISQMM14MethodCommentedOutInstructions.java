@@ -9,12 +9,15 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.TokenMgrError;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.Statement;
 
+import autocisq.JavaParserHelper;
 import autocisq.lexical.TextOrJavaCode;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
@@ -47,7 +50,8 @@ public class CISQMM14MethodCommentedOutInstructions extends CISQMaintainabilityM
 			double result = (double) commOutInstructions / (instructions + commOutInstructions);
 			if (result > THRESHOLD) {
 				List<Issue> issues = new ArrayList<>();
-				issues.add(new FileIssue(this, node, fileString));
+				NameExpr methodHeader = JavaParserHelper.getNameExpr((BodyDeclaration) node);
+				issues.add(new FileIssue(this, methodHeader, fileString));
 				return issues;
 			}
 		}

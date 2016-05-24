@@ -7,7 +7,9 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.NameExpr;
 
 import autocisq.JavaParserHelper;
 import autocisq.models.FileIssue;
@@ -40,7 +42,8 @@ public class CISQMM01MethodSpansLayer extends CISQMMLayerDependentMeasure {
 			if (layerAmount > 1) {
 				List<Issue> issues = new LinkedList<>();
 				String message = path + MESSAGE + layerAmount;
-				issues.add(new FileIssue(this, node, fileString, message));
+				NameExpr methodHeader = JavaParserHelper.getNameExpr((BodyDeclaration) node);
+				issues.add(new FileIssue(this, methodHeader, fileString, message));
 				return issues;
 			} else {
 				return null;

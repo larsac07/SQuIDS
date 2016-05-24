@@ -8,10 +8,12 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.ConditionalExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.DoStmt;
 import com.github.javaparser.ast.stmt.ForStmt;
@@ -20,6 +22,7 @@ import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.SwitchEntryStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
 
+import autocisq.JavaParserHelper;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -45,8 +48,8 @@ public class CISQMM18MethodCyclomaticComplexity extends CISQMaintainabilityMeasu
 	private int count;
 
 	/**
-	 * Creates a new {@link CISQMM18MethodCyclomaticComplexity} measure and assumes a
-	 * starting cyclomatic complexity value of 1.
+	 * Creates a new {@link CISQMM18MethodCyclomaticComplexity} measure and
+	 * assumes a starting cyclomatic complexity value of 1.
 	 *
 	 * @param settings
 	 *            - not required
@@ -80,22 +83,11 @@ public class CISQMM18MethodCyclomaticComplexity extends CISQMaintainabilityMeasu
 		} else if (this.count >= THRESHOLD && !this.blamedMethodsAndConstructors.contains(this.methodOrConstructor)) {
 			this.blamedMethodsAndConstructors.add(this.methodOrConstructor);
 			List<Issue> issues = new LinkedList<>();
-			issues.add(new FileIssue(this, getMethodOrConstructorSignature(this.methodOrConstructor), fileString));
+			NameExpr methodHeader = JavaParserHelper.getNameExpr((BodyDeclaration) this.methodOrConstructor);
+			issues.add(new FileIssue(this, methodHeader, fileString));
 			return issues;
 		} else {
 			return null;
-		}
-	}
-
-	private Node getMethodOrConstructorSignature(Node node) {
-		if (node instanceof ConstructorDeclaration) {
-			return ((ConstructorDeclaration) node).getNameExpr();
-		} else if (node instanceof MethodDeclaration) {
-			return ((MethodDeclaration) node).getNameExpr();
-		} else {
-			// If node is neither a constructor or method, simply return the
-			// node itself
-			return node;
 		}
 	}
 

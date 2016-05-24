@@ -14,6 +14,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 
 import autocisq.JavaParserHelper;
 import autocisq.NoSuchAncestorFoundException;
@@ -69,7 +70,8 @@ public class CISQMM09MethodDirectlyUsingFieldFromOtherClass extends CISQMMTypeDe
 									if (!isMarked(methodDeclaration)) {
 										markMethod(methodDeclaration);
 										List<Issue> issues = new ArrayList<>();
-										issues.add(new FileIssue(this, methodDeclaration, fileString));
+										NameExpr methodHeader = JavaParserHelper.getNameExpr(methodDeclaration);
+										issues.add(new FileIssue(this, methodHeader, fileString));
 										return issues;
 									}
 								}

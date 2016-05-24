@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -85,7 +86,8 @@ public class CISQMM05MethodUnreachable extends CISQMMTypeDependentMeasure {
 
 				if (!isReferenced && (isPrivate || classIsPrivate)) {
 					List<Issue> issues = new LinkedList<>();
-					issues.add(new FileIssue(this, node, fileString));
+					NameExpr methodHeader = JavaParserHelper.getNameExpr((BodyDeclaration) node);
+					issues.add(new FileIssue(this, methodHeader, fileString));
 					return issues;
 				}
 			} catch (NoSuchAncestorFoundException e) {

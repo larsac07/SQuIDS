@@ -14,8 +14,8 @@ import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
 /**
- * The {@link CISQMM06ClassInheritanceLevel} class represents the CISQ Maintainability
- * measure 6: # of classes with inheritance levels ≥ 7.
+ * The {@link CISQMM06ClassInheritanceLevel} class represents the CISQ
+ * Maintainability measure 6: # of classes with inheritance levels ≥ 7.
  *
  * If a class has 7 or more ancestor superclasses (e.g. Class1 extends Class2,
  * Class2 extends Class3..., Class7 extends Class8), it has an inheritance level
@@ -41,7 +41,7 @@ public class CISQMM06ClassInheritanceLevel extends CISQMaintainabilityMeasure {
 				int inheritanceLevel = calcInheritanceLvl(classDecl, compilationUnits, 0);
 				if (inheritanceLevel >= THRESHOLD) {
 					List<Issue> issues = new LinkedList<>();
-					issues.add(new FileIssue(this, classDecl, fileString));
+					issues.add(new FileIssue(this, classDecl.getNameExpr(), fileString));
 					return issues;
 				}
 			}

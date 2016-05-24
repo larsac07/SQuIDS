@@ -6,10 +6,13 @@ import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.NameExpr;
 
+import autocisq.JavaParserHelper;
 import autocisq.models.FileIssue;
 import autocisq.models.Issue;
 
@@ -24,7 +27,6 @@ public class CISQMM20MethodParameters extends CISQMaintainabilityMeasure {
 
 	@Override
 	public List<Issue> analyzeNode(Node node, String fileString, List<CompilationUnit> compilationUnits) {
-		List<Issue> issues = new ArrayList<>();
 		if (node instanceof MethodDeclaration || node instanceof ConstructorDeclaration) {
 			List<Parameter> parameters;
 			if (node instanceof MethodDeclaration) {
@@ -34,10 +36,13 @@ public class CISQMM20MethodParameters extends CISQMaintainabilityMeasure {
 			}
 
 			if (parameters.size() >= THRESHOLD) {
-				issues.add(new FileIssue(this, node, fileString));
+				List<Issue> issues = new ArrayList<>();
+				NameExpr methodHeader = JavaParserHelper.getNameExpr((BodyDeclaration) node);
+				issues.add(new FileIssue(this, methodHeader, fileString));
+				return issues;
 			}
 		}
-		return issues;
+		return null;
 	}
 
 	@Override

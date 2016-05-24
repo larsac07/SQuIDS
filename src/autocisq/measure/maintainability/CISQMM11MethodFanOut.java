@@ -64,7 +64,8 @@ public class CISQMM11MethodFanOut extends CISQMMTypeDependentMeasure {
 			if (fanOut >= THRESHOLD) {
 				List<Issue> issues = new ArrayList<>();
 				String message = createMessage(member, fanOut);
-				issues.add(new FileIssue(this, node, fileString, message));
+				NameExpr methodHeader = JavaParserHelper.getNameExpr((BodyDeclaration) node);
+				issues.add(new FileIssue(this, methodHeader, fileString, message));
 				return issues;
 			}
 		}
