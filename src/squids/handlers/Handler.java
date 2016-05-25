@@ -72,20 +72,12 @@ public class Handler extends AbstractHandler {
 		String cmdID = event.getCommand().getId();
 		if (cmdID.equals(COMMAND_SELECTED_PROJECTS) || cmdID.equals(COMMAND_ALL_PROJECTS)) {
 
+			Handler.this.totalTime = System.currentTimeMillis();
+			resetCISQReport();
+			final Set<IProject> projects = getSelectedProjects(cmdID);
 			Job job = new Job(JOB_NAME) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					Handler.this.totalTime = System.currentTimeMillis();
-					resetCISQReport();
-					Set<IProject> projects = new LinkedHashSet<>();
-					if (cmdID.equals(COMMAND_SELECTED_PROJECTS)) {
-						projects = getSelectedProjects();
-					} else {
-						IProject[] projectArray = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-						for (IProject project : projectArray) {
-							projects.add(project);
-						}
-					}
 					for (IProject project : projects) {
 						try {
 							analyzeSourceFiles(project, monitor);
@@ -106,17 +98,24 @@ public class Handler extends AbstractHandler {
 	/**
 	 * @param projects
 	 */
-	public Set<IProject> getSelectedProjects() {
+	public Set<IProject> getSelectedProjects(String cmdID) {
 		Set<IProject> projects = new LinkedHashSet<>();
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null) {
-			IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
-			Object[] selections = selection.toArray();
-			for (Object object : selections) {
-				if (object instanceof IAdaptable) {
-					IProject project = ((IAdaptable) object).getAdapter(IProject.class);
-					projects.add(project);
+		if (cmdID.equals(COMMAND_SELECTED_PROJECTS)) {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (window != null) {
+				IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
+				Object[] selections = selection.toArray();
+				for (Object object : selections) {
+					if (object instanceof IAdaptable) {
+						IProject project = ((IAdaptable) object).getAdapter(IProject.class);
+						projects.add(project);
+					}
 				}
+			}
+		} else {
+			IProject[] projectArray = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			for (IProject project : projectArray) {
+				projects.add(project);
 			}
 		}
 		return projects;
