@@ -8,13 +8,16 @@ import java.util.regex.Pattern;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.NameExpr;
 
+import squids.JavaParserHelper;
 import squids.models.FileIssue;
 import squids.models.Issue;
 
 /**
- * The {@link CISQMM04FileDuplicateTokens} class represents the CISQ Maintainability
- * measure 4: # files that contain 100+ consecutive duplicate tokens.
+ * The {@link CISQMM04FileDuplicateTokens} class represents the CISQ
+ * Maintainability measure 4: # files that contain 100+ consecutive duplicate
+ * tokens.
  *
  * It considers tokens as Java keywords, identifiers, separators, operators and
  * literals. In other words, comments and whitespace is not considered.
@@ -40,10 +43,12 @@ public class CISQMM04FileDuplicateTokens extends CISQMaintainabilityMeasure {
 	private final static String LITERALS = "[0-9]+(l|L)?\\.?([0-9]+((f|F)|(d|D)))?|\"[^\"]*\"";
 
 	private Pattern pattern;
+	private String fileString;
 
 	public CISQMM04FileDuplicateTokens(Map<String, Object> settings) {
 		super(settings);
 		this.pattern = Pattern.compile(SEPARATORS + "|" + OPERATORS + "|" + IDENTIFIERS + "|" + LITERALS);
+		this.fileString = "";
 	}
 
 	@Override
@@ -57,6 +62,7 @@ public class CISQMM04FileDuplicateTokens extends CISQMaintainabilityMeasure {
 			}
 			// If there are at least two 100-token lists to compare
 			if (tokens.size() >= THRESHOLD * 2) {
+				this.fileString = fileString;
 				return findDuplicates(node, tokens);
 			}
 		}
@@ -74,7 +80,8 @@ public class CISQMM04FileDuplicateTokens extends CISQMaintainabilityMeasure {
 				if (i1 <= e2 && e1 <= i2 && e1 < size && e2 < size) {
 					if (listPartsEqual(tokens, i1, e1, i2, e2)) {
 						List<Issue> issues = new ArrayList<>();
-						issues.add(new FileIssue(this, node, String.join(" ", tokens)));
+						NameExpr classHeader = JavaParserHelper.getNameExpr((CompilationUnit) node);
+						issues.add(new FileIssue(this, classHeader, this.fileString));
 						return issues;
 					}
 				}
