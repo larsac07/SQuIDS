@@ -1,10 +1,10 @@
 package org.test.java;
 
-public class Class1 {
+public class Class3 {
 	
 	private boolean isClass;
 	
-	public Class1(boolean isClass) {
+	public Class3(boolean isClass) {
 		this.isClass = isClass;
 	}
 	
@@ -38,13 +38,15 @@ public class Class1 {
 			if(x == a) {
 				System.out.println(comment.toString());
 				break;
+				break;
+				break;
 			}
 		}
 		
 		someFunction(someOtherFunction(anotherFunction(++a)));
 	}
 	
-	public void method99Tokens(boolean isClass, String comment) {
+	public void method101Tokens(boolean isClass, String comment) {
 		int b, c = 0;
 		int j = 2;
 		// hello my lovelies
@@ -68,7 +70,9 @@ public class Class1 {
 		while(true) {
 			if(x == a) {
 				System.out.println(comment.toString());
-				c = a+b;
+				break;
+				break;
+				break;
 			}
 		}
 	}

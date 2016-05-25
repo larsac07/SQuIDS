@@ -9,7 +9,7 @@ public class Class2 {
 	}
 	
 	public void method1(boolean isClass, String comment) {
-		a = x;
+		int a = 0, b = 0, c = 0;
 		int j = 2;
 		
 		// hello my lovelies
@@ -36,7 +36,8 @@ public class Class2 {
 		
 		while(true) {
 			if(x == a) {
-				System.out.println("much amaze");
+				System.out.println(comment.toString());
+				break;
 				break;
 			}
 		}
@@ -44,42 +45,8 @@ public class Class2 {
 		someFunction(someOtherFunction(anotherFunction(++a)));
 	}
 	
-	public void method2(int children, int parents) {
-		a = x;
-		int j = 2;
-		
-		while(true) {
-			x++;
-			if(x == a) {
-				break;
-			}
-		}
-		
-		// hello my lovelies
-		a = x;
-		int j;
-		j = 2;
-//		int z;
-		String s = "Hello";
-		// Dis no code man;
-		b = s = "OK then";
-		
-		someFunction();
-		for(int i = 0; i < 20; i++) {
-			a++;
-		}
-		
-		while(true) {
-			if(x == a) {
-				System.out.println("much amaze");
-				break;
-			}
-		}
-		someFunction(someOtherFunction(anotherFunction(++a)));
-	}
-	
-	public void method3(boolean isClass, String comment) {
-		a = x;
+	public void method100Tokens(boolean isClass, String comment) {
+		int b, c = 0;
 		int j = 2;
 		// hello my lovelies
 		a = x;
@@ -101,7 +68,9 @@ public class Class2 {
 		someFunction();
 		while(true) {
 			if(x == a) {
-				System.out.println("much amaze");
+				System.out.println(comment.toString());
+				break;
+				break;
 			}
 		}
 	}
