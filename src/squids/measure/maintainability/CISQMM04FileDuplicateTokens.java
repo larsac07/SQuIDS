@@ -34,10 +34,10 @@ public class CISQMM04FileDuplicateTokens extends CISQMaintainabilityMeasure {
 	public final static int THRESHOLD = 100;
 	public final static String ISSUE_TYPE = "CISQ MM04: File with >= " + THRESHOLD + " consecutive duplicate tokens";
 
-	private final static String SEPARATORS = ";|,|\\.|\\(|\\)|\\{|\\|\\}|\\[|\\]";
+	private final static String SEPARATORS = ";|,|\\.|\\(|\\)|\\{|\\}|\\||\\[|\\]";
 	private final static String OPERATORS = "~|\\?|:|==|=|<=|>=|>|<|!=|!|&&|\\|\\||\\+\\+|--|\\+|-|\\*|/|&|\\||\\^|%|\\$|\\#";
 	private final static String IDENTIFIERS = "[a-zA-Z_][a-zA-Z0-9_]*";
-	private final static String LITERALS = "[0-9]+(l|L)?\\.?([0-9]+((f|F)|(d|D)))?|\"^\"*\"";
+	private final static String LITERALS = "[0-9]+(l|L)?\\.?([0-9]+((f|F)|(d|D)))?|\"[^\"]*\"";
 
 	private Pattern pattern;
 
