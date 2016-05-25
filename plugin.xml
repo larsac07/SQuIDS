@@ -11,7 +11,7 @@
       <command
             name="Analyze selected projects"
             categoryId="SQuIDS.commands.category"
-            id="squids.commands.analyzeSelectedProjects">
+            id="SQuIDS.commands.analyzeSelectedProjects">
       </command>
       <command
             name="Analyze all projects"
