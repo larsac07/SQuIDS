@@ -269,6 +269,13 @@ public abstract class JavaParserHelper {
 	}
 
 	/**
+	 * Get the NameExpr of a CompilationUnit
+	 */
+	public static NameExpr getNameExpr(CompilationUnit cu) {
+		return cu.getTypes().get(0).getNameExpr();
+	}
+
+	/**
 	 * Get the NameExpr of a member (BodyDeclaration)
 	 */
 	public static NameExpr getNameExpr(BodyDeclaration member) {
