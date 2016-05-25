@@ -14,6 +14,11 @@ import com.github.javaparser.ast.CompilationUnit;
 import squids.io.IOUtils;
 import squids.measure.MeasureTest;
 
+/**
+ * Unit test class for {@link CISQMM06ClassInheritanceLevel}
+ *
+ * @author Lars A. V. Cabrera
+ */
 public class CISQMM06ClassInheritanceLevelTest extends MeasureTest {
 
 	private CompilationUnit classIL6;
@@ -70,24 +75,47 @@ public class CISQMM06ClassInheritanceLevelTest extends MeasureTest {
 		this.issueFinder.setCompilationUnits(compilationUnits);
 	}
 
+	/**
+	 * Let classes with inheritance level of 6 pass (6 < threshold).
+	 *
+	 * Uses
+	 * {@link MeasureTest#skipIssue(com.github.javaparser.ast.Node, String)}
+	 */
 	@Test
 	public void skipClassIL6() {
 		skipIssue(this.classIL6, this.classIL6String);
 	}
 
+	/**
+	 * Report a problem for classes with inheritance level 7 (7 == threshold).
+	 *
+	 * Uses
+	 * {@link MeasureTest#findIssue(com.github.javaparser.ast.Node, String)}
+	 */
 	@Test
 	public void findClassIL7() {
 		findIssue(this.classIL7, this.classIL7String);
 	}
 
+	/**
+	 * Report a problem for classes with inheritance level 8 (8 > threshold).
+	 *
+	 * Uses
+	 * {@link MeasureTest#findIssue(com.github.javaparser.ast.Node, String)}
+	 */
 	@Test
 	public void findClassIL8() {
 		findIssue(this.classIL8, this.classIL8String);
 	}
 
+	/**
+	 * Used in superclass {@link MeasureTest} to determine if the correct issue
+	 * was found
+	 * {@link MeasureTest#findIssue(com.github.javaparser.ast.Node, String)} and
+	 * {@link MeasureTest#skipIssue(com.github.javaparser.ast.Node, String)}
+	 */
 	@Override
 	public String getIssueType() {
 		return CISQMM06ClassInheritanceLevel.ISSUE_TYPE;
 	}
-
 }
