@@ -57,6 +57,7 @@ public class Handler extends AbstractHandler {
 	private final static String JAVA = "java";
 	private final static String JOB_NAME = "SQuIDS";
 	private final static String NL = System.lineSeparator();
+	private final static String TAB = "\t";
 	private final static String MARKER_ID = "SQuIDS.javaqualityissue";
 	private long parsingTime;
 	private long analysisTime;
@@ -401,7 +402,7 @@ public class Handler extends AbstractHandler {
 			for (String measureElement : measureElements) {
 				Integer violations = qcMap.get(measureElement);
 				violationsTot += violations;
-				qcjString += " - " + measureElement + ": " + violations + NL;
+				qcjString += measureElement + TAB + violations + NL;
 			}
 			qcjString += "QCj(" + qc + ") = " + violationsTot + NL + NL;
 		}
